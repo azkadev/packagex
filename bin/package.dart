@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:package/package.dart' as package;
 
-void main(List<String> arguments) {
-  Process.start("sh", [
-    "-c",
-    pfetch
-  ]).then((shell) {
+void main(List<String> arguments) async {
+  ProcessResult res = await Process.run("id", ["-u"]);
+  if (int.parse(res.stdout) != 0) {
+    print("Please run as sudo");
+    exit(0);
+  }
+  Process.start("sh", ["-c", pfetch]).then((shell) {
     stdout.addStream(shell.stdout); // listening for stdout
     stderr.addStream(shell.stderr); // listening for stderr
   });
