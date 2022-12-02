@@ -1,20 +1,12 @@
 # Packagex
 
-Experimental Packagex all in one for cross platform except web, pluggable support cli
+Experimental Packagex all in one for cross platform except web, pluggable support cli 
 
-<!-- - Linux
-
-```bash
-dart compile exe ./bin/*.dart -o ./linux/package_managerdeb/usr/local/bin/package
-dpkg-deb --build --root-owner-group ./linux/package_managerdeb ./package-linux.deb
-sudo dpkg -i ./package-linux.deb
-``` -->
-
+## Acttivate Package
 
 ```bash
 dart pub global activate packagex
 ```
-
 
 ## Create Package
 
@@ -26,4 +18,10 @@ packagex create name_project
 
 ```bash
 packagex build name_project
+```
+
+## Install Package
+
+```bash
+packagex install ./package.deb
 ```
