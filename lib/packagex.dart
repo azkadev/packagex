@@ -14,6 +14,7 @@ class PackageBuild {
     required String name,
     String maintaner = "-",
     required String package,
+    bool isForce = true,
     double version = 0.0,
     String architecture = "amd64",
     String essential = "no",
@@ -58,6 +59,17 @@ Homepage: "${homepage}"
       }
       return;
     }
+
+    Process shell = await Process.start(
+      "dart",
+      [
+        "create",
+        name,
+        (isForce)?"--force":""
+      ],
+    );
+    await stdout.addStream(shell.stdout);
+    await stderr.addStream(shell.stderr);
 
     await createFolders(
       directory: Directory(p.join(directory.path, "android", "packaging")),
