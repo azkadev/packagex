@@ -35,11 +35,9 @@ void main(List<String> arguments) async {
   if (command == "build") {
     String? out = args["-output"];
     try {
-      String name = args.arguments[1];
-      String path_project = p.join(Directory.current.path, name);
+      String path_project = p.join(Directory.current.path);
       await packageBuild.build(path: path_project, output: out);
-    } catch (e) {
-      String name = args.arguments[1];
+    } catch (e) { 
       String path_project = p.join(Directory.current.path);
       await packageBuild.build(path: path_project, output: out);
     }

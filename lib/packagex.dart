@@ -62,11 +62,7 @@ Homepage: "${homepage}"
 
     Process shell = await Process.start(
       "dart",
-      [
-        "create",
-        name,
-        (isForce)?"--force":""
-      ],
+      ["create", name, (isForce) ? "--force" : ""],
     );
     await stdout.addStream(shell.stdout);
     await stderr.addStream(shell.stderr);
@@ -108,8 +104,10 @@ Homepage: "${homepage}"
     String? output,
   }) async {
     Directory directory = Directory(p.join(Directory.current.path, "build"));
+    await directory.autoCreate();
     if (Platform.isLinux) {
-      output ??= p.join(Directory.current.path, "${p.basename(path)}.deb");
+      output ??= p.join(directory.path, "${p.basename(path)}-linux.deb");
+      path = p.join(path, "linux", "packaging"); 
       Process shell = await Process.start(
         "dpkg-deb",
         [
