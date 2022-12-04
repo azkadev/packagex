@@ -27,6 +27,7 @@ void main(List<String> arguments) async {
       await packageBuild.create(
         name: p.basename(path_project),
         package: p.basename(path_project),
+        isForce: args.arguments.contains("--force"),
       );
     } catch (e) {
       print(e);
@@ -36,10 +37,17 @@ void main(List<String> arguments) async {
     String? out = args["-output"];
     try {
       String path_project = p.join(Directory.current.path);
-      await packageBuild.build(path: path_project, output: out);
-    } catch (e) { 
+      await packageBuild.build(
+        path: path_project,
+        output: out,
+        
+      );
+    } catch (e) {
       String path_project = p.join(Directory.current.path);
-      await packageBuild.build(path: path_project, output: out);
+      await packageBuild.build(
+        path: path_project,
+        output: out,
+      );
     }
   }
 }

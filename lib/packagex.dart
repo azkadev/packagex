@@ -14,7 +14,7 @@ class PackageBuild {
     required String name,
     String maintaner = "-",
     required String package,
-    bool isForce = true,
+    bool isForce = false,
     double version = 0.0,
     String architecture = "amd64",
     String essential = "no",
@@ -62,10 +62,14 @@ Homepage: "${homepage}"
 
     Process shell = await Process.start(
       "dart",
-      ["create", name, (isForce) ? "--force" : ""],
+      [
+        "create",
+        name,
+        (isForce) ? "--force" : "",
+      ],
     );
     await stdout.addStream(shell.stdout);
-    await stderr.addStream(shell.stderr);
+    // await stderr.addStream(shell.stderr);
 
     await createFolders(
       directory: Directory(p.join(directory.path, "android", "packaging")),
@@ -107,7 +111,7 @@ Homepage: "${homepage}"
     await directory.autoCreate();
     if (Platform.isLinux) {
       output ??= p.join(directory.path, "${p.basename(path)}-linux.deb");
-      path = p.join(path, "linux", "packaging"); 
+      path = p.join(path, "linux", "packaging");
       Process shell = await Process.start(
         "dpkg-deb",
         [
