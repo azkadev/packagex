@@ -24,6 +24,9 @@ void main(List<String> arguments) async {
     try {
       String name = args.arguments[1];
       String path_project = p.join(Directory.current.path, name);
+      if (name == ".") {
+        path_project = Directory.current.path;
+      }
       await packageBuild.create(
         name: p.basename(path_project),
         package: p.basename(path_project),
@@ -40,7 +43,6 @@ void main(List<String> arguments) async {
       await packageBuild.build(
         path: path_project,
         output: out,
-        
       );
     } catch (e) {
       String path_project = p.join(Directory.current.path);
