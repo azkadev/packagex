@@ -22,9 +22,16 @@ class PackageBuild {
     String description = "A new Flutter project.",
     String homepage = "https://youtube.com/@azkadev",
   }) async {
+    String package_name = "";
+    if (package != ".") {
+      package_name = package;
+    } else {
+      package_name = p.basename(Directory.current.path);
+    }
+
     String scripts = """
 Maintainer: "${maintaner}"
-Package: ${package}
+Package: ${package_name}
 Version: ${version}
 Priority: optional
 Architecture: amd64
@@ -36,9 +43,9 @@ Homepage: "${homepage}"
 [Desktop Entry]
 Type=Application
 Version=0.0.0
-Name=${package}
+Name=${package_name}
 GenericName=General Application
-Exec=${package} %U
+Exec=${package_name} %U
 Categories=Music;Media;
 Keywords=Hello;World;Test;Application;
 StartupNotify=true

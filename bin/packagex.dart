@@ -24,9 +24,6 @@ void main(List<String> arguments) async {
     try {
       String name = args.arguments[1];
       String path_project = p.join(Directory.current.path, name);
-      if (name == ".") {
-        path_project = Directory.current.path;
-      }
       await packageBuild.create(
         name: p.basename(path_project),
         package: p.basename(path_project),
@@ -37,7 +34,17 @@ void main(List<String> arguments) async {
     }
   }
   if (command == "build") {
-    String? out = args["-output"];
+    late String out = "";
+    List<String> outputs = [
+      "-output",
+      "-o",
+    ];
+    for (var i = 0; i < outputs.length; i++) {
+      var loop_data = outputs[i];
+      if (args[loop_data] != null) {
+        out = args[loop_data] ?? "";
+      }
+    }
     try {
       String path_project = p.join(Directory.current.path);
       await packageBuild.build(
