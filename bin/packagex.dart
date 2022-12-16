@@ -34,7 +34,7 @@ void main(List<String> arguments) async {
     }
   }
   if (command == "build") {
-    late String out = "";
+    String? out;
     List<String> outputs = [
       "-output",
       "-o",

@@ -1,6 +1,6 @@
 name: packagex
 description: A library for package dart or flutter to specific platform.
-version: 0.0.3
+version: 0.0.5
 homepage: https://youtube.com/@azkadev
 repository: https://github.com/azkadev
 
@@ -17,5 +17,6 @@ dev_dependencies:
 executables:
   packagex: packagex
 dependencies:
-  galaxeus_lib: ^0.0.29
+  archive: ^3.3.5
+  galaxeus_lib: ^0.0.34
   path: ^1.8.2
