@@ -71,13 +71,10 @@ StartupNotify=true
       }
       if (Platform.isLinux) {
         try {
-          await File(p.join(directory.path, "DEBIAN", "control"))
-              .writeAsString(scripts);
+          await File(p.join(directory.path, "DEBIAN", "control")).writeAsString(scripts);
         } catch (e) {}
         try {
-          await File(p.join(directory.path, "usr", "local", "share",
-                  "applications", "${package}.desktop"))
-              .writeAsString(app_desktop_linux);
+          await File(p.join(directory.path, "usr", "local", "share", "applications", "${package_name}.desktop")).writeAsString(app_desktop_linux);
         } catch (e) {}
       }
       return;
@@ -130,8 +127,7 @@ StartupNotify=true
     String? output,
   }) async {
     String basename = p.basename(path);
-    String path_script =
-        p.join(Directory.current.path, "bin", "${basename}.dart");
+    String path_script = p.join(Directory.current.path, "bin", "${basename}.dart");
 
     Directory directory = Directory(p.join(Directory.current.path, "build"));
 

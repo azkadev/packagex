@@ -1,11 +1,11 @@
 name: packagex
 description: A library for package dart or flutter to specific platform.
-version: 0.0.5
+version: 0.0.7
 homepage: https://youtube.com/@azkadev
 repository: https://github.com/azkadev
 
 environment:
-  sdk: '>=2.18.5 <3.0.0'
+  sdk: '>=2.19.0 <3.0.0'
 
 # dependencies:
 #   path: ^1.8.0
