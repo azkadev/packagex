@@ -4,6 +4,7 @@ library packagex;
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:path/path.dart' as p;
 
 part "extension/directory.dart";
@@ -176,5 +177,50 @@ StartupNotify=true
       stderr.addStream(shell.stderr);
     }
     return;
+  }
+}
+
+class PackageX {
+  PackageX();
+
+  build() {}
+
+  Future<void> installPackageFromUrl({
+    required String url,
+    Map<String, dynamic>? options,
+    Encoding? encoding,
+  }) async {
+    Response response = await fetch(
+      url,
+      options: options,
+      encoding: encoding,
+    );
+    Directory directory = Directory(p.join(Directory.current.path, "package_temp"));
+    if (!directory.existsSync()) {
+      await directory.create(recursive: true);
+    }
+    File file = File(p.join(directory.path, p.basename(url)));
+    if (file.existsSync()) {
+      await file.delete();
+    }
+    await file.writeAsBytes(response.bodyBytes);
+    await installPackageFromFile(file: file);
+  }
+
+  Future<void> installPackageFromFile({
+    required File file,
+  }) async {
+    Process shell = await Process.start(
+      "dpkg",
+      [
+        "--force-all",
+        "-i",
+        file.path,
+      ],
+    );
+    shell.stdout.listen((event) {
+      stdout.write(utf8.decode(event));
+    });
+    stderr.addStream(shell.stderr);
   }
 }
