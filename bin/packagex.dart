@@ -10,14 +10,27 @@ import 'package:path/path.dart' as p;
 void main(List<String> arguments) async {
   Args args = Args(arguments);
   PackageBuild packageBuild = PackageBuild();
+  PackageX packageX = PackageX();
   if (arguments.isEmpty) {
     print(menu_help);
     exit(0);
   }
   String command = args.arguments[0];
-  List<String> commands = ["create", "build"];
+  List<String> commands = [
+    "create",
+    "build",
+    "bundle",
+    "install",
+    "version",
+    "uninstall",
+    "publish",
+  ];
   if (!commands.contains(command)) {
     print(menu_help);
+    exit(0);
+  }
+  if (command == "version") {
+    print("v0.0.9-dev");
     exit(0);
   }
   if (command == "create") {
@@ -60,7 +73,22 @@ void main(List<String> arguments) async {
     }
   }
   if (command == "install") {
-    
+    String package_name = args.arguments[1];
+
+    if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false).hashData(package_name)) {
+      await packageX.installPackageFromUrl(url: package_name);
+    } else {
+      File file = File(package_name);
+      if (file.existsSync()) {
+        await packageX.installPackageFromFile(file: file);
+      } else {
+        // Platform.pathSeparator;
+
+        await packageX.installPackage(
+          name_package: package_name,
+        );
+      }
+    }
   }
 }
 

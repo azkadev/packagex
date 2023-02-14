@@ -8,6 +8,10 @@ Experimental Packagex all in one for cross platform except web, pluggable suppor
 dart pub global activate packagex
 ```
 
+```bash
+dart pub global activate --source path ./
+```
+
 ## Create Package
 
 ```bash
@@ -24,4 +28,8 @@ packagex build name_project
 
 ```bash
 packagex install ./package.deb
+```
+
+```bash
+packagex install https://example.com/software/app.deb
 ```
