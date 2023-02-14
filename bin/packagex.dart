@@ -59,6 +59,9 @@ void main(List<String> arguments) async {
       );
     }
   }
+  if (command == "install") {
+    
+  }
 }
 
 String menu_help = """
@@ -72,6 +75,7 @@ help                 Print this usage information
 Available commands: 
   create Create New Package
   build Build package to platform
+  install (name/url/local_file) install package
 
 Run "packagex help <command>" for more information about a command.
 
