@@ -73,13 +73,10 @@ StartupNotify=true
       }
       if (Platform.isLinux) {
         try {
-          await File(p.join(directory.path, "DEBIAN", "control"))
-              .writeAsString(scripts);
+          await File(p.join(directory.path, "DEBIAN", "control")).writeAsString(scripts);
         } catch (e) {}
         try {
-          await File(p.join(directory.path, "usr", "local", "share",
-                  "applications", "${package_name}.desktop"))
-              .writeAsString(app_desktop_linux);
+          await File(p.join(directory.path, "usr", "local", "share", "applications", "${package_name}.desktop")).writeAsString(app_desktop_linux);
         } catch (e) {}
       }
       return;
@@ -150,8 +147,7 @@ StartupNotify=true
     String? output,
   }) async {
     String basename = p.basename(path);
-    String path_script =
-        p.join(Directory.current.path, "bin", "${basename}.dart");
+    String path_script = p.join(Directory.current.path, "bin", "${basename}.dart");
 
     Directory directory = Directory(p.join(Directory.current.path, "build"));
     await directory.autoCreate();
@@ -201,14 +197,15 @@ class PackageX {
     required String url,
     Map<String, dynamic>? options,
     Encoding? encoding,
+    required void Function(String data) onData,
+    required void Function() onDone,
   }) async {
     Response response = await fetch(
       url,
       options: options,
       encoding: encoding,
     );
-    Directory directory =
-        Directory(p.join(Directory.current.path, "package_temp"));
+    Directory directory = Directory(p.join(Directory.current.path, "package_temp"));
     if (!directory.existsSync()) {
       await directory.create(recursive: true);
     }
@@ -217,14 +214,17 @@ class PackageX {
       await file.delete();
     }
     await file.writeAsBytes(response.bodyBytes);
-    await installPackageFromFile(file: file);
+    await installPackageFromFile(
+      file: file,
+      onData: onData,
+      onDone: onDone
+    );
   }
 
   Future<void> installPackage({
     required String name_package,
   }) async {
-    String result_url_package = "";
-    await installPackageFromUrl(url: result_url_package);
+    String result_url_package = ""; 
   }
 
   Future<void> searchPackage({
@@ -247,6 +247,8 @@ class PackageX {
 
   Future<void> installPackageFromFile({
     required File file,
+    required void Function(String data) onData,
+    required void Function() onDone,
   }) async {
     Process shell = await Process.start(
       "dpkg",
@@ -258,19 +260,25 @@ class PackageX {
     );
     shell.stdout.listen(
       (event) {
-        stdout.write(utf8.decode(event));
+        String data = utf8.decode(event);
+        stdout.write(data);
+        onData.call(data);
       },
       onDone: () {
         shell.kill();
+        onDone.call();
       },
       cancelOnError: true,
     );
     shell.stderr.listen(
       (event) {
-        stderr.write(utf8.decode(event));
+        String data = utf8.decode(event);
+        stderr.write(data);
+        onData.call(data);
       },
       onDone: () {
         shell.kill();
+        onDone.call();
       },
       cancelOnError: true,
     );

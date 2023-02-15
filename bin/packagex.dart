@@ -76,11 +76,27 @@ void main(List<String> arguments) async {
     String package_name = args.arguments[1];
 
     if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false).hashData(package_name)) {
-      await packageX.installPackageFromUrl(url: package_name);
+      await packageX.installPackageFromUrl(
+        url: package_name,
+        onData: (data) {
+          
+        },
+        onDone: () {
+          
+        },
+      );
     } else {
       File file = File(package_name);
       if (file.existsSync()) {
-        await packageX.installPackageFromFile(file: file);
+        await packageX.installPackageFromFile(
+          file: file,
+          onData: (data) {
+            
+          },
+          onDone: () {
+            
+          },
+        );
       } else {
         // Platform.pathSeparator;
 
