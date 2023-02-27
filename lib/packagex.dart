@@ -195,7 +195,7 @@ class PackageX {
 
   Future<void> installPackageFromUrl({
     required String url,
-    Map<String, dynamic>? options,
+    FetchOption? options,
     Encoding? encoding,
     required void Function(String data) onData,
     required void Function() onDone,
@@ -214,17 +214,13 @@ class PackageX {
       await file.delete();
     }
     await file.writeAsBytes(response.bodyBytes);
-    await installPackageFromFile(
-      file: file,
-      onData: onData,
-      onDone: onDone
-    );
+    await installPackageFromFile(file: file, onData: onData, onDone: onDone);
   }
 
   Future<void> installPackage({
     required String name_package,
   }) async {
-    String result_url_package = ""; 
+    String result_url_package = "";
   }
 
   Future<void> searchPackage({
@@ -245,7 +241,7 @@ class PackageX {
     String result_url_package = "";
   }
 
-  Future<void> installPackageFromFile({
+  Future<Process> installPackageFromFile({
     required File file,
     required void Function(String data) onData,
     required void Function() onDone,
@@ -282,5 +278,6 @@ class PackageX {
       },
       cancelOnError: true,
     );
+    return shell;
   }
 }
