@@ -69,14 +69,12 @@ jobs:
         run: |
           cd example
           flutter pub get
-          
+          flutter pub run packagex create .
+          flutter pub run packagex build
           if [ "$RUNNER_OS" == "Linux" ]; then
-            flutter pub run packagex build
             mv build/packagex/* ../build/
           fi
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            flutter pub run msix:create
-            flutter pub run packagex build
+          if [ "$RUNNER_OS" == "Windows" ]; then 
             mv build/packagex/* ../build/
           fi
       - name: Publish artifact

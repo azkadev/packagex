@@ -41,7 +41,7 @@ void main(List<String> arguments) async {
       String name = args.arguments[1];
       String path_project = p.join(Directory.current.path, name);
       await packageBuild.create(
-        name: p.basename(path_project), 
+        name: p.basename(path_project),
         // isForce: args.arguments.contains("--force"),
       );
     } catch (e) {
@@ -51,7 +51,8 @@ void main(List<String> arguments) async {
   if (command == "read") {
     Directory directory_current = Directory.current;
     File file = File(p.join(directory_current.path, "pubspec.yaml"));
-    Map yaml_code = (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
+    Map yaml_code =
+        (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
 
     print(json.encode(yaml_code));
     exit(0);
@@ -82,11 +83,12 @@ void main(List<String> arguments) async {
       );
     }
     return;
-  } 
+  }
   if (command == "install") {
     String package_name = args.arguments[1];
 
-    if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false).hashData(package_name)) {
+    if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false)
+        .hashData(package_name)) {
       await packageX.installPackageFromUrl(
         url: package_name,
         onData: (data) {},

@@ -25,10 +25,8 @@ Future<void> main() async {
         "sdk": ">=2.18.5 <3.0.0",
       },
       "dependencies": {
-        
         "@type": "dependencies",
         "flutter": {
-          
           "@type": "dependencies_extra",
           "sdk": "flutter",
         },

@@ -20,9 +20,9 @@ Future<void> shell({
     workingDirectory: workingDirectory,
     environment: environment,
     includeParentEnvironment: includeParentEnvironment,
-runInShell: runInShell,
+    runInShell: runInShell,
     mode: mode,
-  ); 
+  );
   var stdout_shell = shell.stdout.listen(
     (event) {
       stdout.write(utf8.decode(event));

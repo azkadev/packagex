@@ -4,20 +4,20 @@ import "json_dart.dart";
 
 import "dependencies_extra.dart";
 
-
 class Dependencies extends JsonDart {
-
-  
   Dependencies(super.rawData);
-   
+
   static Map get defaultData {
-    return {"@type":"dependencies","flutter":{"@type":"dependencies_extra","sdk":"flutter"},"cupertino_icons":"^1.0.2"};
+    return {
+      "@type": "dependencies",
+      "flutter": {"@type": "dependencies_extra", "sdk": "flutter"},
+      "cupertino_icons": "^1.0.2"
+    };
   }
 
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -26,24 +26,20 @@ class Dependencies extends JsonDart {
     }
   }
 
-
-  
   DependenciesExtra get flutter {
     try {
-      if (rawData["flutter"] is Map == false){
-        return DependenciesExtra({}); 
+      if (rawData["flutter"] is Map == false) {
+        return DependenciesExtra({});
       }
       return DependenciesExtra(rawData["flutter"] as Map);
-    } catch (e) {  
-      return DependenciesExtra({}); 
+    } catch (e) {
+      return DependenciesExtra({});
     }
   }
 
-
-  
   String? get cupertino_icons {
     try {
-      if (rawData["cupertino_icons"] is String == false){
+      if (rawData["cupertino_icons"] is String == false) {
         return null;
       }
       return rawData["cupertino_icons"] as String;
@@ -52,25 +48,17 @@ class Dependencies extends JsonDart {
     }
   }
 
-
-  
   static Dependencies create({
-
     String? special_type,
-      DependenciesExtra? flutter,
+    DependenciesExtra? flutter,
     String? cupertino_icons,
-})  {
+  }) {
     Dependencies dependencies = Dependencies({
-  
       "@type": special_type,
-      "flutter": (flutter != null)?flutter.toJson(): null,
+      "flutter": (flutter != null) ? flutter.toJson() : null,
       "cupertino_icons": cupertino_icons,
+    });
 
-
-  });
-
-
-return dependencies;
-
-      }
+    return dependencies;
+  }
 }

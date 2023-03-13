@@ -2,21 +2,24 @@
 import "json_dart.dart";
 // import "dart:convert";
 
-
-
 class Platforms extends JsonDart {
-
-  
   Platforms(super.rawData);
-   
+
   static Map get defaultData {
-    return {"@type":"platforms","android":null,"ios":null,"linux":null,"macos":null,"web":null,"windows":null};
+    return {
+      "@type": "platforms",
+      "android": null,
+      "ios": null,
+      "linux": null,
+      "macos": null,
+      "web": null,
+      "windows": null
+    };
   }
 
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -25,11 +28,9 @@ class Platforms extends JsonDart {
     }
   }
 
-
-  
   Object? get android {
     try {
-      if (rawData["android"] is Object == false){
+      if (rawData["android"] is Object == false) {
         return null;
       }
       return rawData["android"] as Object;
@@ -38,11 +39,9 @@ class Platforms extends JsonDart {
     }
   }
 
-
-  
   Object? get ios {
     try {
-      if (rawData["ios"] is Object == false){
+      if (rawData["ios"] is Object == false) {
         return null;
       }
       return rawData["ios"] as Object;
@@ -51,11 +50,9 @@ class Platforms extends JsonDart {
     }
   }
 
-
-  
   Object? get linux {
     try {
-      if (rawData["linux"] is Object == false){
+      if (rawData["linux"] is Object == false) {
         return null;
       }
       return rawData["linux"] as Object;
@@ -64,11 +61,9 @@ class Platforms extends JsonDart {
     }
   }
 
-
-  
   Object? get macos {
     try {
-      if (rawData["macos"] is Object == false){
+      if (rawData["macos"] is Object == false) {
         return null;
       }
       return rawData["macos"] as Object;
@@ -77,11 +72,9 @@ class Platforms extends JsonDart {
     }
   }
 
-
-  
   Object? get web {
     try {
-      if (rawData["web"] is Object == false){
+      if (rawData["web"] is Object == false) {
         return null;
       }
       return rawData["web"] as Object;
@@ -90,11 +83,9 @@ class Platforms extends JsonDart {
     }
   }
 
-
-  
   Object? get windows {
     try {
-      if (rawData["windows"] is Object == false){
+      if (rawData["windows"] is Object == false) {
         return null;
       }
       return rawData["windows"] as Object;
@@ -103,10 +94,7 @@ class Platforms extends JsonDart {
     }
   }
 
-
-  
   static Platforms create({
-
     String? special_type,
     Object? android,
     Object? ios,
@@ -114,9 +102,8 @@ class Platforms extends JsonDart {
     Object? macos,
     Object? web,
     Object? windows,
-})  {
+  }) {
     Platforms platforms = Platforms({
-  
       "@type": special_type,
       "android": android,
       "ios": ios,
@@ -124,12 +111,8 @@ class Platforms extends JsonDart {
       "macos": macos,
       "web": web,
       "windows": windows,
+    });
 
-
-  });
-
-
-return platforms;
-
-      }
+    return platforms;
+  }
 }
