@@ -530,9 +530,10 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
               "-cf",
               "--force-local",
               p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"),
-              p.join(directory_current.path, "build", "web"),
-            ],
-            workingDirectory: directory_current.path,
+              // p.join(directory_current.path, "build", "web"),
+              ".",
+            ], 
+            workingDirectory: p.join(directory_current.path, "build", "web", "."),
             runInShell: true,
           );
         }
@@ -543,9 +544,9 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
             arguments: [
               "-r",
               p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"),
-              p.join(directory_current.path, "build", "web"),
+              ".",
             ],
-            workingDirectory: directory_current.path,
+            workingDirectory: p.join(directory_current.path, "build", "web", "."),
             runInShell: true,
           );
         }
