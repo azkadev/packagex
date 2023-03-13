@@ -522,16 +522,21 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
           runInShell: true,
         );
 
+        await Future.delayed(Duration(milliseconds: 500));
+        Directory directory_build_web_canvaskit = Directory(p.join(directory_current.path, "build", "web", "canvaskit", "."));
+
+        if (directory_build_web_canvaskit.existsSync()) {
+          try {
+            await directory_build_web_canvaskit.delete(recursive: true);
+          } catch (e) {}
+        }
+
         if (Platform.isWindows) {
           // zip
           await packagex_shell.shell(
             executable: "tar",
-            arguments: [ 
-              "-cf", 
-              p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"), 
-              "*"
-            ], 
-            workingDirectory:  p.join(directory_current.path, "build", "web"),
+            arguments: ["-cf", p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"), "*"],
+            workingDirectory: p.join(directory_current.path, "build", "web"),
             runInShell: true,
           );
         }
