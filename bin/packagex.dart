@@ -1,11 +1,13 @@
 // ignore_for_file: non_constant_identifier_names, unused_local_variable
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:packagex/packagex.dart';
 
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:path/path.dart' as p;
+import "package:yaml/yaml.dart" as yaml;
 
 void main(List<String> arguments) async {
   Args args = Args(arguments);
@@ -24,6 +26,7 @@ void main(List<String> arguments) async {
     "version",
     "uninstall",
     "publish",
+    "read",
   ];
   if (!commands.contains(command)) {
     print(menu_help);
@@ -45,6 +48,14 @@ void main(List<String> arguments) async {
     } catch (e) {
       print(e);
     }
+  }
+  if (command == "read") {
+    Directory directory_current = Directory.current;
+    File file = File(p.join(directory_current.path, "pubspec.yaml"));
+    Map yaml_code = (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
+
+    print(json.encode(yaml_code));
+    exit(0);
   }
   if (command == "build") {
     String? out;
@@ -71,31 +82,24 @@ void main(List<String> arguments) async {
         output: out,
       );
     }
-  }
+    return;
+  } 
   if (command == "install") {
     String package_name = args.arguments[1];
 
     if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false).hashData(package_name)) {
       await packageX.installPackageFromUrl(
         url: package_name,
-        onData: (data) {
-          
-        },
-        onDone: () {
-          
-        },
+        onData: (data) {},
+        onDone: () {},
       );
     } else {
       File file = File(package_name);
       if (file.existsSync()) {
         await packageX.installPackageFromFile(
           file: file,
-          onData: (data) {
-            
-          },
-          onDone: () {
-            
-          },
+          onData: (data) {},
+          onDone: () {},
         );
       } else {
         // Platform.pathSeparator;

@@ -7,8 +7,20 @@ import "package:universal_io/io.dart";
 
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:path/path.dart' as p;
-
+import "package:msix/msix.dart" as msix;
 import "extension/directory.dart";
+import "scheme/scheme.dart" as packagex_scheme;
+import "package:yaml/yaml.dart" as yaml;
+import "shell/shell.dart" as packagex_shell;
+
+enum PackagexPlatform {
+  current,
+  android,
+  ios,
+  linux,
+  macos,
+  windows,
+}
 
 class PackageBuild {
   PackageBuild();
@@ -30,6 +42,12 @@ class PackageBuild {
     } else {
       package_name = p.basename(Directory.current.path);
     }
+
+    package_name = package_name.replaceAll(
+        RegExp(
+          r"([_])",
+        ),
+        "-");
 
     String scripts = """
 Maintainer: "${maintaner}"
@@ -145,45 +163,120 @@ StartupNotify=true
   Future<void> build({
     required String path,
     String? output,
+    PackagexPlatform? packagexPlatform,
   }) async {
-    String basename = p.basename(path);
-    String path_script = p.join(Directory.current.path, "bin", "${basename}.dart");
+    packagexPlatform ??= PackagexPlatform.current;
 
-    Directory directory = Directory(p.join(Directory.current.path, "build"));
-    await directory.autoCreate();
-    if (Platform.isLinux) {
-      output ??= p.join(directory.path, "${p.basename(path)}-linux.deb");
-      path = p.join(path, "linux", "packaging");
-      Process shell = await Process.start(
-        "dpkg-deb",
-        [
-          "--build",
-          "--root-owner-group",
-          path,
-          output,
-        ],
-      );
-      shell.stdout.listen(
-        (event) {
-          stdout.write(utf8.decode(event));
-        },
-        onDone: () {
-          shell.kill();
-        },
-        cancelOnError: true,
-      );
-      shell.stderr.listen(
-        (event) {
-          stderr.write(utf8.decode(event));
-        },
-        onDone: () {
-          shell.kill();
-        },
-        cancelOnError: true,
-      );
+    if (packagexPlatform == PackagexPlatform.current) {
+      if (Platform.isLinux) {
+        packagexPlatform = PackagexPlatform.linux;
+      }
+      if (Platform.isMacOS) {
+        packagexPlatform = PackagexPlatform.macos;
+      }
+      if (Platform.isWindows) {
+        packagexPlatform = PackagexPlatform.windows;
+      }
     }
-    if (Platform.isMacOS) {}
-    if (Platform.isWindows) {}
+    String basename = p.basename(path);
+    Directory directory_current = Directory.current;
+    File file = File(p.join(directory_current.path, "pubspec.yaml"));
+    Map yaml_code = (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
+    packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(yaml_code);
+    if (pubspec["name"] == null) {
+      pubspec["name"] = basename;
+    }
+    File script_cli = File(p.join(directory_current.path, "bin", "${pubspec.name}.dart"));
+    File script_app = File(p.join(directory_current.path, "lib", "main.dart"));
+    bool is_app = false;
+    bool is_cli = false;
+
+    if (script_app.existsSync()) {
+      is_app = true;
+    }
+    if (script_cli.existsSync()) {
+      is_cli = true;
+    }
+    Directory directory = Directory(p.join(directory_current.path, "build", "packagex"));
+    await directory.autoCreate();
+
+    if (packagexPlatform == PackagexPlatform.linux) {
+      output ??= p.join(directory.path, "${pubspec.name}-linux.deb");
+      String path_linux_package = p.join(
+        path,
+        "linux",
+        "packaging",
+      );
+      if (is_app) {
+        await packagex_shell.shell(
+          executable: "flutter",
+          arguments: [
+            "build",
+            "linux",
+            "--release",
+          ],
+          workingDirectory: directory_current.path,
+        );
+        String path_app = p.join(directory_current.path, "build", "linux", "x64", "release", "bundle");
+        await packagex_shell.shell(
+          executable: "cp",
+          arguments: [
+            "-rf",
+            path_app,
+            p.join(
+              path_linux_package,
+              "usr",
+              "local",
+              "share",
+              pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
+            ),
+          ],
+          workingDirectory: directory_current.path,
+        );
+        await packagex_shell.shell(
+          executable: "dpkg-deb",
+          arguments: [
+            "--build",
+            "--root-owner-group",
+            path_linux_package,
+            p.join(directory.path, "${pubspec.name}-app-linux.deb"),
+          ],
+          workingDirectory: directory_current.path,
+        );
+      }
+      if (is_cli) {
+        await packagex_shell.shell(
+          executable: "dart",
+          arguments: [
+            "compile",
+            "exe",
+            script_cli.path,
+            "-o",
+            p.join(
+              path_linux_package,
+              "usr",
+              "local",
+              "bin",
+              pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
+            ),
+          ],
+          workingDirectory: directory_current.path,
+        );
+
+        await packagex_shell.shell(
+          executable: "dpkg-deb",
+          arguments: [
+            "--build",
+            "--root-owner-group",
+            path_linux_package,
+            p.join(directory.path, "${pubspec.name}-cli-linux.deb"),
+          ],
+          workingDirectory: directory_current.path,
+        );
+      }
+    } else if (packagexPlatform == PackagexPlatform.windows) {
+      await msix.Msix().createMsix([]);
+    }
     return;
   }
 }
