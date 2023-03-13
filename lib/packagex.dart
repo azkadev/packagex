@@ -25,39 +25,75 @@ enum PackagexPlatform {
 class PackageBuild {
   PackageBuild();
 
-  Future create({
+  Future<void> create({
     required String name,
-    String maintaner = "-",
-    required String package,
-    bool isForce = true,
-    double version = 0.0,
-    String architecture = "amd64",
-    String essential = "no",
-    String description = "A new Flutter project.",
-    String homepage = "https://youtube.com/@azkadev",
   }) async {
-    String package_name = "";
-    if (package != ".") {
-      package_name = package;
+    Directory directory_package = Directory(p.join(Directory.current.path, name));
+    if (name == ".") {
+      directory_package = Directory(p.join(Directory.current.path));
+    }
+    String package_name = p.basename(directory_package.path);
+    packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec({});
+    File file_pubspec = File(p.join(directory_package.path, "pubspec.yaml"));
+    if (file_pubspec.existsSync()) {
+      try {
+        Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
+        pubspec.rawData = {...yaml_code};
+      } catch (e) {}
     } else {
-      package_name = p.basename(Directory.current.path);
+      await packagex_shell.shell(
+        executable: "dart",
+        arguments: [
+          "create",
+          name,
+          "--force",
+          "--no-pub",
+        ],
+        workingDirectory: directory_package.path,
+        runInShell: true,
+      );
+    }
+    if (pubspec["name"] == null) {
+      pubspec["name"] = package_name;
+    }
+    if (pubspec["msix_config"] is Map == false) {
+      await file_pubspec.writeAsString("""
+msix_config:
+  display_name: ${pubspec.name}
+  publisher_display_name: Azkadev
+  identity_name: org.azkadev.${package_name}
+  msix_version: 0.0.0.0
+  capabilities: internetClient, location, microphone, webcam
+""", mode: FileMode.writeOnlyAppend);
     }
 
-    package_name = package_name.replaceAll(
-        RegExp(
-          r"([_])",
-        ),
-        "-");
+    if (!pubspec.dev_dependencies.rawData.containsKey("msix")) {
+      await packagex_shell.shell(
+        executable: "flutter",
+        arguments: ["pub", "add", "--dev", "msix"],
+        workingDirectory: directory_package.path,
+        runInShell: true,
+      );
+    }
 
+    if (pubspec["name"] != null) {
+      pubspec["name"] = pubspec["name"].toString().replaceAll(RegExp(r"([_])"), "-");
+    }
+
+    if (pubspec["homepage"] == null) {
+      pubspec["homepage"] = "https://github.com/azkadev";
+    }
+    
+    package_name = package_name.toString().replaceAll(RegExp(r"([_])"), "-");
     String scripts = """
-Maintainer: "${maintaner}"
-Package: ${package_name}
-Version: ${version}
+Maintainer: "${pubspec["maintaner"] ?? "azkadev"}"
+Package: ${pubspec.name}
+Version: ${pubspec.version}
 Priority: optional
 Architecture: amd64
 Essential: no
-Description: "${description}"
-Homepage: "${homepage}"
+Description: "${pubspec.description}"
+Homepage: "${pubspec.homepage}"
 """;
     String app_desktop_linux = """
 [Desktop Entry]
@@ -75,69 +111,36 @@ StartupNotify=true
       required Directory directory,
       required List<List<String>> folders,
     }) async {
-      // List<List<String>> folders = [
-      //   ["DEBIAN"],
-      //   ["usr", "lib"],
-      //   ["usr", "local"],
-      //   ["usr", "local", "bin"],
-      //   ["usr", "local", "lib"],
-      //   ["usr", "local", "share", package],
-      // ];
       await directory.autoCreate();
       for (var i = 0; i < folders.length; i++) {
         List<String> res = folders[i];
         Directory dir = Directory(p.joinAll([directory.path, ...res]));
         await dir.autoCreate();
       }
-      if (Platform.isLinux) {
-        try {
-          await File(p.join(directory.path, "DEBIAN", "control")).writeAsString(scripts);
-        } catch (e) {}
-        try {
-          await File(p.join(directory.path, "usr", "local", "share", "applications", "${package_name}.desktop")).writeAsString(app_desktop_linux);
-        } catch (e) {}
-      }
+      try {
+        await File(p.join(directory.path, "DEBIAN", "control")).writeAsString(scripts);
+      } catch (e) {}
+      try {
+        await File(p.join(directory.path, "usr", "local", "share", "applications", "${package_name}.desktop")).writeAsString(app_desktop_linux);
+      } catch (e) {}
+
       return;
     }
 
-    Process shell = await Process.start(
-      "dart",
-      ["create", name, "--force", "--no-pub"],
-    );
-    // await stdout.addStream(shell.stdout);
-    // await stderr.addStream(shell.stderr);
-    shell.stdout.listen(
-      (event) {
-        stdout.write(utf8.decode(event));
-      },
-      onDone: () {
-        shell.kill();
-      },
-      cancelOnError: true,
-    );
-    shell.stderr.listen(
-      (event) {
-        stderr.write(utf8.decode(event));
-      },
-      onDone: () {
-        shell.kill();
-      },
-      cancelOnError: true,
-    );
     if (!directory.existsSync()) {
       await directory.create(recursive: true);
     }
     await createFolders(
-      directory: Directory(p.join(directory.path, "android", "packaging")),
+      directory: Directory(p.join(directory.path, "android", "packagex")),
       folders: [],
     );
     await createFolders(
-      directory: Directory(p.join(directory.path, "ios", "packaging")),
+      directory: Directory(p.join(directory.path, "ios", "packagex")),
       folders: [],
     );
 
     await createFolders(
-      directory: Directory(p.join(directory.path, "linux", "packaging")),
+      directory: Directory(p.join(directory.path, "linux", "packagex")),
       folders: [
         ["DEBIAN"],
         ["usr", "lib"],
@@ -145,15 +148,15 @@ StartupNotify=true
         ["usr", "local", "bin"],
         ["usr", "local", "lib"],
         ["usr", "local", "share", "applications"],
-        ["usr", "local", "share", package],
+        ["usr", "local", "share", pubspec.name!],
       ],
     );
     await createFolders(
-      directory: Directory(p.join(directory.path, "macos", "packaging")),
+      directory: Directory(p.join(directory.path, "macos", "packagex")),
       folders: [],
     );
     await createFolders(
-      directory: Directory(p.join(directory.path, "windows", "packaging")),
+      directory: Directory(p.join(directory.path, "windows", "packagex")),
       folders: [],
     );
 
@@ -205,7 +208,7 @@ StartupNotify=true
       String path_linux_package = p.join(
         path,
         "linux",
-        "packaging",
+        "packagex",
       );
       if (is_app) {
         await packagex_shell.shell(
@@ -301,7 +304,7 @@ StartupNotify=true
         arguments: [
           "pub",
           "run",
-          "msix:create", 
+          "msix:create",
         ],
         workingDirectory: directory_current.path,
         runInShell: true,

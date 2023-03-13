@@ -41,9 +41,8 @@ void main(List<String> arguments) async {
       String name = args.arguments[1];
       String path_project = p.join(Directory.current.path, name);
       await packageBuild.create(
-        name: p.basename(path_project),
-        package: p.basename(path_project),
-        isForce: args.arguments.contains("--force"),
+        name: p.basename(path_project), 
+        // isForce: args.arguments.contains("--force"),
       );
     } catch (e) {
       print(e);

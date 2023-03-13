@@ -2,34 +2,22 @@
 
 Experimental Packagex all in one for cross platform except web, pluggable support cli 
 
-## Acttivate Package
+
+## Installl
 
 ```bash
-dart pub global activate packagex
+dart pub add packagex -d
 ```
 
+## Init
+
 ```bash
-dart pub global activate --source path ./
+dart pub run packagex create .
 ```
 
-## Create Package
+
+## Build
 
 ```bash
-packagex create name_project
-```
-
-## Build Package
-
-```bash
-packagex build name_project
-```
-
-## Install Package
-
-```bash
-packagex install ./package.deb
-```
-
-```bash
-packagex install https://example.com/software/app.deb
+dart pub run packagex build
 ```
