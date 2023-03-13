@@ -519,6 +519,7 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
             "html",
           ],
           workingDirectory: directory_current.path,
+          runInShell: true,
         );
 
         if (Platform.isWindows) {
