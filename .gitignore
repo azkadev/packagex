@@ -5,6 +5,4 @@
 # Conventional directory for build output.
 build/
  
-*.deb
-
-example_app/
+*.deb 
