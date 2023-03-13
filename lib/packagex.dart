@@ -415,17 +415,6 @@ StartupNotify=true
         return;
       }
 
-      // if [ "$RUNNER_OS" == "macOS" ]; then
-      //   flutter build ios --no-codesign
-      //   cd build/ios/iphoneos
-      //   mkdir Payload
-      //   cd Payload
-      //   ln -s ../Runner.app
-      //   cd ..
-      //   zip -r app_ios.ipa Payload
-      //   mv app_ios.ipa ../../../../build/
-      // fi
-
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
@@ -439,16 +428,22 @@ StartupNotify=true
         );
 
 
-        // await packagex_shell.shell(
-        //   executable: "zip",
-        //   arguments: [
-        //     "-r",
-        //     p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"),
-        //     p.join(directory_current.path, "build", "web"),
-        //   ],
-        //   workingDirectory: directory_current.path,
-        //   runInShell: true,
-        // );
+        await packagex_shell.shell(
+          executable: "sh",
+          arguments: [
+            "-c",
+            """
+cd build/ios/iphoneos
+mkdir Payload
+cd Payload
+ln -s ../Runner.app
+cd ..
+zip -r  p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa") Payload
+"""
+          ],
+          workingDirectory: directory_current.path,
+        );
+       
       }
     } else if (packagexPlatform == PackagexPlatform.web) {
       if (is_app) {
