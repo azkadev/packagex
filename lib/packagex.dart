@@ -525,15 +525,12 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
           // zip
           await packagex_shell.shell(
             executable: "tar",
-            arguments: [
-              "-a",
-              "-cf",
-              "--force-local",
-              p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"),
-              // p.join(directory_current.path, "build", "web"),
-              ".",
+            arguments: [ 
+              "-cf", 
+              p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"), 
+              "*"
             ], 
-            workingDirectory: p.join(directory_current.path, "build", "web", "."),
+            workingDirectory:  p.join(directory_current.path, "build", "web"),
             runInShell: true,
           );
         }
