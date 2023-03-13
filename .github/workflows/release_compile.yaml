@@ -90,7 +90,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@latest
         continue-on-error: true
         with:
-          repo_token: "${{ github.token }}"
+          repo_token: ${{ github.token }}
           automatic_release_tag: "latest-${{ matrix.output-name }}"
           prerelease: false
           title: "Release ${{ matrix.output-name }}"
