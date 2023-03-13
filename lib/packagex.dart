@@ -86,12 +86,14 @@ class PackageBuild {
     }
     if (pubspec["msix_config"] is Map == false) {
       await file_pubspec.writeAsString("""
-msix_config:
+
+msix_config: 
   display_name: ${pubspec.name}
-  publisher_display_name: Azkadev
-  identity_name: org.azkadev.${package_name}
-  msix_version: 0.0.0.0
-  capabilities: internetClient, location, microphone, webcam
+  install_certificate: false
+  # publisher_display_name: Azkadev
+  # identity_name: org.azkadev.${package_name}
+  # msix_version: 0.0.0.0
+  # capabilities: internetClient, location, microphone, webcam
 """, mode: FileMode.writeOnlyAppend);
     }
 
@@ -211,8 +213,8 @@ StartupNotify=true
     }
     String basename = p.basename(path);
     Directory directory_current = Directory.current;
-    File file = File(p.join(directory_current.path, "pubspec.yaml"));
-    Map yaml_code = (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
+    File file_pubspec = File(p.join(directory_current.path, "pubspec.yaml"));
+    Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
     packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(yaml_code);
     if (pubspec["name"] == null) {
       pubspec["name"] = basename;
@@ -385,7 +387,20 @@ StartupNotify=true
         );
       }
 
-      if (is_app) {}
+      if (is_app) {
+        
+
+        await packagex_shell.shell(
+          executable: "flutter",
+          arguments: [
+            "build",
+            "macos",
+            "--release",
+          ],
+          workingDirectory: directory_current.path,
+        );
+
+      }
     } else if (packagexPlatform == PackagexPlatform.android) {
       if (is_app) {
         await packagex_shell.shell(
