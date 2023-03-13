@@ -106,22 +106,20 @@ msix_config:
       );
     }
 
-    if (pubspec["name"] != null) {
-      pubspec["name"] = pubspec["name"].toString().replaceAll(RegExp(r"([_])"), "-");
-    }
-
     if (pubspec["homepage"] == null) {
       pubspec["homepage"] = "https://github.com/azkadev";
     }
 
     package_name = package_name.toString().replaceAll(RegExp(r"([_])"), "-");
     String scripts = """
-Maintainer: "${pubspec["maintaner"] ?? "azkadev"}"
-Package: ${pubspec.name}
+Maintainer: "${pubspec["maintaner"] ?? "azkadev"} <${pubspec["maintaner"] ?? "azkadev"}@noemail.com>"
+Package: ${package_name}-azkadev
 Version: ${pubspec.version}
+Section: x11
 Priority: optional
 Architecture: amd64
 Essential: no
+Installed-Size: 0
 Description: "${pubspec.description}"
 Homepage: "${pubspec.homepage}"
 """;
@@ -151,7 +149,22 @@ StartupNotify=true
         await File(p.join(directory.path, "DEBIAN", "control")).writeAsString(scripts);
       } catch (e) {}
       try {
-        await File(p.join(directory.path, "usr", "local", "share", "applications", "${package_name}.desktop")).writeAsString(app_desktop_linux);
+        await File(p.join(directory.path, "DEBIAN", "postinst")).writeAsString("""
+#!/usr/bin/env sh
+ln -s /usr/share/${package_name}/${pubspec.name!} /usr/bin/${package_name}
+chmod +x /usr/bin/${package_name}
+exit 0
+""");
+      } catch (e) {}
+      try {
+        await File(p.join(directory.path, "DEBIAN", "postrm")).writeAsString("""
+#!/usr/bin/env sh
+rm /usr/bin/${package_name} 
+exit 0
+""");
+      } catch (e) {}
+      try {
+        await File(p.join(directory.path, "usr", "share", "applications", "${package_name}.desktop")).writeAsString(app_desktop_linux);
       } catch (e) {}
 
       return;
@@ -177,8 +190,8 @@ StartupNotify=true
         ["usr", "local"],
         ["usr", "local", "bin"],
         ["usr", "local", "lib"],
-        ["usr", "local", "share", "applications"],
-        ["usr", "local", "share", pubspec.name!],
+        ["usr", "share", "applications"],
+        ["usr", "share", pubspec.name!],
       ],
     );
     await createFolders(
@@ -189,6 +202,19 @@ StartupNotify=true
       directory: Directory(p.join(directory.path, "windows", "packagex")),
       folders: [],
     );
+
+    if (Platform.isLinux) {
+      await packagex_shell.shell(
+        executable: "chmod",
+        arguments: ["775", p.join(directory.path, "linux", "packagex", "DEBIAN", "postinst")],
+        runInShell: true,
+      );
+      await packagex_shell.shell(
+        executable: "chmod",
+        arguments: ["775", p.join(directory.path, "linux", "packagex", "DEBIAN", "postrm")],
+        runInShell: true,
+      );
+    }
 
     return;
   }
@@ -264,6 +290,20 @@ StartupNotify=true
           workingDirectory: directory_current.path,
         );
 
+        try {
+          await packagex_shell.shell(
+            executable: "chmod",
+            arguments: ["775", p.join(path_linux_package, "DEBIAN", "postinst")],
+            runInShell: true,
+          );
+        } catch (e) {}
+        try {
+          await packagex_shell.shell(
+            executable: "chmod",
+            arguments: ["775", p.join(path_linux_package, "DEBIAN", "postrm")],
+            runInShell: true,
+          );
+        } catch (e) {}
         await packagex_shell.shell(
           executable: "dpkg-deb",
           arguments: [
@@ -292,19 +332,20 @@ StartupNotify=true
           ],
           workingDirectory: directory_current.path,
         );
-        String path_app = p.join(directory_current.path, "build", "linux", "x64", "release", "bundle");
+        String path_app = p.join(directory_current.path, "build", "linux", "x64", "release", "bundle", ".");
+        String path_app_deb = p.join(
+          path_linux_package,
+          "usr",
+          // "local",
+          "share",
+          pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
+        );
         await packagex_shell.shell(
           executable: "cp",
           arguments: [
             "-rf",
             path_app,
-            p.join(
-              path_linux_package,
-              "usr",
-              "local",
-              "share",
-              pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
-            ),
+            path_app_deb,
           ],
           workingDirectory: directory_current.path,
         );
@@ -388,8 +429,6 @@ StartupNotify=true
       }
 
       if (is_app) {
-        
-
         await packagex_shell.shell(
           executable: "flutter",
           arguments: [
@@ -399,7 +438,6 @@ StartupNotify=true
           ],
           workingDirectory: directory_current.path,
         );
-
       }
     } else if (packagexPlatform == PackagexPlatform.android) {
       if (is_app) {
@@ -435,7 +473,6 @@ StartupNotify=true
             }
           } catch (e) {}
         }
-        
       }
     } else if (packagexPlatform == PackagexPlatform.ios) {
       if (!Platform.isMacOS) {
