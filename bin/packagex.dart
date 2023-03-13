@@ -93,6 +93,9 @@ void main(List<String> arguments) async {
     if (PackagexPlatform.all == packagex_platform) {
       for (var i = 0; i < packagexPlatforms.length; i++) {
         PackagexPlatform packagexPlatform = packagexPlatforms[i];
+        if (packagexPlatform == PackagexPlatform.current) {
+          continue;
+        }
         await packageBuild.build(
           path: path_project,
           output: out,

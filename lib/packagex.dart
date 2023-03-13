@@ -387,7 +387,69 @@ StartupNotify=true
 
       if (is_app) {}
     } else if (packagexPlatform == PackagexPlatform.android) {
+      if (is_app) {
+        await packagex_shell.shell(
+          executable: "flutter",
+          arguments: [
+            "build",
+            "apk",
+            "--release",
+            "--split-per-abi",
+          ],
+          workingDirectory: directory_current.path,
+        ); 
+        await packagex_shell.shell(
+          executable: (Platform.isWindows) ? "copy" : "cp",
+          arguments: [
+            p.join(directory_current.path, "build", "app", "outputs", "apk", "*.apk"),
+            p.join(
+              directory_build_packagex.path,
+            ),
+          ],
+          workingDirectory: directory_current.path,
+          runInShell: true,
+        );
+      }
     } else if (packagexPlatform == PackagexPlatform.ios) {
+      if (!Platform.isMacOS) {
+        return;
+      }
+
+      // if [ "$RUNNER_OS" == "macOS" ]; then
+      //   flutter build ios --no-codesign
+      //   cd build/ios/iphoneos
+      //   mkdir Payload
+      //   cd Payload
+      //   ln -s ../Runner.app
+      //   cd ..
+      //   zip -r app_ios.ipa Payload
+      //   mv app_ios.ipa ../../../../build/
+      // fi
+
+      if (is_app) {
+        await packagex_shell.shell(
+          executable: "flutter",
+          arguments: [
+            "build",
+            "ios",
+            "--release",
+            "--no-codesign",
+          ],
+          workingDirectory: directory_current.path,
+        );
+
+
+        // await packagex_shell.shell(
+        //   executable: "zip",
+        //   arguments: [
+        //     "-r",
+        //     p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"),
+        //     p.join(directory_current.path, "build", "web"),
+        //   ],
+        //   workingDirectory: directory_current.path,
+        //   runInShell: true,
+        // );
+      }
     } else if (packagexPlatform == PackagexPlatform.web) {
       if (is_app) {
         await packagex_shell.shell(
