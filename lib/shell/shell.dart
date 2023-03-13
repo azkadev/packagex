@@ -48,10 +48,15 @@ Future<void> shell({
     await Future.delayed(Duration(milliseconds: 1));
 
     if (is_complete) {
+      await Future.delayed(Duration(milliseconds: 500));
       // await stdin_shell.cancel();
       await stdout_shell.cancel();
+
+      await Future.delayed(Duration(milliseconds: 500));
       await stderr_shell.cancel();
-      break;
+
+      await Future.delayed(Duration(milliseconds: 500));
+      return;
     }
   }
 }
