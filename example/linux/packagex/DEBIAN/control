@@ -1,0 +1,8 @@
+Maintainer: "azkadev"
+Package: example
+Version: 1.0.0+1
+Priority: optional
+Architecture: amd64
+Essential: no
+Description: "A new Flutter project."
+Homepage: "null"
