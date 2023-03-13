@@ -525,10 +525,9 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
         await Future.delayed(Duration(milliseconds: 500));
         Directory directory_build_web_canvaskit = Directory(p.join(directory_current.path, "build", "web", "canvaskit", "."));
 
-          try {
-            await directory_build_web_canvaskit.delete(recursive: true);
-          } catch (e) {}
-        
+        try {
+          await directory_build_web_canvaskit.delete(recursive: true);
+        } catch (e) {}
 
         if (Platform.isWindows) {
           // zip
