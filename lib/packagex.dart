@@ -113,7 +113,7 @@ msix_config:
     package_name = package_name.toString().replaceAll(RegExp(r"([_])"), "-");
     String scripts = """
 Maintainer: "${pubspec["maintaner"] ?? "azkadev"} <${pubspec["maintaner"] ?? "azkadev"}@noemail.com>"
-Package: ${package_name}-azkadev
+Package: ${package_name}
 Version: ${pubspec.version}
 Section: x11
 Priority: optional
