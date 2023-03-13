@@ -397,20 +397,30 @@ StartupNotify=true
             "--split-per-abi",
           ],
           workingDirectory: directory_current.path,
-        ); 
- 
-
-        await packagex_shell.shell(
-          executable: (Platform.isWindows) ? "copy" : "cp",
-          arguments: [
-            p.join(directory_current.path, "build", "app", "outputs", "flutter-apk", "*"),
-            p.join(
-              directory_build_packagex.path,
-            ),
-          ],
-          workingDirectory: directory_current.path,
-          runInShell: true,
         );
+
+        Directory directory_apk = Directory(p.join(directory_current.path, "build", "app", "outputs", "flutter-apk"));
+        List<FileSystemEntity> dirs = directory_apk.listSync();
+        for (var i = 0; i < dirs.length; i++) {
+          FileSystemEntity dir = dirs[i];
+          try {
+            if (dir is Directory) {
+            } else if (dir is File) {
+              if (p.extension(dir.path) != ".apk") {
+                continue;
+              }
+              await dir.absolute.copy(
+                p.join(
+                  directory_build_packagex.path,
+                  p.basename(
+                    dir.path,
+                  ),
+                ),
+              );
+            }
+          } catch (e) {}
+        }
+        
       }
     } else if (packagexPlatform == PackagexPlatform.ios) {
       if (!Platform.isMacOS) {
@@ -429,7 +439,6 @@ StartupNotify=true
           workingDirectory: directory_current.path,
         );
 
-
         await packagex_shell.shell(
           executable: "sh",
           arguments: [
@@ -445,7 +454,6 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
           ],
           workingDirectory: directory_current.path,
         );
-       
       }
     } else if (packagexPlatform == PackagexPlatform.web) {
       if (is_app) {
