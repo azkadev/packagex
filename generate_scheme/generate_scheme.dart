@@ -44,7 +44,12 @@ Future<void> main() async {
       },
       "packagex": {
         "@type": "packagex",
-        "command": "",
+        "name": "Pack",
+        "dart_target": "",
+        "flutter_target": "",
+        "dart_name": "",
+        "flutter_name": "",
+
       },
       "msix_config": {
         "@type": "msix_config",

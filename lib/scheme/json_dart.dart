@@ -3,6 +3,7 @@ import 'dart:convert';
 
 /// return original data json
 class JsonDart {
+  
   /// return original data json
   Map rawData;
 
@@ -134,3 +135,4 @@ class JsonDart {
     return json.encode(rawData);
   }
 }
+

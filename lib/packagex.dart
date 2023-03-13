@@ -84,6 +84,15 @@ class PackageBuild {
     if (pubspec["name"] == null) {
       pubspec["name"] = package_name;
     }
+    if (pubspec["packagex"] is Map == false) {
+      await file_pubspec.writeAsString("""
+
+packagex:
+  dart_target: ${pubspec.name}
+  flutter_target: main
+  command: ""
+""", mode: FileMode.writeOnlyAppend);
+    }
     if (pubspec["msix_config"] is Map == false) {
       await file_pubspec.writeAsString("""
 
@@ -169,7 +178,7 @@ exit 0
 """);
       } catch (e) {}
       try {
-        await File(p.join(directory.path, "usr", "local" ,"share", pubspec.name!, ".gitignore")).writeAsString("""
+        await File(p.join(directory.path, "usr", "local", "share", pubspec.name!, ".gitignore")).writeAsString("""
 *
 """);
       } catch (e) {}
@@ -273,17 +282,18 @@ exit 0
     if (pubspec["name"] == null) {
       pubspec["name"] = basename;
     }
-    File script_cli = File(p.join(directory_current.path, "bin", "${pubspec.name}.dart"));
-    File script_app = File(p.join(directory_current.path, "lib", "main.dart"));
+    File script_cli = File(p.join(directory_current.path, "bin", "${pubspec.packagex.dart_target ?? pubspec.name}.dart"));
+    File script_app = File(p.join(directory_current.path, "lib", "${pubspec.packagex.flutter_target ?? "main"}.dart"));
     bool is_app = false;
     bool is_cli = false;
-
     if (script_app.existsSync()) {
       is_app = true;
     }
     if (script_cli.existsSync()) {
       is_cli = true;
-    }
+    } 
+    
+
     Directory directory_build_packagex = Directory(p.join(directory_current.path, "build", "packagex"));
     await directory_build_packagex.autoCreate();
 
@@ -301,8 +311,7 @@ exit 0
       if (is_cli) {
         File file_cli = File(p.join(
           path_linux_package,
-          "usr",
-          "local",
+          "usr", 
           "bin",
           pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
         ));
@@ -353,11 +362,7 @@ exit 0
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
-          arguments: [
-            "build",
-            "linux",
-            "--release",
-          ],
+          arguments: ["build", "linux", "--release", "--target=${script_app.path}"],
           workingDirectory: directory_current.path,
         );
         String path_app = p.join(directory_current.path, "build", "linux", "x64", "release", "bundle", ".");
@@ -459,11 +464,7 @@ exit 0
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
-          arguments: [
-            "build",
-            "macos",
-            "--release",
-          ],
+          arguments: ["build", "macos", "--release", "--target=${script_app.path}"],
           workingDirectory: directory_current.path,
         );
       }
@@ -471,12 +472,7 @@ exit 0
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
-          arguments: [
-            "build",
-            "apk",
-            "--release",
-            "--split-per-abi",
-          ],
+          arguments: ["build", "apk", "--release", "--split-per-abi", "--target=${script_app.path}"],
           workingDirectory: directory_current.path,
         );
 
@@ -510,12 +506,7 @@ exit 0
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
-          arguments: [
-            "build",
-            "ios",
-            "--release",
-            "--no-codesign",
-          ],
+          arguments: ["build", "ios", "--release", "--no-codesign", "--target=${script_app.path}"],
           workingDirectory: directory_current.path,
         );
 
@@ -543,7 +534,8 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
             "build",
             "web",
             "--release",
-            "--web-renderer",
+            "--target=${script_app.path}"
+                "--web-renderer",
             "html",
           ],
           workingDirectory: directory_current.path,

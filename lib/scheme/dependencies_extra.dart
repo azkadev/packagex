@@ -2,16 +2,21 @@
 import "json_dart.dart";
 // import "dart:convert";
 
-class DependenciesExtra extends JsonDart {
-  DependenciesExtra(super.rawData);
 
+
+class DependenciesExtra extends JsonDart {
+
+  
+  DependenciesExtra(super.rawData);
+   
   static Map get defaultData {
-    return {"@type": "dependencies_extra", "sdk": "flutter"};
+    return {"@type":"dependencies_extra","sdk":"flutter"};
   }
 
+  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false) {
+      if (rawData["@type"] is String == false){
         return null;
       }
       return rawData["@type"] as String;
@@ -20,9 +25,11 @@ class DependenciesExtra extends JsonDart {
     }
   }
 
+
+  
   String? get sdk {
     try {
-      if (rawData["sdk"] is String == false) {
+      if (rawData["sdk"] is String == false){
         return null;
       }
       return rawData["sdk"] as String;
@@ -31,15 +38,23 @@ class DependenciesExtra extends JsonDart {
     }
   }
 
+
+  
   static DependenciesExtra create({
+
     String? special_type,
     String? sdk,
-  }) {
+})  {
     DependenciesExtra dependenciesExtra = DependenciesExtra({
+  
       "@type": special_type,
       "sdk": sdk,
-    });
 
-    return dependenciesExtra;
-  }
+
+  });
+
+
+return dependenciesExtra;
+
+      }
 }

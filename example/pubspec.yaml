@@ -98,3 +98,8 @@ msix_config:
   # identity_name: org.azkadev.example
   # msix_version: 0.0.0.0
   # capabilities: internetClient, location, microphone, webcam
+  
+packagex:
+  dart_target: example
+  flutter_target: main
+  command: ""
