@@ -20,6 +20,8 @@ enum PackagexPlatform {
   linux,
   macos,
   windows,
+  web,
+  all,
 }
 
 class PackageBuild {
@@ -42,8 +44,7 @@ class PackageBuild {
             } else {
               remove(dir.absolute);
             }
-          } catch (e) { 
-          }
+          } catch (e) {}
         }
       }
     }
@@ -227,11 +228,11 @@ StartupNotify=true
     if (script_cli.existsSync()) {
       is_cli = true;
     }
-    Directory directory = Directory(p.join(directory_current.path, "build", "packagex"));
-    await directory.autoCreate();
+    Directory directory_build_packagex = Directory(p.join(directory_current.path, "build", "packagex"));
+    await directory_build_packagex.autoCreate();
 
     if (packagexPlatform == PackagexPlatform.linux) {
-      output ??= p.join(directory.path, "${pubspec.name}-linux.deb");
+      output ??= p.join(directory_build_packagex.path, "${pubspec.name}-linux.deb");
       String path_linux_package = p.join(
         path,
         "linux",
@@ -269,7 +270,7 @@ StartupNotify=true
             "--build",
             "--root-owner-group",
             path_linux_package,
-            p.join(directory.path, "${pubspec.name}-app-linux.deb"),
+            p.join(directory_build_packagex.path, "${pubspec.name}-app-linux.deb"),
           ],
           workingDirectory: directory_current.path,
         );
@@ -299,13 +300,13 @@ StartupNotify=true
             "--build",
             "--root-owner-group",
             path_linux_package,
-            p.join(directory.path, "${pubspec.name}-cli-linux.deb"),
+            p.join(directory_build_packagex.path, "${pubspec.name}-cli-linux.deb"),
           ],
           workingDirectory: directory_current.path,
         );
       }
     } else if (packagexPlatform == PackagexPlatform.windows) {
-      output ??= p.join(directory.path, "${pubspec.name}-app.msix");
+      // output ??= p.join(directory_build_packagex.path, );
       if (!pubspec.dev_dependencies.rawData.containsKey("msix")) {
         await packagex_shell.shell(
           executable: "flutter",
@@ -325,43 +326,86 @@ StartupNotify=true
       //   workingDirectory: directory_current.path,
       //   runInShell: true,
       // );
+      if (is_app) {
+        await packagex_shell.shell(
+          executable: "flutter",
+          arguments: [
+            "pub",
+            "run",
+            "msix:create",
+          ],
+          workingDirectory: directory_current.path,
+          runInShell: true,
+        );
 
-      await packagex_shell.shell(
-        executable: "flutter",
-        arguments: [
-          "pub",
-          "run",
-          "msix:create",
-        ],
-        workingDirectory: directory_current.path,
-        runInShell: true,
-      );
-
-      await packagex_shell.shell(
-        executable: "copy",
-        arguments: [
-          p.join(directory_current.path, "build", "windows", "runner", "Release", "${pubspec.name}.msix"),
-          output,
-        ],
-        workingDirectory: directory_current.path,
-        runInShell: true,
-      );
+        await packagex_shell.shell(
+          executable: "copy",
+          arguments: [
+            p.join(directory_current.path, "build", "windows", "runner", "Release", "${pubspec.name}.msix"),
+            p.join(
+              directory_build_packagex.path,
+              "${pubspec.name}-app-windows.msix"
+            ),
+          ],
+          workingDirectory: directory_current.path,
+          runInShell: true,
+        );
+      }
+      if (is_cli) {
+        await packagex_shell.shell(
+          executable: "dart",
+          arguments: [
+            "compile",
+            "exe",
+            script_cli.path,
+            "-o",
+            p.join(
+              directory_build_packagex.path,
+              "${pubspec.name}-cli-windows.exe"
+            ),
+          ],
+          workingDirectory: directory_current.path,
+        );
+      }
     } else if (packagexPlatform == PackagexPlatform.macos) {
+      if (is_app) {
+
+      }
+      if (is_cli) {
+        await packagex_shell.shell(
+          executable: "dart",
+          arguments: [
+            "compile",
+            "exe",
+            script_cli.path,
+            "-o",
+            p.join(
+              directory_build_packagex.path,
+              "${pubspec.name}-cli-macos"
+            ),
+          ],
+          workingDirectory: directory_current.path,
+        );
+      }
+
     } else if (packagexPlatform == PackagexPlatform.android) {
       
-      // await packagex_shell.shell(
-      //   executable: "flutter",
-      //   arguments: [
-      //     "build",
-      //     "windows",
-      //     "--release",
-      //   ],
-      //   workingDirectory: directory_current.path,
-      //   runInShell: true,
-      // );
+    } else if (packagexPlatform == PackagexPlatform.ios) {
 
-
-
+    } else if (packagexPlatform == PackagexPlatform.web){
+      if (is_app){
+        await packagex_shell.shell(
+          executable: "flutter",
+          arguments: [
+            "build",
+            "web",
+            "--release",
+            "--web-renderer",
+            "html"
+          ],
+          workingDirectory: directory_current.path,
+        );
+      }
     }
     return;
   }
