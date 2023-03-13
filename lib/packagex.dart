@@ -88,9 +88,12 @@ class PackageBuild {
       await file_pubspec.writeAsString("""
 
 packagex:
+  name: ${pubspec.name}
   dart_target: ${pubspec.name}
   flutter_target: main
-  command: ""
+  dart_name: ${pubspec.name}
+  flutter_name: ${pubspec.name}
+  
 """, mode: FileMode.writeOnlyAppend);
     }
     if (pubspec["msix_config"] is Map == false) {
@@ -291,8 +294,7 @@ exit 0
     }
     if (script_cli.existsSync()) {
       is_cli = true;
-    } 
-    
+    }
 
     Directory directory_build_packagex = Directory(p.join(directory_current.path, "build", "packagex"));
     await directory_build_packagex.autoCreate();
@@ -301,20 +303,32 @@ exit 0
       if (!Platform.isLinux) {
         return;
       }
-      output ??= p.join(directory_build_packagex.path, "${pubspec.name}-linux.deb");
+
       String path_linux_package = p.join(
         path,
         "linux",
         "packagex",
       );
 
+      String path_app_deb = p.join(
+        path_linux_package,
+        "usr",
+        "share",
+        pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
+      );
+
       if (is_cli) {
         File file_cli = File(p.join(
           path_linux_package,
-          "usr", 
+          "usr",
           "bin",
-          pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
+          pubspec.packagex.dart_name ?? pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
         ));
+        try {
+          if (Directory(path_app_deb).existsSync()) {
+            await Directory(path_app_deb).delete(recursive: true);
+          }
+        } catch (e) {}
         await packagex_shell.shell(
           executable: "dart",
           arguments: [
@@ -357,6 +371,12 @@ exit 0
             await file_cli.delete();
           } catch (e) {}
         }
+
+        try {
+          if (Directory(path_app_deb).existsSync()) {
+            await Directory(path_app_deb).delete(recursive: true);
+          }
+        } catch (e) {}
       }
 
       if (is_app) {
@@ -366,13 +386,6 @@ exit 0
           workingDirectory: directory_current.path,
         );
         String path_app = p.join(directory_current.path, "build", "linux", "x64", "release", "bundle", ".");
-        String path_app_deb = p.join(
-          path_linux_package,
-          "usr",
-          // "local",
-          "share",
-          pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
-        );
         await packagex_shell.shell(
           executable: "cp",
           arguments: [
@@ -388,7 +401,7 @@ exit 0
             "--build",
             "--root-owner-group",
             path_linux_package,
-            p.join(directory_build_packagex.path, "${pubspec.name}-app-linux.deb"),
+            p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-app-linux.deb"),
           ],
           workingDirectory: directory_current.path,
         );
@@ -415,7 +428,7 @@ exit 0
             "exe",
             script_cli.path,
             "-o",
-            p.join(directory_build_packagex.path, "${pubspec.name}-cli-windows.exe"),
+            p.join(directory_build_packagex.path, "${pubspec.packagex.dart_name ?? pubspec.name}-cli-windows.exe"),
           ],
           workingDirectory: directory_current.path,
         );
@@ -437,7 +450,7 @@ exit 0
           executable: "copy",
           arguments: [
             p.join(directory_current.path, "build", "windows", "runner", "Release", "${pubspec.name}.msix"),
-            p.join(directory_build_packagex.path, "${pubspec.name}-app-windows.msix"),
+            p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-app-windows.msix"),
           ],
           workingDirectory: directory_current.path,
           runInShell: true,
@@ -455,7 +468,7 @@ exit 0
             "exe",
             script_cli.path,
             "-o",
-            p.join(directory_build_packagex.path, "${pubspec.name}-cli-macos"),
+            p.join(directory_build_packagex.path, "${pubspec.packagex.dart_name ?? pubspec.name}-cli-macos"),
           ],
           workingDirectory: directory_current.path,
         );
