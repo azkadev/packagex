@@ -164,6 +164,26 @@ exit 0
 """);
       } catch (e) {}
       try {
+        await File(p.join(directory.path, "usr", "share", pubspec.name!, ".gitignore")).writeAsString("""
+*
+""");
+      } catch (e) {}
+      try {
+        await File(p.join(directory.path, "usr", "local" ,"share", pubspec.name!, ".gitignore")).writeAsString("""
+*
+""");
+      } catch (e) {}
+      try {
+        await File(p.join(directory.path, "usr", "bin", ".gitignore")).writeAsString("""
+*
+""");
+      } catch (e) {}
+      try {
+        await File(p.join(directory.path, "usr", "local", "bin", ".gitignore")).writeAsString("""
+*
+""");
+      } catch (e) {}
+      try {
         await File(p.join(directory.path, "usr", "share", "applications", "${package_name}.desktop")).writeAsString(app_desktop_linux);
       } catch (e) {}
 
@@ -186,6 +206,7 @@ exit 0
       directory: Directory(p.join(directory.path, "linux", "packagex")),
       folders: [
         ["DEBIAN"],
+        ["usr", "bin"],
         ["usr", "lib"],
         ["usr", "local"],
         ["usr", "local", "bin"],
@@ -206,12 +227,18 @@ exit 0
     if (Platform.isLinux) {
       await packagex_shell.shell(
         executable: "chmod",
-        arguments: ["775", p.join(directory.path, "linux", "packagex", "DEBIAN", "postinst")],
+        arguments: [
+          "775",
+          p.join(directory.path, "linux", "packagex", "DEBIAN", "postinst"),
+        ],
         runInShell: true,
       );
       await packagex_shell.shell(
         executable: "chmod",
-        arguments: ["775", p.join(directory.path, "linux", "packagex", "DEBIAN", "postrm")],
+        arguments: [
+          "775",
+          p.join(directory.path, "linux", "packagex", "DEBIAN", "postrm"),
+        ],
         runInShell: true,
       );
     }
@@ -221,11 +248,11 @@ exit 0
 
   Future<void> build({
     required String path,
-    String? output,
     PackagexPlatform? packagexPlatform,
+    Directory? directory_current,
+    String? output,
   }) async {
     packagexPlatform ??= PackagexPlatform.current;
-
     if (packagexPlatform == PackagexPlatform.current) {
       if (Platform.isLinux) {
         packagexPlatform = PackagexPlatform.linux;
@@ -238,7 +265,8 @@ exit 0
       }
     }
     String basename = p.basename(path);
-    Directory directory_current = Directory.current;
+    directory_current ??= Directory.current;
+
     File file_pubspec = File(p.join(directory_current.path, "pubspec.yaml"));
     Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
     packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(yaml_code);
