@@ -8,6 +8,7 @@ import 'package:packagex/packagex.dart';
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:path/path.dart' as p;
 import "package:yaml/yaml.dart" as yaml;
+import "package:packagex/scheme/scheme.dart" as packagex_scheme;
 
 void main(List<String> arguments) async {
   Args args = Args(arguments);
@@ -90,6 +91,19 @@ void main(List<String> arguments) async {
       }
     }
     String path_project = p.join(Directory.current.path);
+    packagex_scheme.Packagex packagexConfig = packagex_scheme.Packagex({});
+
+    // Map jsonData = {};
+    for (var i = 0; i < args.arguments.length; i++) {
+      String argument = args.arguments[i];
+      if (!RegExp(r"^--", caseSensitive: false).hashData(argument)) {
+        continue;
+      }
+      if (args[argument] != null && args[argument]!.isNotEmpty) {
+        packagexConfig[argument.replaceAll(RegExp(r"^--"), "")] = args[argument];
+      }
+    }
+
     if (PackagexPlatform.all == packagex_platform) {
       for (var i = 0; i < packagexPlatforms.length; i++) {
         PackagexPlatform packagexPlatform = packagexPlatforms[i];
@@ -97,13 +111,19 @@ void main(List<String> arguments) async {
           continue;
         }
         await packageBuild.build(
-          path: path_project,
+          path_current: path_project,
           path_output: out,
           packagexPlatform: packagexPlatform,
+          packagexConfig: packagexConfig,
         );
       }
     } else {
-      await packageBuild.build(path: path_project, path_output: out, packagexPlatform: packagex_platform);
+      await packageBuild.build(
+        path_current: path_project,
+        path_output: out,
+        packagexPlatform: packagex_platform,
+        packagexConfig: packagexConfig,
+      );
     }
     return;
   }

@@ -259,11 +259,13 @@ exit 0
   }
 
   Future<void> build({
-    required String path,
+    // required String path,
     PackagexPlatform? packagexPlatform,
-    String? path_current,
+    required String path_current,
     String? path_output,
+    packagex_scheme.Packagex? packagexConfig,
   }) async {
+    packagexConfig ??= packagex_scheme.Packagex({});
     packagexPlatform ??= PackagexPlatform.current;
     if (packagexPlatform == PackagexPlatform.current) {
       if (Platform.isLinux) {
@@ -276,15 +278,28 @@ exit 0
         packagexPlatform = PackagexPlatform.windows;
       }
     }
-    String basename = p.basename(path);
-    Directory directory_current = Directory(path_current ?? Directory.current.path);
+    String basename = p.basename(path_current);
+    Directory directory_current = Directory(path_current);
 
     File file_pubspec = File(p.join(directory_current.path, "pubspec.yaml"));
     Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
-    packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(yaml_code);
+    Map getClone(Map data) {
+      return data.map((k, v) => MapEntry(k, v is Map ? getClone(v) : v));
+    }
+
+    packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(getClone(yaml_code));
     if (pubspec["name"] == null) {
       pubspec["name"] = basename;
     }
+    if (pubspec["packagex"] is Map == false) {
+      pubspec["packagex"] = {};
+    }
+
+    packagexConfig.rawData.forEach((key, value) {
+      if (value != null) {
+        pubspec["packagex"][key] = value;
+      }
+    });
     File script_cli = File(p.join(directory_current.path, "bin", "${pubspec.packagex.dart_target ?? pubspec.name}.dart"));
     File script_app = File(p.join(directory_current.path, "lib", "${pubspec.packagex.flutter_target ?? "main"}.dart"));
     bool is_app = false;
@@ -296,8 +311,6 @@ exit 0
       is_cli = true;
     }
 
-    
-
     Directory directory_build_packagex = Directory(path_output ?? p.join(directory_current.path, "build", "packagex"));
     await directory_build_packagex.autoCreate();
 
@@ -307,7 +320,7 @@ exit 0
       }
 
       String path_linux_package = p.join(
-        path,
+        path_current,
         "linux",
         "packagex",
       );
@@ -549,8 +562,8 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
             "build",
             "web",
             "--release",
-            "--target=${script_app.path}"
-                "--web-renderer",
+            "--target=${script_app.path}",
+            "--web-renderer",
             "html",
           ],
           workingDirectory: directory_current.path,
