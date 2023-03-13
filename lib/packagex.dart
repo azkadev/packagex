@@ -296,6 +296,8 @@ exit 0
       is_cli = true;
     }
 
+    
+
     Directory directory_build_packagex = Directory(path_output ?? p.join(directory_current.path, "build", "packagex"));
     await directory_build_packagex.autoCreate();
 
