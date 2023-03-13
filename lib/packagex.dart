@@ -7,7 +7,7 @@ import "package:universal_io/io.dart";
 
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:path/path.dart' as p;
-import "package:msix/msix.dart" as msix;
+// import "package:msix/msix.dart" as msix;
 import "extension/directory.dart";
 import "scheme/scheme.dart" as packagex_scheme;
 import "package:yaml/yaml.dart" as yaml;
@@ -275,8 +275,49 @@ StartupNotify=true
         );
       }
     } else if (packagexPlatform == PackagexPlatform.windows) {
-      await msix.Msix().createMsix([]);
-    }
+      output ??= p.join(directory.path, "${pubspec.name}-app.msix");
+      if (!pubspec.dev_dependencies.rawData.containsKey("msix")) {
+        await packagex_shell.shell(
+          executable: "flutter",
+          arguments: ["pub", "add", "--dev", "msix"],
+          workingDirectory: directory_current.path,
+          runInShell: true,
+        );
+      }
+
+      // await packagex_shell.shell(
+      //   executable: "flutter",
+      //   arguments: [
+      //     "build",
+      //     "windows",
+      //     "--release",
+      //   ],
+      //   workingDirectory: directory_current.path,
+      //   runInShell: true,
+      // );
+
+      await packagex_shell.shell(
+        executable: "flutter",
+        arguments: [
+          "pub",
+          "run",
+          "msix:create", 
+        ],
+        workingDirectory: directory_current.path,
+        runInShell: true,
+      );
+
+      await packagex_shell.shell(
+        executable: "copy",
+        arguments: [
+          p.join(directory_current.path, "build", "windows", "runner", "Release", "${pubspec.name}.msix"),
+          output,
+        ],
+        workingDirectory: directory_current.path,
+        runInShell: true,
+      );
+    } else if (packagexPlatform == PackagexPlatform.macos) {
+    } else if (packagexPlatform == PackagexPlatform.android) {}
     return;
   }
 }

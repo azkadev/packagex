@@ -10,7 +10,7 @@ Future<void> shell({
   String? workingDirectory,
   Map<String, String>? environment,
   bool includeParentEnvironment = true,
-  bool runInShell = false,
+  bool runInShell = true,
   ProcessStartMode mode = ProcessStartMode.normal,
 }) async {
   bool is_complete = false;
@@ -18,6 +18,10 @@ Future<void> shell({
     executable,
     arguments,
     workingDirectory: workingDirectory,
+    environment: environment,
+    includeParentEnvironment: includeParentEnvironment,
+runInShell: runInShell,
+    mode: mode,
   ); 
   var stdout_shell = shell.stdout.listen(
     (event) {

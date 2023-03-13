@@ -17,14 +17,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.6.0"
-  ansicolor:
-    dependency: transitive
-    description:
-      name: ansicolor
-      sha256: "607f8fa9786f392043f169898923e6c59b4518242b68b8862eb8a8b7d9c30b4a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   archive:
     dependency: "direct main"
     description:
@@ -225,14 +217,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
-  msix:
-    dependency: "direct main"
-    description:
-      name: msix
-      sha256: a7a8f3fc2bb44ad84f8608df40a522440ec861fc34c120f03613ac8d19a056d5
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   node_preamble:
     dependency: transitive
     description:
@@ -451,4 +435,3 @@ packages:
     version: "3.1.1"
 sdks:
   dart: ">=2.19.0 <3.0.0"
-  flutter: ">=1.20.0"

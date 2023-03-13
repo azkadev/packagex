@@ -24,6 +24,16 @@ Future<void> main() async {
         "@type": "environment",
         "sdk": ">=2.18.5 <3.0.0",
       },
+      "dependencies": {
+        
+        "@type": "dependencies",
+        "flutter": {
+          
+          "@type": "dependencies_extra",
+          "sdk": "flutter",
+        },
+        "cupertino_icons": "^1.0.2"
+      },
       "dev_dependencies": {
         "@type": "dev_dependencies",
         "lints": "^2.0.0",
@@ -31,7 +41,8 @@ Future<void> main() async {
         "packagex": {
           "@type": "dev_dependencies_extra",
           "path": "../",
-        }
+        },
+        "msix": "^1.0.6"
       },
       "packagex": {
         "@type": "packagex",

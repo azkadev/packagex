@@ -22,10 +22,10 @@ dev_dependencies:
 
 executables:
   packagex: packagex
+  
 dependencies:
   archive: ^3.3.6
   galaxeus_lib: ^0.0.56
-  msix: ^1.0.2
   path: ^1.8.2
   universal_io: ^2.2.0
   yaml: ^3.1.1

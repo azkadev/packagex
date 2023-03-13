@@ -11,7 +11,7 @@ class DevDependencies extends JsonDart {
   DevDependencies(super.rawData);
    
   static Map get defaultData {
-    return {"@type":"dev_dependencies","lints":"^2.0.0","test":"^1.16.0","packagex":{"@type":"dev_dependencies_extra","path":"../"}};
+    return {"@type":"dev_dependencies","lints":"^2.0.0","test":"^1.16.0","packagex":{"@type":"dev_dependencies_extra","path":"../"},"msix":"^1.0.6"};
   }
 
   
@@ -67,12 +67,26 @@ class DevDependencies extends JsonDart {
 
 
   
+  String? get msix {
+    try {
+      if (rawData["msix"] is String == false){
+        return null;
+      }
+      return rawData["msix"] as String;
+    } catch (e) {
+      return null;
+    }
+  }
+
+
+  
   static DevDependencies create({
 
     String? special_type,
     String? lints,
     String? test,
       DevDependenciesExtra? packagex,
+    String? msix,
 })  {
     DevDependencies devDependencies = DevDependencies({
   
@@ -80,6 +94,7 @@ class DevDependencies extends JsonDart {
       "lints": lints,
       "test": test,
       "packagex": (packagex != null)?packagex.toJson(): null,
+      "msix": msix,
 
 
   });

@@ -8,3 +8,5 @@ build/
 linux/
 
 *.deb
+
+example_app/
