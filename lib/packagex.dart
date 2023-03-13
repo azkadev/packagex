@@ -347,7 +347,22 @@ StartupNotify=true
         runInShell: true,
       );
     } else if (packagexPlatform == PackagexPlatform.macos) {
-    } else if (packagexPlatform == PackagexPlatform.android) {}
+    } else if (packagexPlatform == PackagexPlatform.android) {
+      
+      // await packagex_shell.shell(
+      //   executable: "flutter",
+      //   arguments: [
+      //     "build",
+      //     "windows",
+      //     "--release",
+      //   ],
+      //   workingDirectory: directory_current.path,
+      //   runInShell: true,
+      // );
+
+
+
+    }
     return;
   }
 }
