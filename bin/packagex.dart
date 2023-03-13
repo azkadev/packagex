@@ -64,6 +64,20 @@ void main(List<String> arguments) async {
     exit(0);
   }
   if (command == "build") {
+    String type_platform = "";
+    try {
+      type_platform = args.arguments[1];
+    } catch (e) {}
+    PackagexPlatform packagex_platform = PackagexPlatform.current;
+    List<PackagexPlatform> packagexPlatforms = PackagexPlatform.values;
+    for (var i = 0; i < packagexPlatforms.length; i++) {
+      PackagexPlatform packagexPlatform = packagexPlatforms[i];
+      if (packagexPlatform.name != type_platform) {
+        continue;
+      }
+      packagex_platform = packagexPlatform;
+    }
+    print("build for: ${packagex_platform.name}");
     String? out;
     List<String> outputs = [
       "-output",
@@ -75,18 +89,18 @@ void main(List<String> arguments) async {
         out = args[loop_data] ?? "";
       }
     }
-    try {
-      String path_project = p.join(Directory.current.path);
-      await packageBuild.build(
-        path: path_project,
-        output: out,
-      );
-    } catch (e) {
-      String path_project = p.join(Directory.current.path);
-      await packageBuild.build(
-        path: path_project,
-        output: out,
-      );
+    String path_project = p.join(Directory.current.path);
+    if (PackagexPlatform.all == packagex_platform) {
+      for (var i = 0; i < packagexPlatforms.length; i++) {
+        PackagexPlatform packagexPlatform = packagexPlatforms[i];
+        await packageBuild.build(
+          path: path_project,
+          output: out,
+          packagexPlatform: packagexPlatform,
+        );
+      }
+    } else {
+      await packageBuild.build(path: path_project, output: out, packagexPlatform: packagex_platform);
     }
     return;
   }

@@ -43,7 +43,7 @@ jobs:
           if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt update -y
             sudo apt-get install -y make git zlib1g-dev libssl-dev gperf cmake clang libc++-dev libc++abi-dev php-cli cmake g++
-            sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+            sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev zip
           fi
           if [ "$RUNNER_OS" == "macOS" ]; then
             brew update
@@ -70,7 +70,7 @@ jobs:
           cd example
           flutter pub get
           flutter pub run packagex create .
-          flutter pub run packagex build
+          flutter pub run packagex build all
           if [ "$RUNNER_OS" == "Linux" ]; then
             mv build/packagex/* ../build/
           fi
@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v3
         continue-on-error: true
         with:
-          name: Artifact
+          name: "Release ${{ matrix.output-name }}"
           path: build/*
       - name: Publish Release
         uses: marvinpinto/action-automatic-releases@latest
