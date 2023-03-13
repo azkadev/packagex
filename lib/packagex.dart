@@ -398,10 +398,12 @@ StartupNotify=true
           ],
           workingDirectory: directory_current.path,
         ); 
+ 
+
         await packagex_shell.shell(
           executable: (Platform.isWindows) ? "copy" : "cp",
           arguments: [
-            p.join(directory_current.path, "build", "app", "outputs", "apk", "*.apk"),
+            p.join(directory_current.path, "build", "app", "outputs", "flutter-apk", "*"),
             p.join(
               directory_build_packagex.path,
             ),
@@ -438,7 +440,7 @@ mkdir Payload
 cd Payload
 ln -s ../Runner.app
 cd ..
-zip -r  p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa") Payload
+zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payload
 """
           ],
           workingDirectory: directory_current.path,
@@ -466,6 +468,7 @@ zip -r  p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa") Payload
             arguments: [
               "-a",
               "-cf",
+              "--force-local",
               p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"),
               p.join(directory_current.path, "build", "web"),
             ],
