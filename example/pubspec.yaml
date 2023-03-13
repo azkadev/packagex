@@ -93,7 +93,8 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 msix_config:
   display_name: example
-  publisher_display_name: Azkadev
-  identity_name: org.azkadev.example
-  msix_version: 0.0.0.0
-  capabilities: internetClient, location, microphone, webcam
+  install_certificate: false
+  # publisher_display_name: Azkadev
+  # identity_name: org.azkadev.example
+  # msix_version: 0.0.0.0
+  # capabilities: internetClient, location, microphone, webcam

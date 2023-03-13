@@ -27,6 +27,7 @@ void main(List<String> arguments) async {
     "uninstall",
     "publish",
     "read",
+    "clean",
   ];
   if (!commands.contains(command)) {
     print(menu_help);
@@ -35,6 +36,12 @@ void main(List<String> arguments) async {
   if (command == "version") {
     print("v0.0.9-dev");
     exit(0);
+  }
+  if (command == "clean") {
+    print("Start Clean");
+    await packageBuild.clean();
+    print("Complete Clean");
+    return;
   }
   if (command == "create") {
     try {
@@ -51,8 +58,7 @@ void main(List<String> arguments) async {
   if (command == "read") {
     Directory directory_current = Directory.current;
     File file = File(p.join(directory_current.path, "pubspec.yaml"));
-    Map yaml_code =
-        (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
+    Map yaml_code = (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
 
     print(json.encode(yaml_code));
     exit(0);
@@ -87,8 +93,7 @@ void main(List<String> arguments) async {
   if (command == "install") {
     String package_name = args.arguments[1];
 
-    if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false)
-        .hashData(package_name)) {
+    if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false).hashData(package_name)) {
       await packageX.installPackageFromUrl(
         url: package_name,
         onData: (data) {},
@@ -124,6 +129,7 @@ help                 Print this usage information
 Available commands: 
   create Create New Package
   build Build package to platform
+  clean clean package
   install (name/url/local_file) install package
 
 Run "packagex help <command>" for more information about a command.

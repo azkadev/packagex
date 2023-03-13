@@ -25,11 +25,37 @@ enum PackagexPlatform {
 class PackageBuild {
   PackageBuild();
 
+  Future<void> clean() async {
+    Directory directory_package = Directory(p.join(Directory.current.path));
+    void remove(Directory directory) {
+      List<FileSystemEntity> dirs = directory.listSync();
+
+      for (var i = 0; i < dirs.length; i++) {
+        FileSystemEntity dir = dirs[i];
+        if (dir is Directory) {
+          try {
+            String base_name = p.basename(dir.path);
+            if (base_name == "packagex" || base_name == "packaging") {
+              dir.deleteSync(
+                recursive: true,
+              );
+            } else {
+              remove(dir.absolute);
+            }
+          } catch (e) { 
+          }
+        }
+      }
+    }
+
+    remove(Directory.current);
+    return;
+  }
+
   Future<void> create({
     required String name,
   }) async {
-    Directory directory_package =
-        Directory(p.join(Directory.current.path, name));
+    Directory directory_package = Directory(p.join(Directory.current.path, name));
     if (name == ".") {
       directory_package = Directory(p.join(Directory.current.path));
     }
@@ -38,8 +64,7 @@ class PackageBuild {
     File file_pubspec = File(p.join(directory_package.path, "pubspec.yaml"));
     if (file_pubspec.existsSync()) {
       try {
-        Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(),
-            recover: true) as Map);
+        Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
         pubspec.rawData = {...yaml_code};
       } catch (e) {}
     } else {
@@ -79,8 +104,7 @@ msix_config:
     }
 
     if (pubspec["name"] != null) {
-      pubspec["name"] =
-          pubspec["name"].toString().replaceAll(RegExp(r"([_])"), "-");
+      pubspec["name"] = pubspec["name"].toString().replaceAll(RegExp(r"([_])"), "-");
     }
 
     if (pubspec["homepage"] == null) {
@@ -121,13 +145,10 @@ StartupNotify=true
         await dir.autoCreate();
       }
       try {
-        await File(p.join(directory.path, "DEBIAN", "control"))
-            .writeAsString(scripts);
+        await File(p.join(directory.path, "DEBIAN", "control")).writeAsString(scripts);
       } catch (e) {}
       try {
-        await File(p.join(directory.path, "usr", "local", "share",
-                "applications", "${package_name}.desktop"))
-            .writeAsString(app_desktop_linux);
+        await File(p.join(directory.path, "usr", "local", "share", "applications", "${package_name}.desktop")).writeAsString(app_desktop_linux);
       } catch (e) {}
 
       return;
@@ -190,14 +211,12 @@ StartupNotify=true
     String basename = p.basename(path);
     Directory directory_current = Directory.current;
     File file = File(p.join(directory_current.path, "pubspec.yaml"));
-    Map yaml_code =
-        (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
+    Map yaml_code = (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
     packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(yaml_code);
     if (pubspec["name"] == null) {
       pubspec["name"] = basename;
     }
-    File script_cli =
-        File(p.join(directory_current.path, "bin", "${pubspec.name}.dart"));
+    File script_cli = File(p.join(directory_current.path, "bin", "${pubspec.name}.dart"));
     File script_app = File(p.join(directory_current.path, "lib", "main.dart"));
     bool is_app = false;
     bool is_cli = false;
@@ -208,8 +227,7 @@ StartupNotify=true
     if (script_cli.existsSync()) {
       is_cli = true;
     }
-    Directory directory =
-        Directory(p.join(directory_current.path, "build", "packagex"));
+    Directory directory = Directory(p.join(directory_current.path, "build", "packagex"));
     await directory.autoCreate();
 
     if (packagexPlatform == PackagexPlatform.linux) {
@@ -229,8 +247,7 @@ StartupNotify=true
           ],
           workingDirectory: directory_current.path,
         );
-        String path_app = p.join(directory_current.path, "build", "linux",
-            "x64", "release", "bundle");
+        String path_app = p.join(directory_current.path, "build", "linux", "x64", "release", "bundle");
         await packagex_shell.shell(
           executable: "cp",
           arguments: [
@@ -323,8 +340,7 @@ StartupNotify=true
       await packagex_shell.shell(
         executable: "copy",
         arguments: [
-          p.join(directory_current.path, "build", "windows", "runner",
-              "Release", "${pubspec.name}.msix"),
+          p.join(directory_current.path, "build", "windows", "runner", "Release", "${pubspec.name}.msix"),
           output,
         ],
         workingDirectory: directory_current.path,
@@ -353,8 +369,7 @@ class PackageX {
       options: options,
       encoding: encoding,
     );
-    Directory directory =
-        Directory(p.join(Directory.current.path, "package_temp"));
+    Directory directory = Directory(p.join(Directory.current.path, "package_temp"));
     if (!directory.existsSync()) {
       await directory.create(recursive: true);
     }
