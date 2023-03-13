@@ -261,8 +261,8 @@ exit 0
   Future<void> build({
     required String path,
     PackagexPlatform? packagexPlatform,
-    Directory? directory_current,
-    String? output,
+    String? path_current,
+    String? path_output,
   }) async {
     packagexPlatform ??= PackagexPlatform.current;
     if (packagexPlatform == PackagexPlatform.current) {
@@ -277,7 +277,7 @@ exit 0
       }
     }
     String basename = p.basename(path);
-    directory_current ??= Directory.current;
+    Directory directory_current = Directory(path_current ?? Directory.current.path);
 
     File file_pubspec = File(p.join(directory_current.path, "pubspec.yaml"));
     Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
@@ -296,7 +296,7 @@ exit 0
       is_cli = true;
     }
 
-    Directory directory_build_packagex = Directory(p.join(directory_current.path, "build", "packagex"));
+    Directory directory_build_packagex = Directory(path_output ?? p.join(directory_current.path, "build", "packagex"));
     await directory_build_packagex.autoCreate();
 
     if (packagexPlatform == PackagexPlatform.linux) {

@@ -98,12 +98,12 @@ void main(List<String> arguments) async {
         }
         await packageBuild.build(
           path: path_project,
-          output: out,
+          path_output: out,
           packagexPlatform: packagexPlatform,
         );
       }
     } else {
-      await packageBuild.build(path: path_project, output: out, packagexPlatform: packagex_platform);
+      await packageBuild.build(path: path_project, path_output: out, packagexPlatform: packagex_platform);
     }
     return;
   }
