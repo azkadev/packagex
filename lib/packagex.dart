@@ -317,9 +317,9 @@ usr/local/share/${pubspec.name}
     PackagexPlatform? packagexPlatform,
     required String? path_current,
     String? path_output,
+    String? name_output,
     packagex_scheme.Packagex? packagexConfig,
     bool cancelOnError = false,
-
   }) async {
     path_current ??= Directory.current.path;
     packagexConfig ??= packagex_scheme.Packagex({});
@@ -343,6 +343,7 @@ usr/local/share/${pubspec.name}
     Map getClone(Map data) {
       return data.map((k, v) => MapEntry(k, v is Map ? getClone(v) : v));
     }
+
     packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(getClone(yaml_code));
     if (pubspec["name"] == null) {
       pubspec["name"] = basename;
@@ -373,9 +374,7 @@ usr/local/share/${pubspec.name}
 
     if (packagexPlatform == PackagexPlatform.linux) {
       if (!Platform.isLinux) {
-        return {
-
-        };
+        return {};
       }
 
       String path_linux_package = p.join(
@@ -391,18 +390,53 @@ usr/local/share/${pubspec.name}
         pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
       );
 
-      if (is_cli) {
-        File file_cli = File(p.join(
-          path_linux_package,
-          "usr",
-          "bin",
-          pubspec.packagex.dart_name ?? pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
-        ));
+      try {
+        await packagex_shell.shell(
+          executable: "chmod",
+          arguments: ["775", p.join(path_linux_package, "DEBIAN", "postinst")],
+          runInShell: true,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
+        );
+      } catch (e) {}
+      try {
+        await packagex_shell.shell(
+          executable: "chmod",
+          arguments: ["775", p.join(path_linux_package, "DEBIAN", "postrm")],
+          runInShell: true,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
+        );
+      } catch (e) {}
+
+      if (is_app) {
         try {
           if (Directory(path_app_deb).existsSync()) {
             await Directory(path_app_deb).delete(recursive: true);
+
+            await Directory(path_app_deb).create(recursive: true);
+          } else {
+            await Directory(path_app_deb).create(recursive: true);
           }
         } catch (e) {}
+      }
+      File file_cli = File(p.join(
+        path_linux_package,
+        "usr",
+        "bin",
+        "${pubspec.packagex.dart_name ?? pubspec.name!.replaceAll(RegExp(r"([_])"), "-")}-cli-linux",
+      ));
+      File file_app = File(p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-linux.deb"));
+
+      if (is_cli) {
         await packagex_shell.shell(
           executable: "dart",
           arguments: [
@@ -420,55 +454,6 @@ usr/local/share/${pubspec.name}
             stderr.add(data);
           },
         );
-
-        try {
-          await packagex_shell.shell(
-            executable: "chmod",
-            arguments: ["775", p.join(path_linux_package, "DEBIAN", "postinst")],
-            runInShell: true,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
-          );
-        } catch (e) {}
-        try {
-          await packagex_shell.shell(
-            executable: "chmod",
-            arguments: ["775", p.join(path_linux_package, "DEBIAN", "postrm")],
-            runInShell: true,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
-          );
-        } catch (e) {}
-        await packagex_shell.shell(
-          executable: "dpkg-deb",
-          arguments: [
-            "--build",
-            "--root-owner-group",
-            path_linux_package,
-            p.join(directory_build_packagex.path, "${pubspec.name}-cli-linux.deb"),
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-
-        if (file_cli.existsSync()) {
-          try {
-            await file_cli.delete();
-          } catch (e) {}
-        }
       }
 
       if (is_app) {
@@ -499,13 +484,16 @@ usr/local/share/${pubspec.name}
             stderr.add(data);
           },
         );
+      }
+
+      if (is_app || is_cli) {
         await packagex_shell.shell(
           executable: "dpkg-deb",
           arguments: [
             "--build",
             "--root-owner-group",
             path_linux_package,
-            p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-app-linux.deb"),
+            file_app.path,
           ],
           workingDirectory: directory_current.path,
           onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
@@ -515,6 +503,14 @@ usr/local/share/${pubspec.name}
             stderr.add(data);
           },
         );
+        try {
+          if (file_cli.existsSync()) {
+            await file_cli.delete(recursive: true);
+          }
+          if (file_app.existsSync()) {
+            await file_app.delete(recursive: true);
+          }
+        } catch (e) {}
       }
     } else if (packagexPlatform == PackagexPlatform.windows) {
       if (!Platform.isWindows) {
@@ -706,9 +702,7 @@ usr/local/share/${pubspec.name}
       }
     } else if (packagexPlatform == PackagexPlatform.ios) {
       if (!Platform.isMacOS) {
-        return {
-
-        };
+        return {};
       }
 
       if (is_app) {
@@ -810,9 +804,7 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
         }
       }
     }
-    return {
-      "@type": ""
-    };
+    return {"@type": ""};
   }
 
   Future<void> installPackageFromUrl({

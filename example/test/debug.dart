@@ -8,7 +8,7 @@ void main() async {
   packagex_api.BuildPackage buildPackage = packagex_api.BuildPackage.create(
     special_type: "buildPackage",
     path_current: Directory.current.path,
-    platform: "web",
+    platform: "current",
   );
   var res_api = await packagex.request(jsonData: buildPackage.rawData);
   print(res_api);
