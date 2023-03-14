@@ -7,11 +7,11 @@ import "package:universal_io/io.dart";
 
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:path/path.dart' as p;
-// import "package:msix/msix.dart" as msix;
 import "extension/directory.dart";
 import "scheme/scheme.dart" as packagex_scheme;
 import "package:yaml/yaml.dart" as yaml;
 import "shell/shell.dart" as packagex_shell;
+import "api/api.dart" as packagex_api;
 
 enum PackagexPlatform {
   current,
@@ -24,11 +24,47 @@ enum PackagexPlatform {
   all,
 }
 
+extension ListExtensions on List<PackagexPlatform> {
+  PackagexPlatform? getByString(String data) {
+    for (var i = 0; i < length; i++) {
+      try {
+        if ((this[i]).name == data) {
+          return (this[i]);
+        }
+      } catch (e) {}
+    }
+    return null;
+  }
+}
+
 class PackageBuild {
   PackageBuild();
 
-  Future<void> clean() async {
-    Directory directory_package = Directory(p.join(Directory.current.path));
+  Future<packagex_api.JsonDart> request({
+    required Map jsonData,
+  }) async {
+    packagex_api.JsonDart jsonDart = packagex_api.JsonDart(jsonData);
+
+    if (RegExp(r"^(createPackage)$", caseSensitive: false).hashData(jsonDart["@type"])) {}
+    if (RegExp(r"^(buildPackage)$", caseSensitive: false).hashData(jsonDart["@type"])) {
+      packagex_api.BuildPackage buildPackage = (jsonDart as packagex_api.BuildPackage); 
+      await build(
+        packagexPlatform: (PackagexPlatform.values.getByString(buildPackage.platform ?? "current") as PackagexPlatform),
+        path_current: buildPackage.path_current,
+        packagexConfig: packagex_scheme.Packagex(
+          buildPackage.build_config.rawData,
+        ),
+      );
+    }
+
+    return packagex_api.JsonDart({"@type": "error", "message": "method_not_found", "description": "Method not found"});
+  }
+
+  Future<void> clean({
+    String? path_current,
+  }) async {
+    path_current ??= Directory.current.path;
+    Directory directory_package = Directory(path_current);
     void remove(Directory directory) {
       List<FileSystemEntity> dirs = directory.listSync();
 
@@ -79,6 +115,12 @@ class PackageBuild {
         ],
         workingDirectory: directory_package.path,
         runInShell: true,
+        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+          stdout.add(data);
+        },
+        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+          stderr.add(data);
+        },
       );
     }
     if (pubspec["name"] == null) {
@@ -115,6 +157,12 @@ msix_config:
         arguments: ["pub", "add", "--dev", "msix"],
         workingDirectory: directory_package.path,
         runInShell: true,
+        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+          stdout.add(data);
+        },
+        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+          stderr.add(data);
+        },
       );
     }
 
@@ -232,6 +280,12 @@ usr/local/share/${pubspec.name}
           p.join(directory.path, "linux", "packagex", "DEBIAN", "postinst"),
         ],
         runInShell: true,
+        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+          stdout.add(data);
+        },
+        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+          stderr.add(data);
+        },
       );
       await packagex_shell.shell(
         executable: "chmod",
@@ -240,6 +294,12 @@ usr/local/share/${pubspec.name}
           p.join(directory.path, "linux", "packagex", "DEBIAN", "postrm"),
         ],
         runInShell: true,
+        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+          stdout.add(data);
+        },
+        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+          stderr.add(data);
+        },
       );
     }
 
@@ -247,12 +307,12 @@ usr/local/share/${pubspec.name}
   }
 
   Future<void> build({
-    // required String path,
     PackagexPlatform? packagexPlatform,
-    required String path_current,
+    required String? path_current,
     String? path_output,
     packagex_scheme.Packagex? packagexConfig,
   }) async {
+    path_current ??= Directory.current.path;
     packagexConfig ??= packagex_scheme.Packagex({});
     packagexPlatform ??= PackagexPlatform.current;
     if (packagexPlatform == PackagexPlatform.current) {
@@ -343,6 +403,12 @@ usr/local/share/${pubspec.name}
             file_cli.path,
           ],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
 
         try {
@@ -350,6 +416,12 @@ usr/local/share/${pubspec.name}
             executable: "chmod",
             arguments: ["775", p.join(path_linux_package, "DEBIAN", "postinst")],
             runInShell: true,
+            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stdout.add(data);
+            },
+            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stderr.add(data);
+            },
           );
         } catch (e) {}
         try {
@@ -357,6 +429,12 @@ usr/local/share/${pubspec.name}
             executable: "chmod",
             arguments: ["775", p.join(path_linux_package, "DEBIAN", "postrm")],
             runInShell: true,
+            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stdout.add(data);
+            },
+            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stderr.add(data);
+            },
           );
         } catch (e) {}
         await packagex_shell.shell(
@@ -368,6 +446,12 @@ usr/local/share/${pubspec.name}
             p.join(directory_build_packagex.path, "${pubspec.name}-cli-linux.deb"),
           ],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
 
         if (file_cli.existsSync()) {
@@ -382,6 +466,12 @@ usr/local/share/${pubspec.name}
           executable: "flutter",
           arguments: ["build", "linux", "--release", "--target=${script_app.path}"],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
         String path_app = p.join(directory_current.path, "build", "linux", "x64", "release", "bundle", ".");
         await packagex_shell.shell(
@@ -392,6 +482,12 @@ usr/local/share/${pubspec.name}
             path_app_deb,
           ],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
         await packagex_shell.shell(
           executable: "dpkg-deb",
@@ -402,6 +498,12 @@ usr/local/share/${pubspec.name}
             p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-app-linux.deb"),
           ],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
       }
     } else if (packagexPlatform == PackagexPlatform.windows) {
@@ -415,6 +517,12 @@ usr/local/share/${pubspec.name}
           arguments: ["pub", "add", "--dev", "msix"],
           workingDirectory: directory_current.path,
           runInShell: true,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
       }
 
@@ -429,6 +537,12 @@ usr/local/share/${pubspec.name}
             p.join(directory_build_packagex.path, "${pubspec.packagex.dart_name ?? pubspec.name}-cli-windows.exe"),
           ],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
       }
 
@@ -466,7 +580,7 @@ usr/local/share/${pubspec.name}
               List<String> versions = value.toString().split(".");
               if (versions.length != 4) {
                 value = "0.0.0.0";
-              } 
+              }
             }
             args_msix.add(key_args_msix);
             args_msix.add(value);
@@ -489,6 +603,12 @@ usr/local/share/${pubspec.name}
           ],
           workingDirectory: directory_current.path,
           runInShell: true,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
 
         // await packagex_shell.shell(
@@ -516,6 +636,12 @@ usr/local/share/${pubspec.name}
             p.join(directory_build_packagex.path, "${pubspec.packagex.dart_name ?? pubspec.name}-cli-macos"),
           ],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
       }
 
@@ -524,6 +650,12 @@ usr/local/share/${pubspec.name}
           executable: "flutter",
           arguments: ["build", "macos", "--release", "--target=${script_app.path}"],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
       }
     } else if (packagexPlatform == PackagexPlatform.android) {
@@ -532,6 +664,12 @@ usr/local/share/${pubspec.name}
           executable: "flutter",
           arguments: ["build", "apk", "--release", "--split-per-abi", "--target=${script_app.path}"],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
 
         Directory directory_apk = Directory(p.join(directory_current.path, "build", "app", "outputs", "flutter-apk"));
@@ -566,6 +704,12 @@ usr/local/share/${pubspec.name}
           executable: "flutter",
           arguments: ["build", "ios", "--release", "--no-codesign", "--target=${script_app.path}"],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
 
         await packagex_shell.shell(
@@ -582,6 +726,12 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
 """
           ],
           workingDirectory: directory_current.path,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
       }
     } else if (packagexPlatform == PackagexPlatform.web) {
@@ -598,6 +748,12 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
           ],
           workingDirectory: directory_current.path,
           runInShell: true,
+          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stdout.add(data);
+          },
+          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+            stderr.add(data);
+          },
         );
 
         Directory directory_build_web_canvaskit = Directory(p.join(directory_current.path, "build", "web", "canvaskit", "."));
@@ -613,6 +769,12 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
             arguments: ["-cf", p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"), "*"],
             workingDirectory: p.join(directory_current.path, "build", "web"),
             runInShell: true,
+            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stdout.add(data);
+            },
+            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stderr.add(data);
+            },
           );
         }
 
@@ -626,6 +788,12 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
             ],
             workingDirectory: p.join(directory_current.path, "build", "web", "."),
             runInShell: true,
+            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stdout.add(data);
+            },
+            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stderr.add(data);
+            },
           );
         }
       }

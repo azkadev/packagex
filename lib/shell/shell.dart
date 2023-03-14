@@ -12,6 +12,28 @@ Future<void> shell({
   bool includeParentEnvironment = true,
   bool runInShell = true,
   ProcessStartMode mode = ProcessStartMode.normal,
+  required void Function(
+    List<int> data,
+    String executable,
+    List<String> arguments,
+    String? workingDirectory,
+    Map<String, String>? environment,
+    bool includeParentEnvironment,
+    bool runInShell,
+    ProcessStartMode mode,
+  )
+      onStdout,
+  required void Function(
+    List<int> data,
+    String executable,
+    List<String> arguments,
+    String? workingDirectory,
+    Map<String, String>? environment,
+    bool includeParentEnvironment,
+    bool runInShell,
+    ProcessStartMode mode,
+  )
+      onStderr,
 }) async {
   bool is_complete = false;
   Process shell = await Process.start(
@@ -23,9 +45,10 @@ Future<void> shell({
     runInShell: runInShell,
     mode: mode,
   );
+
   var stdout_shell = shell.stdout.listen(
-    (event) {
-      stdout.write(utf8.decode(event));
+    (List<int> data) {
+      onStdout(data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode);
     },
     onDone: () {
       shell.kill();
@@ -34,8 +57,9 @@ Future<void> shell({
     cancelOnError: true,
   );
   var stderr_shell = shell.stderr.listen(
-    (event) {
-      stderr.write(utf8.decode(event));
+    
+    (List<int> data) {
+      onStderr(data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode);
     },
     onDone: () {
       shell.kill();
