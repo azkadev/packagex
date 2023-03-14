@@ -374,7 +374,7 @@ usr/local/share/${pubspec.name}
 
     if (packagexPlatform == PackagexPlatform.linux) {
       if (!Platform.isLinux) {
-        return {};
+        return {"@type": "error", "message": "platform_not_supported", "description": "Package linux hanya bisa di perangkat linux saja !"};
       }
 
       String path_linux_package = p.join(
@@ -514,7 +514,7 @@ usr/local/share/${pubspec.name}
       }
     } else if (packagexPlatform == PackagexPlatform.windows) {
       if (!Platform.isWindows) {
-        return {};
+        return {"@type": "error", "message": "platform_not_supported", "description": "Package windows hanya bisa di perangkat windows saja !"};
       }
       // output ??= p.join(directory_build_packagex.path, );
       if (!pubspec.dev_dependencies.rawData.containsKey("msix")) {
@@ -629,7 +629,7 @@ usr/local/share/${pubspec.name}
       }
     } else if (packagexPlatform == PackagexPlatform.macos) {
       if (!Platform.isMacOS) {
-        return {};
+        return {"@type": "error", "message": "platform_not_supported", "description": "Package macos hanya bisa di perangkat macos saja !"};
       }
       if (is_cli) {
         await packagex_shell.shell(
@@ -702,7 +702,7 @@ usr/local/share/${pubspec.name}
       }
     } else if (packagexPlatform == PackagexPlatform.ios) {
       if (!Platform.isMacOS) {
-        return {};
+        return {"@type": "error", "message": "platform_not_supported", "description": "Package ios hanya bisa di perangkat macos saja !"};
       }
 
       if (is_app) {
