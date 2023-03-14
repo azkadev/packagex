@@ -50,6 +50,11 @@ Future<void> main() async {
         "dart_name": "",
         "flutter_name": "",
 
+        "flutter_commands": {
+          "@type": "flutter_commands",
+            "obfuscate": true,
+            "split_debug_info": "0.0.5"
+        }
       },
       "msix_config": {
         "@type": "msix_config",

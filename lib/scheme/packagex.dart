@@ -2,6 +2,7 @@
 import "json_dart.dart";
 // import "dart:convert";
 
+import "flutter_commands.dart";
 
 
 class Packagex extends JsonDart {
@@ -10,7 +11,7 @@ class Packagex extends JsonDart {
   Packagex(super.rawData);
    
   static Map get defaultData {
-    return {"@type":"packagex","name":"Pack","dart_target":"","flutter_target":"","dart_name":"","flutter_name":""};
+    return {"@type":"packagex","name":"Pack","dart_target":"","flutter_target":"","dart_name":"","flutter_name":"","flutter_commands":{"@type":"flutter_commands","obfuscate":true,"split_debug_info":"0.0.5"}};
   }
 
   
@@ -92,6 +93,19 @@ class Packagex extends JsonDart {
 
 
   
+  FlutterCommands get flutter_commands {
+    try {
+      if (rawData["flutter_commands"] is Map == false){
+        return FlutterCommands({}); 
+      }
+      return FlutterCommands(rawData["flutter_commands"] as Map);
+    } catch (e) {  
+      return FlutterCommands({}); 
+    }
+  }
+
+
+  
   static Packagex create({
 
     String? special_type,
@@ -100,6 +114,7 @@ class Packagex extends JsonDart {
     String? flutter_target,
     String? dart_name,
     String? flutter_name,
+      FlutterCommands? flutter_commands,
 })  {
     Packagex packagex = Packagex({
   
@@ -109,6 +124,7 @@ class Packagex extends JsonDart {
       "flutter_target": flutter_target,
       "dart_name": dart_name,
       "flutter_name": flutter_name,
+      "flutter_commands": (flutter_commands != null)?flutter_commands.toJson(): null,
 
 
   });

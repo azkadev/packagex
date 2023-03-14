@@ -143,10 +143,10 @@ packages:
     dependency: transitive
     description:
       name: galaxeus_lib
-      sha256: "6bfa3b84f6e24a02683555653ba335d258d6b1d8b56e5e34fe36d0c92ed1e268"
+      sha256: "093354cd0392cd12382c7e9063116433a030e500fa2fe9dc43b72890ca95c015"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.56"
+    version: "0.0.57"
   get_it:
     dependency: transitive
     description:

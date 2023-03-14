@@ -1,0 +1,10 @@
+Maintainer: "azkadev <azkadev@noemail.com>"
+Package: packagex
+Version: 0.0.22
+Section: x11
+Priority: optional
+Architecture: amd64
+Essential: no
+Installed-Size: 0
+Description: "A library for package dart or flutter to specific platform."
+Homepage: "https://youtube.com/@azkadev"

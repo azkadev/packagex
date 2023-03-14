@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+ln -s /usr/share/packagex/packagex /usr/bin/packagex
+chmod +x /usr/bin/packagex
+exit 0

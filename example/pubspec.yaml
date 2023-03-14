@@ -98,6 +98,9 @@ packagex:
   flutter_target: main
   dart_name: example
   flutter_name: example
+  flutter_commands:
+    obfuscate: true
+    split_debug_info: 0.0.5
   
 
 msix_config: 

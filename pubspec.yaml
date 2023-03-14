@@ -25,7 +25,26 @@ executables:
   
 dependencies:
   archive: ^3.3.6
-  galaxeus_lib: ^0.0.56
+  galaxeus_lib: ^0.0.57
   path: ^1.8.2
   universal_io: ^2.2.0
   yaml: ^3.1.1
+
+packagex:
+  name: packagex
+  dart_target: packagex
+  flutter_target: main
+  dart_name: packagex
+  flutter_name: packagex
+  flutter_commands:
+    obfuscate: true
+    split-debug-info: 0.0.5
+  
+
+msix_config: 
+  display_name: packagex
+  install_certificate: false
+  # publisher_display_name: Azkadev
+  # identity_name: org.azkadev.packagex
+  # msix_version: 0.0.0.0
+  # capabilities: internetClient, location, microphone, webcam

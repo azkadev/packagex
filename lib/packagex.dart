@@ -96,7 +96,7 @@ class Packagex {
     };
   }
 
-  Future<void> create({
+  Future<Map> create({
     required String name,
   }) async {
     Directory directory_package = Directory(p.join(Directory.current.path, name));
@@ -107,10 +107,8 @@ class Packagex {
     packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec({});
     File file_pubspec = File(p.join(directory_package.path, "pubspec.yaml"));
     if (file_pubspec.existsSync()) {
-      try {
-        Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
-        pubspec.rawData = {...yaml_code};
-      } catch (e) {}
+      Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
+      pubspec.rawData = yaml_code.clone();
     } else {
       await packagex_shell.shell(
         executable: "dart",
@@ -142,6 +140,9 @@ packagex:
   flutter_target: main
   dart_name: ${pubspec.name}
   flutter_name: ${pubspec.name}
+  flutter_commands:
+    obfuscate: true
+    split-debug-info: 0.0.5
   
 """, mode: FileMode.writeOnlyAppend);
     }
@@ -310,7 +311,7 @@ usr/local/share/${pubspec.name}
       );
     }
 
-    return;
+    return {};
   }
 
   Future<Map> build({
@@ -340,11 +341,8 @@ usr/local/share/${pubspec.name}
 
     File file_pubspec = File(p.join(directory_current.path, "pubspec.yaml"));
     Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
-    Map getClone(Map data) {
-      return data.map((k, v) => MapEntry(k, v is Map ? getClone(v) : v));
-    }
 
-    packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(getClone(yaml_code));
+    packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(yaml_code.clone());
     if (pubspec["name"] == null) {
       pubspec["name"] = basename;
     }
@@ -369,12 +367,30 @@ usr/local/share/${pubspec.name}
       is_cli = true;
     }
 
+    List<String> flutter_commands = [];
+
+    pubspec.packagex.flutter_commands.rawData.forEach((key, value) {
+      String key_args_flutter = "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
+
+      if (key_args_flutter == "--obfuscate") {
+        flutter_commands.add(key_args_flutter);
+      }
+
+      if (key_args_flutter == "--split-debug-info") {
+        flutter_commands.add("${key_args_flutter}=${value}");
+      }
+    });
+
     Directory directory_build_packagex = Directory(path_output ?? p.join(directory_current.path, "build", "packagex"));
     await directory_build_packagex.autoCreate();
 
     if (packagexPlatform == PackagexPlatform.linux) {
       if (!Platform.isLinux) {
-        return {"@type": "error", "message": "platform_not_supported", "description": "Package linux hanya bisa di perangkat linux saja !"};
+        return {
+          "@type": "error",
+          "message": "platform_not_supported",
+          "description": "Package linux hanya bisa di perangkat linux saja !",
+        };
       }
 
       String path_linux_package = p.join(
@@ -459,7 +475,13 @@ usr/local/share/${pubspec.name}
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
-          arguments: ["build", "linux", "--release", "--target=${script_app.path}"],
+          arguments: [
+            "build",
+            "linux",
+            "--release",
+            "--target=${script_app.path}",
+            ...flutter_commands,
+          ],
           workingDirectory: directory_current.path,
           onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
             stdout.add(data);
@@ -600,7 +622,7 @@ usr/local/share/${pubspec.name}
             "run",
             "msix:create",
             "--windows-build-args",
-            "--target=${script_app.path}",
+            "--target=${script_app.path} ${flutter_commands.join(" ")}",
             "-o",
             directory_build_packagex.path,
             "-n",
@@ -616,16 +638,6 @@ usr/local/share/${pubspec.name}
             stderr.add(data);
           },
         );
-
-        // await packagex_shell.shell(
-        //   executable: "copy",
-        //   arguments: [
-        //     p.join(directory_current.path, "build", "windows", "runner", "Release", "${pubspec.name}.msix"),
-        //     p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-app-windows.msix"),
-        //   ],
-        //   workingDirectory: directory_current.path,
-        //   runInShell: true,
-        // );
       }
     } else if (packagexPlatform == PackagexPlatform.macos) {
       if (!Platform.isMacOS) {
@@ -654,7 +666,13 @@ usr/local/share/${pubspec.name}
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
-          arguments: ["build", "macos", "--release", "--target=${script_app.path}"],
+          arguments: [
+            "build",
+            "macos",
+            "--release",
+            "--target=${script_app.path}",
+            ...flutter_commands,
+          ],
           workingDirectory: directory_current.path,
           onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
             stdout.add(data);
@@ -668,7 +686,14 @@ usr/local/share/${pubspec.name}
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
-          arguments: ["build", "apk", "--release", "--split-per-abi", "--target=${script_app.path}"],
+          arguments: [
+            "build",
+            "apk",
+            "--release",
+            "--split-per-abi",
+            "--target=${script_app.path}",
+            ...flutter_commands,
+          ],
           workingDirectory: directory_current.path,
           onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
             stdout.add(data);
@@ -708,7 +733,8 @@ usr/local/share/${pubspec.name}
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
-          arguments: ["build", "ios", "--release", "--no-codesign", "--target=${script_app.path}"],
+          arguments: ["build", "ios", "--release", "--no-codesign", "--target=${script_app.path}", 
+            ...flutter_commands,],
           workingDirectory: directory_current.path,
           onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
             stdout.add(data);
