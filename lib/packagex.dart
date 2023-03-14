@@ -285,7 +285,8 @@ usr/local/share/${pubspec.name}
 
     packagexConfig.rawData.forEach((key, value) {
       if (value != null) {
-        pubspec["packagex"][key] = value;
+        pubspec["msix_config"][key.toString()] = value;
+        pubspec["packagex"][key.toString()] = value;
       }
     });
     File script_cli = File(p.join(directory_current.path, "bin", "${pubspec.packagex.dart_target ?? pubspec.name}.dart"));
@@ -374,7 +375,6 @@ usr/local/share/${pubspec.name}
             await file_cli.delete();
           } catch (e) {}
         }
- 
       }
 
       if (is_app) {
@@ -433,26 +433,73 @@ usr/local/share/${pubspec.name}
       }
 
       if (is_app) {
+        List<String> args_msix = [];
+        List<String> msix_args = [
+          "--display-name",
+          "--publisher-display-name",
+          "--identity-name",
+          "--version",
+          "--logo-path",
+          "--trim-logo",
+          "--capabilities",
+          "--languages",
+          "--file-extension",
+          "--protocol-activation",
+          "--app-uri-handler-hosts",
+          "--execution-alias",
+          "--enable-at-startup",
+          "--store",
+          "--certificate-path",
+          "--certificate-password",
+          "--publisher",
+          "--signtool-options",
+          "--sign-msix",
+          "--install-certificate",
+        ];
+        pubspec.msix_config.rawData.forEach((key, value) {
+          if (value is String && value.isNotEmpty) {
+            String key_args_msix = "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
+            if (!msix_args.contains(key_args_msix)) {
+              return;
+            }
+            if (key_args_msix == "--version") {
+              List<String> versions = value.toString().split(".");
+              if (versions.length != 4) {
+                value = "0.0.0.0";
+              } 
+            }
+            args_msix.add(key_args_msix);
+            args_msix.add(value);
+          }
+        });
+
         await packagex_shell.shell(
           executable: "flutter",
           arguments: [
             "pub",
             "run",
             "msix:create",
+            "--windows-build-args",
+            "--target=${script_app.path}",
+            "-o",
+            directory_build_packagex.path,
+            "-n",
+            "${pubspec.packagex.flutter_name ?? pubspec.name}-app-windows",
+            ...args_msix,
           ],
           workingDirectory: directory_current.path,
           runInShell: true,
         );
 
-        await packagex_shell.shell(
-          executable: "copy",
-          arguments: [
-            p.join(directory_current.path, "build", "windows", "runner", "Release", "${pubspec.name}.msix"),
-            p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-app-windows.msix"),
-          ],
-          workingDirectory: directory_current.path,
-          runInShell: true,
-        );
+        // await packagex_shell.shell(
+        //   executable: "copy",
+        //   arguments: [
+        //     p.join(directory_current.path, "build", "windows", "runner", "Release", "${pubspec.name}.msix"),
+        //     p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-app-windows.msix"),
+        //   ],
+        //   workingDirectory: directory_current.path,
+        //   runInShell: true,
+        // );
       }
     } else if (packagexPlatform == PackagexPlatform.macos) {
       if (!Platform.isMacOS) {
