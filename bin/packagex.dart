@@ -12,8 +12,7 @@ import "package:packagex/scheme/scheme.dart" as packagex_scheme;
 
 void main(List<String> arguments) async {
   Args args = Args(arguments);
-  PackageBuild packageBuild = PackageBuild();
-  PackageX packageX = PackageX();
+  Packagex packagex = Packagex();
   if (arguments.isEmpty) {
     print(menu_help);
     exit(0);
@@ -40,7 +39,7 @@ void main(List<String> arguments) async {
   }
   if (command == "clean") {
     print("Start Clean");
-    await packageBuild.clean();
+    await packagex.clean();
     print("Complete Clean");
     return;
   }
@@ -48,7 +47,7 @@ void main(List<String> arguments) async {
     try {
       String name = args.arguments[1];
       String path_project = p.join(Directory.current.path, name);
-      await packageBuild.create(
+      await packagex.create(
         name: p.basename(path_project),
         // isForce: args.arguments.contains("--force"),
       );
@@ -110,7 +109,7 @@ void main(List<String> arguments) async {
         if (packagexPlatform == PackagexPlatform.current) {
           continue;
         }
-        await packageBuild.build(
+        await packagex.build(
           path_current: path_project,
           path_output: out,
           packagexPlatform: packagexPlatform,
@@ -118,7 +117,7 @@ void main(List<String> arguments) async {
         );
       }
     } else {
-      await packageBuild.build(
+      await packagex.build(
         path_current: path_project,
         path_output: out,
         packagexPlatform: packagex_platform,
@@ -131,7 +130,7 @@ void main(List<String> arguments) async {
     String package_name = args.arguments[1];
 
     if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false).hashData(package_name)) {
-      await packageX.installPackageFromUrl(
+      await packagex.installPackageFromUrl(
         url: package_name,
         onData: (data) {},
         onDone: () {},
@@ -139,7 +138,7 @@ void main(List<String> arguments) async {
     } else {
       File file = File(package_name);
       if (file.existsSync()) {
-        await packageX.installPackageFromFile(
+        await packagex.installPackageFromFile(
           file: file,
           onData: (data) {},
           onDone: () {},
@@ -147,7 +146,7 @@ void main(List<String> arguments) async {
       } else {
         // Platform.pathSeparator;
 
-        await packageX.installPackage(
+        await packagex.installPackage(
           name_package: package_name,
         );
       }

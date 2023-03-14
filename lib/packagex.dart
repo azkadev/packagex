@@ -37,18 +37,19 @@ extension ListExtensions on List<PackagexPlatform> {
   }
 }
 
-class PackageBuild {
-  PackageBuild();
+class Packagex {
+  Packagex();
 
-  Future<packagex_api.JsonDart> request({
+  Future<Map> request({
     required Map jsonData,
   }) async {
     packagex_api.JsonDart jsonDart = packagex_api.JsonDart(jsonData);
 
     if (RegExp(r"^(createPackage)$", caseSensitive: false).hashData(jsonDart["@type"])) {}
     if (RegExp(r"^(buildPackage)$", caseSensitive: false).hashData(jsonDart["@type"])) {
-      packagex_api.BuildPackage buildPackage = (jsonDart as packagex_api.BuildPackage); 
-      await build(
+      packagex_api.BuildPackage buildPackage = packagex_api.BuildPackage(jsonData);
+
+      return await build(
         packagexPlatform: (PackagexPlatform.values.getByString(buildPackage.platform ?? "current") as PackagexPlatform),
         path_current: buildPackage.path_current,
         packagexConfig: packagex_scheme.Packagex(
@@ -57,10 +58,14 @@ class PackageBuild {
       );
     }
 
-    return packagex_api.JsonDart({"@type": "error", "message": "method_not_found", "description": "Method not found"});
+    return {
+      "@type": "error",
+      "message": "method_not_found",
+      "description": "Method not found",
+    };
   }
 
-  Future<void> clean({
+  Future<Map> clean({
     String? path_current,
   }) async {
     path_current ??= Directory.current.path;
@@ -86,7 +91,9 @@ class PackageBuild {
     }
 
     remove(Directory.current);
-    return;
+    return {
+      "@type": "ok",
+    };
   }
 
   Future<void> create({
@@ -306,11 +313,13 @@ usr/local/share/${pubspec.name}
     return;
   }
 
-  Future<void> build({
+  Future<Map> build({
     PackagexPlatform? packagexPlatform,
     required String? path_current,
     String? path_output,
     packagex_scheme.Packagex? packagexConfig,
+    bool cancelOnError = false,
+
   }) async {
     path_current ??= Directory.current.path;
     packagexConfig ??= packagex_scheme.Packagex({});
@@ -334,7 +343,6 @@ usr/local/share/${pubspec.name}
     Map getClone(Map data) {
       return data.map((k, v) => MapEntry(k, v is Map ? getClone(v) : v));
     }
-
     packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(getClone(yaml_code));
     if (pubspec["name"] == null) {
       pubspec["name"] = basename;
@@ -365,7 +373,9 @@ usr/local/share/${pubspec.name}
 
     if (packagexPlatform == PackagexPlatform.linux) {
       if (!Platform.isLinux) {
-        return;
+        return {
+
+        };
       }
 
       String path_linux_package = p.join(
@@ -508,7 +518,7 @@ usr/local/share/${pubspec.name}
       }
     } else if (packagexPlatform == PackagexPlatform.windows) {
       if (!Platform.isWindows) {
-        return;
+        return {};
       }
       // output ??= p.join(directory_build_packagex.path, );
       if (!pubspec.dev_dependencies.rawData.containsKey("msix")) {
@@ -623,7 +633,7 @@ usr/local/share/${pubspec.name}
       }
     } else if (packagexPlatform == PackagexPlatform.macos) {
       if (!Platform.isMacOS) {
-        return;
+        return {};
       }
       if (is_cli) {
         await packagex_shell.shell(
@@ -696,7 +706,9 @@ usr/local/share/${pubspec.name}
       }
     } else if (packagexPlatform == PackagexPlatform.ios) {
       if (!Platform.isMacOS) {
-        return;
+        return {
+
+        };
       }
 
       if (is_app) {
@@ -798,14 +810,10 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
         }
       }
     }
-    return;
+    return {
+      "@type": ""
+    };
   }
-}
-
-class PackageX {
-  PackageX();
-
-  build() {}
 
   Future<void> installPackageFromUrl({
     required String url,
