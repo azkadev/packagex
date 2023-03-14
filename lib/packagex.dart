@@ -371,11 +371,9 @@ usr/local/share/${pubspec.name}
 
     pubspec.packagex.flutter_commands.rawData.forEach((key, value) {
       String key_args_flutter = "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
-
       if (key_args_flutter == "--obfuscate") {
         flutter_commands.add(key_args_flutter);
       }
-
       if (key_args_flutter == "--split-debug-info") {
         flutter_commands.add("${key_args_flutter}=${value}");
       }
@@ -733,8 +731,14 @@ usr/local/share/${pubspec.name}
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
-          arguments: ["build", "ios", "--release", "--no-codesign", "--target=${script_app.path}", 
-            ...flutter_commands,],
+          arguments: [
+            "build",
+            "ios",
+            "--release",
+            "--no-codesign",
+            "--target=${script_app.path}",
+            ...flutter_commands,
+          ],
           workingDirectory: directory_current.path,
           onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
             stdout.add(data);
