@@ -176,23 +176,11 @@ exit 0
 """);
       } catch (e) {}
       try {
-        await File(p.join(directory.path, "usr", "share", pubspec.name!, ".gitignore")).writeAsString("""
-*
-""");
-      } catch (e) {}
-      try {
-        await File(p.join(directory.path, "usr", "local", "share", pubspec.name!, ".gitignore")).writeAsString("""
-*
-""");
-      } catch (e) {}
-      try {
-        await File(p.join(directory.path, "usr", "bin", ".gitignore")).writeAsString("""
-*
-""");
-      } catch (e) {}
-      try {
-        await File(p.join(directory.path, "usr", "local", "bin", ".gitignore")).writeAsString("""
-*
+        await File(p.join(directory.path, ".gitignore")).writeAsString("""
+usr/bin/${pubspec.name}
+usr/share/${pubspec.name}
+usr/local/bin/${pubspec.name}
+usr/local/share/${pubspec.name}
 """);
       } catch (e) {}
       try {
@@ -386,12 +374,7 @@ exit 0
             await file_cli.delete();
           } catch (e) {}
         }
-
-        try {
-          if (Directory(path_app_deb).existsSync()) {
-            await Directory(path_app_deb).delete(recursive: true);
-          }
-        } catch (e) {}
+ 
       }
 
       if (is_app) {
