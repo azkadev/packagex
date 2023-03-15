@@ -752,7 +752,7 @@ mkdir Payload
 cd Payload
 ln -s ../Runner.app
 cd ..
-zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payload
+zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-ios.ipa")} Payload
 """
           ],
           workingDirectory: directory_current.path,
@@ -796,7 +796,7 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
           // zip
           await packagex_shell.shell(
             executable: "tar",
-            arguments: ["-cf", p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"), "*"],
+            arguments: ["-cf", p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-web.zip"), "*"],
             workingDirectory: p.join(directory_current.path, "build", "web"),
             runInShell: true,
             onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
@@ -813,7 +813,7 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.name}-ios.ipa")} Payl
             executable: "zip",
             arguments: [
               "-r",
-              p.join(directory_build_packagex.path, "${pubspec.name}-web.zip"),
+              p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}-web.zip"),
               ".",
             ],
             workingDirectory: p.join(directory_current.path, "build", "web", "."),
