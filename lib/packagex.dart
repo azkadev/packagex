@@ -526,10 +526,7 @@ usr/local/share/${pubspec.name}
         try {
           if (file_cli.existsSync()) {
             await file_cli.delete(recursive: true);
-          }
-          if (file_app.existsSync()) {
-            await file_app.delete(recursive: true);
-          }
+          } 
         } catch (e) {}
       }
     } else if (packagexPlatform == PackagexPlatform.windows) {
