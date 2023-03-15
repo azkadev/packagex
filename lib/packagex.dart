@@ -708,7 +708,7 @@ usr/local/share/${pubspec.name}
               if (p.extension(dir.path) != ".apk") {
                 continue;
               }
-              await dir.absolute.copy(p.join(directory_build_packagex.path, p.basename(dir.path).replaceAll(r"^app", "${pubspec.packagex.flutter_name ?? pubspec.name}")));
+              await dir.absolute.copy(p.join(directory_build_packagex.path, p.basename(dir.path).replaceAll(RegExp("^(app)", caseSensitive: false), "${pubspec.packagex.flutter_name ?? pubspec.name}")));
             }
           } catch (e) {}
         }
