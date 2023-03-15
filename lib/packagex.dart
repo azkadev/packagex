@@ -526,7 +526,7 @@ usr/local/share/${pubspec.name}
         try {
           if (file_cli.existsSync()) {
             await file_cli.delete(recursive: true);
-          } 
+          }
         } catch (e) {}
       }
     } else if (packagexPlatform == PackagexPlatform.windows) {
@@ -708,21 +708,18 @@ usr/local/share/${pubspec.name}
               if (p.extension(dir.path) != ".apk") {
                 continue;
               }
-              await dir.absolute.copy(
-                p.join(
-                  directory_build_packagex.path,
-                  p.basename(
-                    dir.path,
-                  ),
-                ),
-              );
+              await dir.absolute.copy(p.join(directory_build_packagex.path, p.basename(dir.path).replaceAll(r"^app", "${pubspec.packagex.flutter_name ?? pubspec.name}")));
             }
           } catch (e) {}
         }
       }
     } else if (packagexPlatform == PackagexPlatform.ios) {
       if (!Platform.isMacOS) {
-        return {"@type": "error", "message": "platform_not_supported", "description": "Package ios hanya bisa di perangkat macos saja !"};
+        return {
+          "@type": "error",
+          "message": "platform_not_supported",
+          "description": "Package ios hanya bisa di perangkat macos saja !",
+        };
       }
 
       if (is_app) {
