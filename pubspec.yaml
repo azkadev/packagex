@@ -1,0 +1,46 @@
+name: packagex
+description: A library for package dart or flutter to specific platform.
+version: 0.0.31
+homepage: https://youtube.com/@azkadev
+repository: https://github.com/azkadev/packagex.git
+
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.24.2
+
+executables:
+  packagex: packagex
+  
+dependencies:
+  archive: ^3.4.9
+  general_lib: ^0.0.1
+  path: ^1.8.3
+  universal_io: ^2.2.2
+  yaml: ^3.1.2
+
+packagex:
+  name: packagex
+  dart_target: packagex
+  flutter_target: main
+  dart_name: packagex
+  flutter_name: packagex
+  flutter_commands:
+    obfuscate: true
+    split-debug-info: 0.0.5
+  
+msix_config: 
+  display_name: packagex
+  install_certificate: false
+  
