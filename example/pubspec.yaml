@@ -88,13 +88,9 @@ packagex:
     obfuscate: true
     split-debug-info: 0.0.5
   project_id: "azkadev.packagex"
-  publish:
-    
-    stable:
-    beta: 
+  github_username: azkadev
+  github_is_org: false
   
-  
-
 msix_config: 
   display_name: example
   install_certificate: false

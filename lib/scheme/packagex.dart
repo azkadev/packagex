@@ -11,7 +11,7 @@ class Packagex extends JsonScheme {
   Packagex(super.rawData);
    
   static Map get defaultData {
-    return {"@type":"packagex","name":"Pack","dart_target":"","flutter_target":"","dart_name":"","flutter_name":"","is_without_platform_name":true,"flutter_commands":{"@type":"flutter_commands","obfuscate":true,"split_debug_info":"0.0.5"}};
+    return {"@type":"packagex","name":"Pack","dart_target":"","flutter_target":"","dart_name":"","flutter_name":"","is_without_platform_name":true,"flutter_commands":{"@type":"flutter_commands","obfuscate":true,"split_debug_info":"0.0.5"},"project_id":"","github_username":"","github_is_org":true};
   }
 
   
@@ -119,6 +119,45 @@ class Packagex extends JsonScheme {
 
 
   
+  String? get project_id {
+    try {
+      if (rawData["project_id"] is String == false){
+        return null;
+      }
+      return rawData["project_id"] as String;
+    } catch (e) {
+      return null;
+    }
+  }
+
+
+  
+  String? get github_username {
+    try {
+      if (rawData["github_username"] is String == false){
+        return null;
+      }
+      return rawData["github_username"] as String;
+    } catch (e) {
+      return null;
+    }
+  }
+
+
+  
+  bool? get github_is_org {
+    try {
+      if (rawData["github_is_org"] is bool == false){
+        return null;
+      }
+      return rawData["github_is_org"] as bool;
+    } catch (e) {
+      return null;
+    }
+  }
+
+
+  
   static Packagex create({
 
     String special_type = "packagex",
@@ -129,6 +168,9 @@ class Packagex extends JsonScheme {
     String? flutter_name,
     bool? is_without_platform_name,
       FlutterCommands? flutter_commands,
+    String? project_id,
+    String? github_username,
+    bool? github_is_org,
 })  {
     // Packagex packagex = Packagex({
 Map packagex_data_create_json = {
@@ -141,6 +183,9 @@ Map packagex_data_create_json = {
       "flutter_name": flutter_name,
       "is_without_platform_name": is_without_platform_name,
       "flutter_commands": (flutter_commands != null)?flutter_commands.toJson(): null,
+      "project_id": project_id,
+      "github_username": github_username,
+      "github_is_org": github_is_org,
 
 
 };

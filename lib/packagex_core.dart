@@ -2,9 +2,13 @@
 
 library packagex;
 
+import "dart:async";
 import 'dart:convert';
+import "dart:io";
 import "package:general_lib/scheme/json_dart.dart";
+import "package:github/github.dart";
 import "package:http/http.dart";
+import "package:mime/mime.dart";
 import "package:universal_io/io.dart";
 
 import 'package:general_lib/general_lib.dart';
@@ -14,6 +18,8 @@ import "scheme/scheme.dart" as packagex_scheme;
 import "package:yaml/yaml.dart" as yaml;
 import "shell/shell.dart" as packagex_shell;
 import "api/api.dart" as packagex_api;
+
+import "package:collection/collection.dart";
 
 enum PackagexPlatform {
   current,
@@ -584,33 +590,33 @@ usr/local/share/${pubspec.name}
       }
 
       if (is_app || is_cli) {
-          try {
-            await packagex_shell.shell(
-              executable: "chmod",
-              arguments: ["-R","775", path_linux_package],
-              runInShell: true,
-              workingDirectory: directory_current.path,
-              onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stdout.add(data);
-              },
-              onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stderr.add(data);
-              },
-            );
-          } catch (e) {}
-          try {
-            await packagex_shell.shell(
-              executable: "chmod", 
-              arguments: ["-R","775", path_linux_package],
-              workingDirectory: directory_current.path,
-              onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stdout.add(data);
-              },
-              onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stderr.add(data);
-              },
-            );
-          } catch (e) {}
+        try {
+          await packagex_shell.shell(
+            executable: "chmod",
+            arguments: ["-R", "775", path_linux_package],
+            runInShell: true,
+            workingDirectory: directory_current.path,
+            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stdout.add(data);
+            },
+            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stderr.add(data);
+            },
+          );
+        } catch (e) {}
+        try {
+          await packagex_shell.shell(
+            executable: "chmod",
+            arguments: ["-R", "775", path_linux_package],
+            workingDirectory: directory_current.path,
+            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stdout.add(data);
+            },
+            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+              stderr.add(data);
+            },
+          );
+        } catch (e) {}
         await packagex_shell.shell(
           executable: "dpkg-deb",
           arguments: [
@@ -970,11 +976,10 @@ usr/local/share/${pubspec.name}
         }
 
         if (is_app || is_cli) {
-
           try {
             await packagex_shell.shell(
               executable: "chmod",
-              arguments: ["-R","775", path_android_package],
+              arguments: ["-R", "775", path_android_package],
               runInShell: true,
               workingDirectory: directory_current.path,
               onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
@@ -987,8 +992,8 @@ usr/local/share/${pubspec.name}
           } catch (e) {}
           try {
             await packagex_shell.shell(
-              executable: "chmod", 
-              arguments: ["-R","775", path_android_package],
+              executable: "chmod",
+              arguments: ["-R", "775", path_android_package],
               workingDirectory: directory_current.path,
               onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
                 stdout.add(data);
@@ -1181,12 +1186,125 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
     String result_url_package = "";
   }
 
-  Future<void> publishPackage({
-    required String username,
+  Future<void> publish({
+    required String tokenGithub,
+    String? path_current,
+    String publishType = "stable",
+    required FutureOr<dynamic> Function(String update) onUpdate,
   }) async {
-    String result_url_package = "";
+    path_current ??= Directory.current.path;
+    Directory directory_current = Directory(path_current);
+    Directory directory_build = Directory(p.join(directory_current.path, "build"));
+    Directory directory_packagex = Directory(p.join(directory_build.path, "packagex"));
 
-    
+    String basename = p.basename(path_current);
+
+    File file_pubspec = File(p.join(directory_current.path, "pubspec.yaml"));
+    Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
+
+    packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(yaml_code.clone());
+    if (pubspec["name"] == null) {
+      pubspec["name"] = basename;
+    }
+    if (pubspec["packagex"] is Map == false) {
+      pubspec["packagex"] = {};
+    }
+    String project_id = pubspec.packagex.project_id ?? "";
+    String github_username = pubspec.packagex.github_username ?? "";
+    GitHub gitHub = GitHub(auth: Authentication.withToken(tokenGithub));
+    onUpdate("Check User");
+    User user = await gitHub.users.getCurrentUser();
+    onUpdate("Use Github: ${user.login}");
+    RepositorySlug repositorySlug = RepositorySlug(github_username, project_id);
+
+    List<FileSystemEntity> files = await Future(() async {
+      return directory_packagex.listSync().where((e) => [".deb", ".apk", ".msix"].contains(p.extension(e.path))).where((element) {
+        if (RegExp(pubspec.name ?? "", caseSensitive: false).hashData(element.path)) {
+          return true;
+        }
+        return false;
+      }).toList();
+    });
+    onUpdate("Upload List: ${files.length}");
+    onUpdate("Fetch Repo: ${repositorySlug.fullName}");
+    Repository repository = await Future(() async {
+      try {
+        return await gitHub.repositories.getRepository(
+          repositorySlug,
+        );
+      } catch (e) {
+        if (e is GitHubError) {
+          if (RegExp(r"Repository not found", caseSensitive: false).hashData(e.message)) {
+            onUpdate("Create Repo: ${repositorySlug.fullName}");
+            return await gitHub.repositories.createRepository(
+              CreateRepository(
+                project_id,
+                hasIssues: false,
+                autoInit: true,
+                gitignoreTemplate: "Dart",
+                licenseTemplate: "MIT",
+              ),
+              org: (pubspec.packagex.github_is_org == true) ? github_username : null,
+            );
+          }
+        }
+        rethrow;
+      }
+    });
+
+    onUpdate("Fetch Release: ${repositorySlug.fullName} ${publishType}");
+
+    Release release_repo = await Future(() async {
+      try {
+        return await gitHub.repositories.getReleaseByTagName(
+          repositorySlug,
+          publishType,
+        );
+      } catch (e) {
+        if (e is GitHubError) {
+          if (RegExp(r"Release for tagName .* not found", caseSensitive: false).hasMatch(e.message ?? "")) {
+            onUpdate("Create Release: ${repositorySlug.fullName} ${publishType}");
+            return await gitHub.repositories.createRelease(repositorySlug, CreateRelease(publishType), getIfExists: true);
+          }
+        }
+
+        rethrow;
+      }
+    });
+
+    onUpdate("Fetch Assets");
+    List<ReleaseAsset> releaseAssets = await gitHub.repositories.listReleaseAssets(repositorySlug, release_repo).toList();
+    onUpdate("Succes Fetch Assets: ${releaseAssets.length}");
+    for (var i = 0; i < files.length; i++) {
+      FileSystemEntity fileSystemEntity = files[i];
+      if (fileSystemEntity is File) {
+        ReleaseAsset? releaseAsset = releaseAssets.firstWhereOrNull((element) => element.name == p.basename(fileSystemEntity.path));
+        if (releaseAsset != null) {
+          onUpdate("Delete Asset: ${releaseAsset.name}");
+          await gitHub.repositories.deleteReleaseAsset(repositorySlug, releaseAsset);
+        }
+        onUpdate("Upload Asset: ${p.basename(fileSystemEntity.path)}");
+        await gitHub.repositories.uploadReleaseAssets(
+          Release(
+            name: basename,
+            htmlUrl: release_repo.htmlUrl,
+            tarballUrl: release_repo.tarballUrl,
+            uploadUrl: release_repo.uploadUrl,
+            url: release_repo.url,
+          ),
+          {
+            CreateReleaseAsset(
+              name: p.basename(fileSystemEntity.path),
+              contentType: lookupMimeType(fileSystemEntity.path) ?? "",
+              assetData: fileSystemEntity.readAsBytesSync(),
+            ),
+          },
+        );
+
+        onUpdate("Succes Upload Asset: ${p.basename(fileSystemEntity.path)}");
+      }
+    }
+    onUpdate("Finished");
   }
 
   Future<void> installPackageFromFile({

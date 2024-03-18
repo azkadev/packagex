@@ -54,7 +54,10 @@ Future<void> main() async {
           "@type": "flutter_commands",
           "obfuscate": true,
           "split_debug_info": "0.0.5",
-        }
+        },
+        "project_id": "",
+        "github_username": "",
+        "github_is_org": true,
       },
       "msix_config": {
         "@type": "msix_config",

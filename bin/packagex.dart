@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:mason_logger/mason_logger.dart';
 import 'package:packagex/packagex.dart';
 
 import 'package:general_lib/general_lib.dart';
@@ -14,12 +15,56 @@ import "package:path/path.dart" as path;
 
 import "package:packagex/shell/shell.dart" as packagex_shell;
 
-void main(List<String> arguments) async {
-  Args args = Args(arguments);
+Logger logger = Logger();
+
+class PackagexEnvironment {
+  PackagexEnvironment();
+
+  static bool get is_not_interactive {
+    return ((Platform.environment["packagex_is_no_interactive"] ?? "").trim() == "true");
+  }
+
+  static String get github_token {
+    return (Platform.environment["packagex_github_token"] ?? "").trim();
+  }
+}
+
+void main(List<String> arguments_origins) async {
+  Args args = Args(arguments_origins);
   Packagex packagex = Packagex();
-  if (arguments.isEmpty) {
-    print(menu_help);
-    exit(0);
+
+  List<String> commands = [
+    "create",
+    "build",
+    "bundle",
+    "install",
+    "version",
+    "uninstall",
+    "publish",
+    "read",
+    "clean",
+    "pub",
+  ];
+
+  commands.sort();
+  if (args.arguments.isEmpty) {
+    while (true) {
+      if (PackagexEnvironment.is_not_interactive) {
+        print(menu_help);
+        exit(0);
+      }
+      await Future.delayed(Duration(microseconds: 1));
+
+      String choose_data = logger.chooseOne<String>(
+        "Select",
+        choices: commands,
+        defaultValue: commands.firstOrNull,
+      );
+      if (commands.contains(choose_data)) {
+        args.arguments.add(choose_data);
+        break;
+      }
+    }
   }
 
   bool args_is_to_json = args.contains([
@@ -49,19 +94,6 @@ void main(List<String> arguments) async {
     }
     command = args[0] ?? "help";
   }
-
-  List<String> commands = [
-    "create",
-    "build",
-    "bundle",
-    "install",
-    "version",
-    "uninstall",
-    "publish",
-    "read",
-    "clean",
-    "pub",
-  ];
   if (!commands.contains(command)) {
     print(menu_help);
     exit(0);
@@ -77,17 +109,31 @@ void main(List<String> arguments) async {
     return;
   }
   if (command == "create") {
-    try {
-      String name = args.arguments[1];
-      String path_project = p.join(Directory.current.path, name);
+    String? name = await Future(() async {
+      try {
+        return args.arguments[1];
+      } catch (e) {
+        while (true) {
+          if (PackagexEnvironment.is_not_interactive) {
+            print(menu_help);
+            exit(0);
+          }
+          await Future.delayed(Duration(microseconds: 1));
 
-      await packagex.create(
-        name: p.basename(path_project),
-        // isForce: args.arguments.contains("--force"),
-      );
-    } catch (e) {
-      print(e);
-    }
+          String result = logger.prompt("Name Project:").trim();
+
+          if (result.isNotEmpty) {
+            return result;
+          }
+        }
+      }
+    });
+    String path_project = p.join(Directory.current.path, name);
+
+    await packagex.create(
+      name: p.basename(path_project),
+      // isForce: args.arguments.contains("--force"),
+    );
   }
   if (command == "read") {
     Directory directory_current = Directory.current;
@@ -187,6 +233,36 @@ void main(List<String> arguments) async {
     }
   }
 
+  if (command == "publish") {
+    String tokenGithub = await Future(() async {
+      String parse_token_github = PackagexEnvironment.github_token;
+      if (RegExp(r"^(ghp_)", caseSensitive: false).hasMatch(parse_token_github)) {
+        return parse_token_github;
+      }
+      while (true) {
+        if (PackagexEnvironment.is_not_interactive) {
+          print(menu_help);
+          exit(0);
+        }
+        await Future.delayed(Duration(microseconds: 1));
+
+        String result = logger.prompt("token Github (ghp_):").trim();
+
+        if (RegExp(r"^(ghp_)", caseSensitive: false).hasMatch(result)) {
+          return result;
+        }
+      }
+    });
+    Progress progress = logger.progress("Start Publish");
+    await packagex.publish(
+      tokenGithub: tokenGithub,
+      onUpdate: (update) {
+        progress.update(update);
+      },
+    );
+    progress.complete("Finished Publish");
+  }
+
   if (command == "pub") {
     if (args.after(command) == "activate") {
       String path_package_install_pub = args.after("activate") ?? Directory.current.path;
@@ -268,6 +344,8 @@ void main(List<String> arguments) async {
       exit(0);
     }
   }
+
+  exit(0);
 }
 
 String menu_help = """
