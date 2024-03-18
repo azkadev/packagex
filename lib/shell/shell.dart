@@ -1,4 +1,6 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, unused_local_variable
+
+import 'dart:async';
 
 import 'package:universal_io/io.dart';
 
@@ -41,37 +43,38 @@ Future<void> shell({
     runInShell: runInShell,
     mode: mode,
   );
+  Completer completer = Completer();
 
   var stdout_shell = shell.stdout.listen(
     (List<int> data) {
-      onStdout(data, executable, arguments, workingDirectory, environment,
-          includeParentEnvironment, runInShell, mode);
+      onStdout(data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode);
     },
     onDone: () {
-      is_complete = true;
+      completer.complete();
+      // is_complete = true;
     },
     cancelOnError: true,
   );
   var stderr_shell = shell.stderr.listen(
     (List<int> data) {
-      onStderr(data, executable, arguments, workingDirectory, environment,
-          includeParentEnvironment, runInShell, mode);
+      onStderr(data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode);
     },
     onDone: () {
-      is_complete = true;
+      // is_complete = true;
+      completer.complete();
     },
     cancelOnError: true,
   );
 
-  while (true) {
-    await Future.delayed(Duration(milliseconds: 1));
+  // while (true) {
+  // await Future.delayed(Duration(milliseconds: 1));
+  await completer.future;
+  // if (is_complete) {
+    await stdout_shell.cancel();
 
-    if (is_complete) {
-      await stdout_shell.cancel();
-
-      await stderr_shell.cancel();
-      shell.kill(ProcessSignal.sigkill);
-      return;
-    }
-  }
+    await stderr_shell.cancel();
+    shell.kill(ProcessSignal.sigkill);
+    return;
+  // }
+  // }
 }

@@ -1,32 +1,23 @@
-// ignore_for_file: non_constant_identifier_names
-import "json_dart.dart";
+// ignore_for_file: non_constant_identifier_names, unused_import
+import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
 import "flutter_commands.dart";
 
-class Packagex extends JsonDart {
-  Packagex(super.rawData);
+ 
+class Packagex extends JsonScheme {
 
+  
+  Packagex(super.rawData);
+   
   static Map get defaultData {
-    return {
-      "@type": "packagex",
-      "name": "Pack",
-      "dart_target": "",
-      "flutter_target": "",
-      "dart_name": "",
-      "flutter_name": "",
-      "is_without_platform_name": true,
-      "flutter_commands": {
-        "@type": "flutter_commands",
-        "obfuscate": true,
-        "split_debug_info": "0.0.5"
-      }
-    };
+    return {"@type":"packagex","name":"Pack","dart_target":"","flutter_target":"","dart_name":"","flutter_name":"","is_without_platform_name":true,"flutter_commands":{"@type":"flutter_commands","obfuscate":true,"split_debug_info":"0.0.5"}};
   }
 
+  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false) {
+      if (rawData["@type"] is String == false){
         return null;
       }
       return rawData["@type"] as String;
@@ -35,9 +26,11 @@ class Packagex extends JsonDart {
     }
   }
 
+
+  
   String? get name {
     try {
-      if (rawData["name"] is String == false) {
+      if (rawData["name"] is String == false){
         return null;
       }
       return rawData["name"] as String;
@@ -46,9 +39,11 @@ class Packagex extends JsonDart {
     }
   }
 
+
+  
   String? get dart_target {
     try {
-      if (rawData["dart_target"] is String == false) {
+      if (rawData["dart_target"] is String == false){
         return null;
       }
       return rawData["dart_target"] as String;
@@ -57,9 +52,11 @@ class Packagex extends JsonDart {
     }
   }
 
+
+  
   String? get flutter_target {
     try {
-      if (rawData["flutter_target"] is String == false) {
+      if (rawData["flutter_target"] is String == false){
         return null;
       }
       return rawData["flutter_target"] as String;
@@ -68,9 +65,11 @@ class Packagex extends JsonDart {
     }
   }
 
+
+  
   String? get dart_name {
     try {
-      if (rawData["dart_name"] is String == false) {
+      if (rawData["dart_name"] is String == false){
         return null;
       }
       return rawData["dart_name"] as String;
@@ -79,9 +78,11 @@ class Packagex extends JsonDart {
     }
   }
 
+
+  
   String? get flutter_name {
     try {
-      if (rawData["flutter_name"] is String == false) {
+      if (rawData["flutter_name"] is String == false){
         return null;
       }
       return rawData["flutter_name"] as String;
@@ -90,9 +91,11 @@ class Packagex extends JsonDart {
     }
   }
 
+
+  
   bool? get is_without_platform_name {
     try {
-      if (rawData["is_without_platform_name"] is bool == false) {
+      if (rawData["is_without_platform_name"] is bool == false){
         return null;
       }
       return rawData["is_without_platform_name"] as bool;
@@ -101,28 +104,35 @@ class Packagex extends JsonDart {
     }
   }
 
+
+  
   FlutterCommands get flutter_commands {
     try {
-      if (rawData["flutter_commands"] is Map == false) {
-        return FlutterCommands({});
+      if (rawData["flutter_commands"] is Map == false){
+        return FlutterCommands({}); 
       }
       return FlutterCommands(rawData["flutter_commands"] as Map);
-    } catch (e) {
-      return FlutterCommands({});
+    } catch (e) {  
+      return FlutterCommands({}); 
     }
   }
 
+
+  
   static Packagex create({
-    String? special_type,
+
+    String special_type = "packagex",
     String? name,
     String? dart_target,
     String? flutter_target,
     String? dart_name,
     String? flutter_name,
     bool? is_without_platform_name,
-    FlutterCommands? flutter_commands,
-  }) {
-    Packagex packagex = Packagex({
+      FlutterCommands? flutter_commands,
+})  {
+    // Packagex packagex = Packagex({
+Map packagex_data_create_json = {
+  
       "@type": special_type,
       "name": name,
       "dart_target": dart_target,
@@ -130,10 +140,18 @@ class Packagex extends JsonDart {
       "dart_name": dart_name,
       "flutter_name": flutter_name,
       "is_without_platform_name": is_without_platform_name,
-      "flutter_commands":
-          (flutter_commands != null) ? flutter_commands.toJson() : null,
-    });
+      "flutter_commands": (flutter_commands != null)?flutter_commands.toJson(): null,
 
-    return packagex;
-  }
+
+};
+
+
+          packagex_data_create_json.removeWhere((key, value) => value == null);
+Packagex packagex_data_create = Packagex(packagex_data_create_json);
+
+return packagex_data_create;
+
+
+
+      }
 }

@@ -3,7 +3,7 @@ Package: example
 Version: 1.0.0+1
 Section: x11
 Priority: optional
-Architecture: amd64
+Architecture: all
 Essential: no
 Installed-Size: 0
 Description: "A new Flutter project."

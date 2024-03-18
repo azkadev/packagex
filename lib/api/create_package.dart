@@ -1,17 +1,22 @@
-// ignore_for_file: non_constant_identifier_names
-import "json_dart.dart";
+// ignore_for_file: non_constant_identifier_names, unused_import
+import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-class CreatePackage extends JsonDart {
-  CreatePackage(super.rawData);
 
+ 
+class CreatePackage extends JsonScheme {
+
+  
+  CreatePackage(super.rawData);
+   
   static Map get defaultData {
-    return {"@type": "createPackage", "path": ""};
+    return {"@type":"createPackage","path":""};
   }
 
+  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false) {
+      if (rawData["@type"] is String == false){
         return null;
       }
       return rawData["@type"] as String;
@@ -20,9 +25,11 @@ class CreatePackage extends JsonDart {
     }
   }
 
+
+  
   String? get path {
     try {
-      if (rawData["path"] is String == false) {
+      if (rawData["path"] is String == false){
         return null;
       }
       return rawData["path"] as String;
@@ -31,15 +38,29 @@ class CreatePackage extends JsonDart {
     }
   }
 
+
+  
   static CreatePackage create({
-    String? special_type,
+
+    String special_type = "createPackage",
     String? path,
-  }) {
-    CreatePackage createPackage = CreatePackage({
+})  {
+    // CreatePackage createPackage = CreatePackage({
+Map createPackage_data_create_json = {
+  
       "@type": special_type,
       "path": path,
-    });
 
-    return createPackage;
-  }
+
+};
+
+
+          createPackage_data_create_json.removeWhere((key, value) => value == null);
+CreatePackage createPackage_data_create = CreatePackage(createPackage_data_create_json);
+
+return createPackage_data_create;
+
+
+
+      }
 }
