@@ -2,21 +2,24 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-
- 
 class Platforms extends JsonScheme {
-
-  
   Platforms(super.rawData);
-   
+
   static Map get defaultData {
-    return {"@type":"platforms","android":null,"ios":null,"linux":null,"macos":null,"web":null,"windows":null};
+    return {
+      "@type": "platforms",
+      "android": null,
+      "ios": null,
+      "linux": null,
+      "macos": null,
+      "web": null,
+      "windows": null
+    };
   }
 
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -25,11 +28,9 @@ class Platforms extends JsonScheme {
     }
   }
 
-
-  
   Object? get android {
     try {
-      if (rawData["android"] is Object == false){
+      if (rawData["android"] is Object == false) {
         return null;
       }
       return rawData["android"] as Object;
@@ -38,11 +39,9 @@ class Platforms extends JsonScheme {
     }
   }
 
-
-  
   Object? get ios {
     try {
-      if (rawData["ios"] is Object == false){
+      if (rawData["ios"] is Object == false) {
         return null;
       }
       return rawData["ios"] as Object;
@@ -51,11 +50,9 @@ class Platforms extends JsonScheme {
     }
   }
 
-
-  
   Object? get linux {
     try {
-      if (rawData["linux"] is Object == false){
+      if (rawData["linux"] is Object == false) {
         return null;
       }
       return rawData["linux"] as Object;
@@ -64,11 +61,9 @@ class Platforms extends JsonScheme {
     }
   }
 
-
-  
   Object? get macos {
     try {
-      if (rawData["macos"] is Object == false){
+      if (rawData["macos"] is Object == false) {
         return null;
       }
       return rawData["macos"] as Object;
@@ -77,11 +72,9 @@ class Platforms extends JsonScheme {
     }
   }
 
-
-  
   Object? get web {
     try {
-      if (rawData["web"] is Object == false){
+      if (rawData["web"] is Object == false) {
         return null;
       }
       return rawData["web"] as Object;
@@ -90,11 +83,9 @@ class Platforms extends JsonScheme {
     }
   }
 
-
-  
   Object? get windows {
     try {
-      if (rawData["windows"] is Object == false){
+      if (rawData["windows"] is Object == false) {
         return null;
       }
       return rawData["windows"] as Object;
@@ -103,10 +94,7 @@ class Platforms extends JsonScheme {
     }
   }
 
-
-  
   static Platforms create({
-
     String special_type = "platforms",
     Object? android,
     Object? ios,
@@ -114,10 +102,9 @@ class Platforms extends JsonScheme {
     Object? macos,
     Object? web,
     Object? windows,
-})  {
+  }) {
     // Platforms platforms = Platforms({
-Map platforms_data_create_json = {
-  
+    Map platforms_data_create_json = {
       "@type": special_type,
       "android": android,
       "ios": ios,
@@ -125,17 +112,11 @@ Map platforms_data_create_json = {
       "macos": macos,
       "web": web,
       "windows": windows,
+    };
 
+    platforms_data_create_json.removeWhere((key, value) => value == null);
+    Platforms platforms_data_create = Platforms(platforms_data_create_json);
 
-};
-
-
-          platforms_data_create_json.removeWhere((key, value) => value == null);
-Platforms platforms_data_create = Platforms(platforms_data_create_json);
-
-return platforms_data_create;
-
-
-
-      }
+    return platforms_data_create;
+  }
 }

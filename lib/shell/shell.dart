@@ -47,7 +47,8 @@ Future<void> shell({
 
   var stdout_shell = shell.stdout.listen(
     (List<int> data) {
-      onStdout(data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode);
+      onStdout(data, executable, arguments, workingDirectory, environment,
+          includeParentEnvironment, runInShell, mode);
     },
     onDone: () {
       completer.complete();
@@ -57,7 +58,8 @@ Future<void> shell({
   );
   var stderr_shell = shell.stderr.listen(
     (List<int> data) {
-      onStderr(data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode);
+      onStderr(data, executable, arguments, workingDirectory, environment,
+          includeParentEnvironment, runInShell, mode);
     },
     onDone: () {
       // is_complete = true;
@@ -70,11 +72,11 @@ Future<void> shell({
   // await Future.delayed(Duration(milliseconds: 1));
   await completer.future;
   // if (is_complete) {
-    await stdout_shell.cancel();
+  await stdout_shell.cancel();
 
-    await stderr_shell.cancel();
-    shell.kill(ProcessSignal.sigkill);
-    return;
+  await stderr_shell.cancel();
+  shell.kill(ProcessSignal.sigkill);
+  return;
   // }
   // }
 }
