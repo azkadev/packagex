@@ -1,21 +1,10 @@
-# Packagex
+IyBQYWNrYWdleAoKRXhwZXJpbWVudGFsIFBhY2thZ2V4IGFsbCBpbiBvbmUg
+Zm9yIGNyb3NzIHBsYXRmb3JtIGV4Y2VwdCB3ZWIsIHBsdWdnYWJsZSBzdXBw
+b3J0IGNsaSAKCiMjIEluc3RhbGxsCgpgYGBiYXNoCmRhcnQgcHViIGFkZCBw
+YWNrYWdleCAtZApgYGAKCiMjIEluaXQKCmBgYGJhc2gKZGFydCBwdWIgcnVu
+IHBhY2thZ2V4IGNyZWF0ZSAuCmBgYAoKIyMgQnVpbGQKCmBgYGJhc2gKZGFy
+dCBwdWIgcnVuIHBhY2thZ2V4IGJ1aWxkCmBgYAo=
 
-Experimental Packagex all in one for cross platform except web, pluggable support cli 
-
-## Installl
-
-```bash
-dart pub add packagex -d
-```
-
-## Init
-
-```bash
-dart pub run packagex create .
-```
-
-## Build
-
-```bash
-dart pub run packagex build
-```
+<!-- START GLOBAL CORPORATION -->
+404: Not Found
+<!-- END GLOBAL CORPORATION -->
