@@ -90,7 +90,7 @@ packagex:
     build-name: 0.0.5
     build-number: 40
     split-per-abi: true
-    no-tree-shake-icons: false
+    no-tree-shake-icons: true
 # --split-debug-info=0.0.40 --build-name=0.0.40 --build-number 40 --obfuscate --split-per-abi --no-tree-shake-icons
 
   project_id: "azkadev.packagex"

@@ -162,8 +162,8 @@ packagex:
   is_without_platform_name: true
   flutter_commands:
     obfuscate: true
-    split-debug-info: 0.0.5
-    build-name: 0.0.5
+    split-debug-info: "0.0.5"
+    build-name: "0.0.5"
     build-number: 40
     split-per-abi: true
     no-tree-shake-icons: false
@@ -450,14 +450,16 @@ usr/local/share/${pubspec.name}
 
     pubspec.packagex.flutter_commands.rawData.forEach((key, value) {
       String key_args_flutter = "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
-       if (key_args_flutter == "--obfuscate") {
+      if (key_args_flutter == "--obfuscate") {
         if (value == true) {
           flutter_commands.add(key_args_flutter);
         }
       }
       if (key_args_flutter == "--split-per-abi") {
         if (value == true) {
-          flutter_commands.add(key_args_flutter);
+          if (packagexPlatform == PackagexPlatform.android) {
+            flutter_commands.add(key_args_flutter);
+          }
         }
       }
       if (key_args_flutter == "--no-tree-shake-icons") {
@@ -476,10 +478,15 @@ usr/local/share/${pubspec.name}
         flutter_commands.add("${key_args_flutter}");
         flutter_commands.add("${value}");
       }
-    }); 
+    });
 
     Directory directory_build_packagex = Directory(path_output ?? p.join(directory_current.path, "build", "packagex"));
-    await directory_build_packagex.autoCreate();
+
+    if (directory_build_packagex.existsSync()) {
+      await directory_build_packagex.delete(recursive: true);
+    }
+
+    await directory_build_packagex.create(recursive: true);
 
     if (packagexPlatform == PackagexPlatform.linux) {
       if (!Platform.isLinux) {
@@ -846,7 +853,13 @@ usr/local/share/${pubspec.name}
               if (p.extension(dir.path) != ".apk") {
                 continue;
               }
+              if (p.basename(dir.path) == "app-release.apk") {
+                continue;
+              }
               await dir.absolute.copy(p.join(directory_build_packagex.path, p.basename(dir.path).replaceAll(RegExp("^(app)", caseSensitive: false), "${pubspec.packagex.flutter_name ?? pubspec.name}")));
+              await dir.absolute.delete(
+                recursive: true,
+              );
             }
           } catch (e) {}
         }
@@ -1169,6 +1182,21 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
         }
       }
     }
+    File file_packagex_release = File(p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}.json"));
+    Map json_data = {
+      "name": "${pubspec.packagex.flutter_name ?? pubspec.name}".trim(),
+      ...pubspec.rawData,
+      ...pubspec.packagex.flutter_commands.rawData,
+    };
+    json_data.removeByKeys([
+      "environment",
+      "dependencies",
+      "dev_dependencies",
+      "flutter",
+      "packagex",
+      "msix_config",
+    ]);
+    await file_packagex_release.writeAsString(json_data.toStringifyPretty());
     return {"@type": ""};
   }
 
@@ -1237,13 +1265,12 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
     if (pubspec["packagex"] is Map == false) {
       pubspec["packagex"] = {};
     }
-    String project_id = pubspec.packagex.project_id ?? "";
     String github_username = pubspec.packagex.github_username ?? "";
     GitHub gitHub = GitHub(auth: Authentication.withToken(tokenGithub));
     onUpdate("Check User");
     User user = await gitHub.users.getCurrentUser();
     onUpdate("Use Github: ${user.login}");
-    RepositorySlug repositorySlug = RepositorySlug(github_username, project_id);
+    RepositorySlug repositorySlug = RepositorySlug(github_username, pubspec.packagex.name ?? "");
 
     List<FileSystemEntity> files = await Future(() async {
       return directory_packagex.listSync().where((e) => [".deb", ".apk", ".msix"].contains(p.extension(e.path))).where((element) {
@@ -1266,7 +1293,7 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
             onUpdate("Create Repo: ${repositorySlug.fullName}");
             return await gitHub.repositories.createRepository(
               CreateRepository(
-                project_id,
+                pubspec.packagex.name,
                 hasIssues: false,
                 autoInit: true,
                 gitignoreTemplate: "Dart",
@@ -1292,7 +1319,20 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
         if (e is GitHubError) {
           if (RegExp(r"Release for tagName .* not found", caseSensitive: false).hasMatch(e.message ?? "")) {
             onUpdate("Create Release: ${repositorySlug.fullName} ${publishType}");
-            return await gitHub.repositories.createRelease(repositorySlug, CreateRelease(publishType), getIfExists: true);
+            try {
+              return await gitHub.repositories.createRelease(repositorySlug, CreateRelease(publishType), getIfExists: true);
+            } catch (e) {
+              if (e is GitHubError) {
+                if (RegExp(r"Repository is empty", caseSensitive: false).hasMatch(e.message ?? "")) {
+                  onUpdate("Create Repo: ${repositorySlug.fullName}");
+                  await gitHub.repositories.deleteRepository(
+                    repositorySlug,
+                  );
+                  rethrow;
+                }
+              }
+              rethrow;
+            }
           }
         }
 
