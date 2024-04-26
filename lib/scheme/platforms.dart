@@ -25,6 +25,11 @@ class Platforms extends JsonScheme {
     }
   }
 
+  
+  set special_type(String? value) {
+    rawData["@type"] = value;
+  }
+
 
   
   Object? get android {
@@ -36,6 +41,11 @@ class Platforms extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set android(Object? value) {
+    rawData["android"] = value;
   }
 
 
@@ -51,6 +61,11 @@ class Platforms extends JsonScheme {
     }
   }
 
+  
+  set ios(Object? value) {
+    rawData["ios"] = value;
+  }
+
 
   
   Object? get linux {
@@ -62,6 +77,11 @@ class Platforms extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set linux(Object? value) {
+    rawData["linux"] = value;
   }
 
 
@@ -77,6 +97,11 @@ class Platforms extends JsonScheme {
     }
   }
 
+  
+  set macos(Object? value) {
+    rawData["macos"] = value;
+  }
+
 
   
   Object? get web {
@@ -90,6 +115,11 @@ class Platforms extends JsonScheme {
     }
   }
 
+  
+  set web(Object? value) {
+    rawData["web"] = value;
+  }
+
 
   
   Object? get windows {
@@ -101,6 +131,11 @@ class Platforms extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set windows(Object? value) {
+    rawData["windows"] = value;
   }
 
 

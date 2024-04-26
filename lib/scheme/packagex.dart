@@ -26,6 +26,11 @@ class Packagex extends JsonScheme {
     }
   }
 
+  
+  set special_type(String? value) {
+    rawData["@type"] = value;
+  }
+
 
   
   String? get name {
@@ -37,6 +42,11 @@ class Packagex extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set name(String? value) {
+    rawData["name"] = value;
   }
 
 
@@ -52,6 +62,11 @@ class Packagex extends JsonScheme {
     }
   }
 
+  
+  set dart_target(String? value) {
+    rawData["dart_target"] = value;
+  }
+
 
   
   String? get flutter_target {
@@ -63,6 +78,11 @@ class Packagex extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set flutter_target(String? value) {
+    rawData["flutter_target"] = value;
   }
 
 
@@ -78,6 +98,11 @@ class Packagex extends JsonScheme {
     }
   }
 
+  
+  set dart_name(String? value) {
+    rawData["dart_name"] = value;
+  }
+
 
   
   String? get flutter_name {
@@ -91,6 +116,11 @@ class Packagex extends JsonScheme {
     }
   }
 
+  
+  set flutter_name(String? value) {
+    rawData["flutter_name"] = value;
+  }
+
 
   
   bool? get is_without_platform_name {
@@ -102,6 +132,11 @@ class Packagex extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set is_without_platform_name(bool? value) {
+    rawData["is_without_platform_name"] = value;
   }
 
 
@@ -119,6 +154,13 @@ class Packagex extends JsonScheme {
 
 
   
+  set flutter_commands(FlutterCommands value) {
+    rawData["flutter_commands"] = value.toJson();
+  }
+
+
+
+  
   String? get project_id {
     try {
       if (rawData["project_id"] is String == false){
@@ -128,6 +170,11 @@ class Packagex extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set project_id(String? value) {
+    rawData["project_id"] = value;
   }
 
 
@@ -143,6 +190,11 @@ class Packagex extends JsonScheme {
     }
   }
 
+  
+  set github_username(String? value) {
+    rawData["github_username"] = value;
+  }
+
 
   
   bool? get github_is_org {
@@ -154,6 +206,11 @@ class Packagex extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set github_is_org(bool? value) {
+    rawData["github_is_org"] = value;
   }
 
 

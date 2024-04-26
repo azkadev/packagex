@@ -25,6 +25,11 @@ class MsixConfig extends JsonScheme {
     }
   }
 
+  
+  set special_type(String? value) {
+    rawData["@type"] = value;
+  }
+
 
   
   String? get display_name {
@@ -36,6 +41,11 @@ class MsixConfig extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set display_name(String? value) {
+    rawData["display_name"] = value;
   }
 
 
@@ -51,6 +61,11 @@ class MsixConfig extends JsonScheme {
     }
   }
 
+  
+  set publisher_display_name(String? value) {
+    rawData["publisher_display_name"] = value;
+  }
+
 
   
   String? get identity_name {
@@ -62,6 +77,11 @@ class MsixConfig extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set identity_name(String? value) {
+    rawData["identity_name"] = value;
   }
 
 
@@ -77,6 +97,11 @@ class MsixConfig extends JsonScheme {
     }
   }
 
+  
+  set msix_version(String? value) {
+    rawData["msix_version"] = value;
+  }
+
 
   
   String? get logo_path {
@@ -90,6 +115,11 @@ class MsixConfig extends JsonScheme {
     }
   }
 
+  
+  set logo_path(String? value) {
+    rawData["logo_path"] = value;
+  }
+
 
   
   String? get capabilities {
@@ -101,6 +131,11 @@ class MsixConfig extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set capabilities(String? value) {
+    rawData["capabilities"] = value;
   }
 
 

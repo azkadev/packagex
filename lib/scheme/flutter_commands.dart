@@ -25,6 +25,11 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
+  
+  set special_type(String? value) {
+    rawData["@type"] = value;
+  }
+
 
   
   bool? get obfuscate {
@@ -36,6 +41,11 @@ class FlutterCommands extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set obfuscate(bool? value) {
+    rawData["obfuscate"] = value;
   }
 
 
@@ -51,6 +61,11 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
+  
+  set split_debug_info(String? value) {
+    rawData["split-debug-info"] = value;
+  }
+
 
   
   String? get build_name {
@@ -62,6 +77,11 @@ class FlutterCommands extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set build_name(String? value) {
+    rawData["build-name"] = value;
   }
 
 
@@ -77,6 +97,11 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
+  
+  set build_number(num? value) {
+    rawData["build-number"] = value;
+  }
+
 
   
   bool? get split_per_abi {
@@ -90,6 +115,11 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
+  
+  set split_per_abi(bool? value) {
+    rawData["split-per-abi"] = value;
+  }
+
 
   
   bool? get no_tree_shake_icons {
@@ -101,6 +131,11 @@ class FlutterCommands extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set no_tree_shake_icons(bool? value) {
+    rawData["no-tree-shake-icons"] = value;
   }
 
 

@@ -26,6 +26,11 @@ class Dependencies extends JsonScheme {
     }
   }
 
+  
+  set special_type(String? value) {
+    rawData["@type"] = value;
+  }
+
 
   
   DependenciesExtra get flutter {
@@ -41,6 +46,13 @@ class Dependencies extends JsonScheme {
 
 
   
+  set flutter(DependenciesExtra value) {
+    rawData["flutter"] = value.toJson();
+  }
+
+
+
+  
   String? get cupertino_icons {
     try {
       if (rawData["cupertino_icons"] is String == false){
@@ -50,6 +62,11 @@ class Dependencies extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set cupertino_icons(String? value) {
+    rawData["cupertino_icons"] = value;
   }
 
 

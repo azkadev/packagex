@@ -31,6 +31,11 @@ class Pubspec extends JsonScheme {
     }
   }
 
+  
+  set special_type(String? value) {
+    rawData["@type"] = value;
+  }
+
 
   
   String? get name {
@@ -42,6 +47,11 @@ class Pubspec extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set name(String? value) {
+    rawData["name"] = value;
   }
 
 
@@ -57,6 +67,11 @@ class Pubspec extends JsonScheme {
     }
   }
 
+  
+  set description(String? value) {
+    rawData["description"] = value;
+  }
+
 
   
   String? get version {
@@ -68,6 +83,11 @@ class Pubspec extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set version(String? value) {
+    rawData["version"] = value;
   }
 
 
@@ -83,6 +103,11 @@ class Pubspec extends JsonScheme {
     }
   }
 
+  
+  set publish_to(String? value) {
+    rawData["publish_to"] = value;
+  }
+
 
   
   String? get homepage {
@@ -96,6 +121,11 @@ class Pubspec extends JsonScheme {
     }
   }
 
+  
+  set homepage(String? value) {
+    rawData["homepage"] = value;
+  }
+
 
   
   String? get repository {
@@ -107,6 +137,11 @@ class Pubspec extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set repository(String? value) {
+    rawData["repository"] = value;
   }
 
 
@@ -124,6 +159,13 @@ class Pubspec extends JsonScheme {
 
 
   
+  set platforms(Platforms value) {
+    rawData["platforms"] = value.toJson();
+  }
+
+
+
+  
   Environment get environment {
     try {
       if (rawData["environment"] is Map == false){
@@ -134,6 +176,13 @@ class Pubspec extends JsonScheme {
       return Environment({}); 
     }
   }
+
+
+  
+  set environment(Environment value) {
+    rawData["environment"] = value.toJson();
+  }
+
 
 
   
@@ -150,6 +199,13 @@ class Pubspec extends JsonScheme {
 
 
   
+  set dependencies(Dependencies value) {
+    rawData["dependencies"] = value.toJson();
+  }
+
+
+
+  
   DevDependencies get dev_dependencies {
     try {
       if (rawData["dev_dependencies"] is Map == false){
@@ -160,6 +216,13 @@ class Pubspec extends JsonScheme {
       return DevDependencies({}); 
     }
   }
+
+
+  
+  set dev_dependencies(DevDependencies value) {
+    rawData["dev_dependencies"] = value.toJson();
+  }
+
 
 
   
@@ -176,6 +239,13 @@ class Pubspec extends JsonScheme {
 
 
   
+  set packagex(Packagex value) {
+    rawData["packagex"] = value.toJson();
+  }
+
+
+
+  
   MsixConfig get msix_config {
     try {
       if (rawData["msix_config"] is Map == false){
@@ -186,6 +256,13 @@ class Pubspec extends JsonScheme {
       return MsixConfig({}); 
     }
   }
+
+
+  
+  set msix_config(MsixConfig value) {
+    rawData["msix_config"] = value.toJson();
+  }
+
 
 
   

@@ -25,6 +25,11 @@ class DevDependenciesExtra extends JsonScheme {
     }
   }
 
+  
+  set special_type(String? value) {
+    rawData["@type"] = value;
+  }
+
 
   
   String? get path {
@@ -36,6 +41,11 @@ class DevDependenciesExtra extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set path(String? value) {
+    rawData["path"] = value;
   }
 
 

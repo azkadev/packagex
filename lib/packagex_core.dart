@@ -1,6 +1,4 @@
-// ignore_for_file: unused_local_variable, unnecessary_brace_in_string_interps, unused_element, non_constant_identifier_names, empty_catches, unnecessary_string_interpolations
-
-library packagex;
+// ignore_for_file: unused_local_variable, unnecessary_brace_in_string_interps, unused_element, non_constant_identifier_names, empty_catches, unnecessary_string_interpolations, constant_identifier_names
 
 import "dart:async";
 import 'dart:convert';
@@ -21,7 +19,7 @@ import "api/api.dart" as packagex_api;
 
 import "package:collection/collection.dart";
 
-enum PackagexPlatform {
+enum PackagexPlatformType {
   current,
   android,
   ios,
@@ -32,20 +30,28 @@ enum PackagexPlatform {
   all,
 }
 
-extension ListExtensions on List<PackagexPlatform> {
-  PackagexPlatform? getByString(String data) {
-    for (var i = 0; i < length; i++) {
-      try {
-        if ((this[i]).name == data) {
-          return (this[i]);
-        }
-      } catch (e) {}
-    }
-    return null;
-  }
+
+enum PackagexApiStatusType {
+  succes,
+  failed,
+  info,
+  start,
+  progress_start,
+  progress,
+  progress_complete,
 }
 
+class PackagexApiStatus {
+  String value;
+  PackagexApiStatusType packagexApiStatusType;
+  PackagexApiStatus({
+    required this.packagexApiStatusType,
+    required this.value,
+  });
+}
+/// 
 class Packagex {
+  /// 
   Packagex();
 
   Future<Map> request({
@@ -58,7 +64,7 @@ class Packagex {
       packagex_api.BuildPackage buildPackage = packagex_api.BuildPackage(jsonData);
 
       return await build(
-        packagexPlatform: (PackagexPlatform.values.getByString(buildPackage.platform ?? "current") as PackagexPlatform),
+        packagexPlatform: (PackagexPlatformType.values.firstWhereOrNull((element) => element.name == (buildPackage.platform ?? "current"))),
         path_current: buildPackage.path_current,
         packagexConfig: packagex_scheme.Packagex(
           buildPackage.build_config.rawData,
@@ -104,9 +110,9 @@ class Packagex {
     };
   }
 
-  Future<Map> create({
+  Stream<PackagexApiStatus> create({
     required String name,
-  }) async {
+  }) async* {
     Directory directory_package = Directory(p.join(Directory.current.path, name));
     if (name == ".") {
       directory_package = Directory(p.join(Directory.current.path));
@@ -391,7 +397,7 @@ usr/local/share/${pubspec.name}
   }
 
   Future<Map> build({
-    PackagexPlatform? packagexPlatform,
+    PackagexPlatformType? packagexPlatform,
     required String? path_current,
     String? path_output,
     String? name_output,
@@ -400,19 +406,19 @@ usr/local/share/${pubspec.name}
   }) async {
     path_current ??= Directory.current.path;
     packagexConfig ??= packagex_scheme.Packagex({});
-    packagexPlatform ??= PackagexPlatform.current;
-    if (packagexPlatform == PackagexPlatform.current) {
+    packagexPlatform ??= PackagexPlatformType.current;
+    if (packagexPlatform == PackagexPlatformType.current) {
       if (Platform.isLinux) {
-        packagexPlatform = PackagexPlatform.linux;
+        packagexPlatform = PackagexPlatformType.linux;
       }
       if (Platform.isMacOS) {
-        packagexPlatform = PackagexPlatform.macos;
+        packagexPlatform = PackagexPlatformType.macos;
       }
       if (Platform.isAndroid) {
-        packagexPlatform = PackagexPlatform.android;
+        packagexPlatform = PackagexPlatformType.android;
       }
       if (Platform.isWindows) {
-        packagexPlatform = PackagexPlatform.windows;
+        packagexPlatform = PackagexPlatformType.windows;
       }
     }
     String basename = p.basename(path_current);
@@ -457,7 +463,7 @@ usr/local/share/${pubspec.name}
       }
       if (key_args_flutter == "--split-per-abi") {
         if (value == true) {
-          if (packagexPlatform == PackagexPlatform.android) {
+          if (packagexPlatform == PackagexPlatformType.android) {
             flutter_commands.add(key_args_flutter);
           }
         }
@@ -481,14 +487,89 @@ usr/local/share/${pubspec.name}
     });
 
     Directory directory_build_packagex = Directory(path_output ?? p.join(directory_current.path, "build", "packagex"));
+    bool is_auto_delete = Platform.environment["packagex_is_auto_delete"] == "true";
+    if (is_auto_delete) {
+      if (directory_build_packagex.existsSync()) {
+        await directory_build_packagex.delete(recursive: true);
+      }
 
-    if (directory_build_packagex.existsSync()) {
-      await directory_build_packagex.delete(recursive: true);
+      await directory_build_packagex.create(recursive: true);
+    } else {
+      if (directory_build_packagex.existsSync() == false) {
+        await directory_build_packagex.create(recursive: true);
+      }
+    }
+    File file_packagex_release = File(p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}.json"));
+    Map json_data_package_detail = {
+      "name": "${pubspec.packagex.flutter_name ?? pubspec.name}".trim(),
+      ...pubspec.rawData,
+      ...pubspec.packagex.flutter_commands.rawData,
+    };
+    json_data_package_detail.removeByKeys([
+      "environment",
+      "dependencies",
+      "dev_dependencies",
+      "flutter",
+      "packagex",
+      "msix_config",
+    ]);
+
+    Directory directory_packagex_script = Directory(p.join(
+      path_current,
+      "lib",
+      "packagex",
+    ));
+
+    if (!directory_packagex_script.existsSync()) {
+      await directory_packagex_script.create(
+        recursive: true,
+      );
     }
 
-    await directory_build_packagex.create(recursive: true);
+    File file_script_pkgx = File(p.join(directory_packagex_script.path, "packagex.dart"));
 
-    if (packagexPlatform == PackagexPlatform.linux) {
+    String content_Scitps = """
+// ignore_for_file: non_constant_identifier_names
+import 'dart:convert';
+
+class PackagexProject${(pubspec.packagex.flutter_name ?? pubspec.name ?? "").split("_").map((e) => e.toUpperCaseFirstData()).join("").toUpperCaseFirstData()} {
+
+    
+  static bool isSame({
+    required String data
+  }) {
+    return [default_data_to_string, json.encode(default_data)].contains(data);
+  } 
+
+
+    static String get default_data_to_string {
+      return (JsonEncoder.withIndent(" " * 2).convert(default_data));
+    }
+
+
+    static Map get default_data {
+return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
+    }
+
+     
+}
+"""
+        .trim();
+
+//     json_data_package_detail.forEach((key, value) {
+//       content_Scitps += "\n";
+//       content_Scitps += """
+// static dynamic get ${key.toString().replaceAll(RegExp("@"), "special_")} {
+//   return ${value};
+// }
+// """
+//           .trim();
+//                 content_Scitps += "\n";
+//     });
+//
+    await file_script_pkgx.writeAsString(content_Scitps);
+
+    if (packagexPlatform == PackagexPlatformType.linux) {
       if (!Platform.isLinux) {
         return {
           "@type": "error",
@@ -674,7 +755,7 @@ usr/local/share/${pubspec.name}
           }
         } catch (e) {}
       }
-    } else if (packagexPlatform == PackagexPlatform.windows) {
+    } else if (packagexPlatform == PackagexPlatformType.windows) {
       if (!Platform.isWindows) {
         return {"@type": "error", "message": "platform_not_supported", "description": "Package windows hanya bisa di perangkat windows saja !"};
       }
@@ -779,7 +860,7 @@ usr/local/share/${pubspec.name}
           },
         );
       }
-    } else if (packagexPlatform == PackagexPlatform.macos) {
+    } else if (packagexPlatform == PackagexPlatformType.macos) {
       if (!Platform.isMacOS) {
         return {"@type": "error", "message": "platform_not_supported", "description": "Package macos hanya bisa di perangkat macos saja !"};
       }
@@ -822,7 +903,7 @@ usr/local/share/${pubspec.name}
           },
         );
       }
-    } else if (packagexPlatform == PackagexPlatform.android) {
+    } else if (packagexPlatform == PackagexPlatformType.android) {
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
@@ -1067,7 +1148,7 @@ usr/local/share/${pubspec.name}
           } catch (e) {}
         }
       }
-    } else if (packagexPlatform == PackagexPlatform.ios) {
+    } else if (packagexPlatform == PackagexPlatformType.ios) {
       if (!Platform.isMacOS) {
         return {
           "@type": "error",
@@ -1101,7 +1182,7 @@ usr/local/share/${pubspec.name}
           arguments: [
             "-c",
             """
-cd build/ios/iphoneos
+cd build/ios/iphoneospackagexCli(args)
 mkdir Payload
 cd Payload
 ln -s ../Runner.app
@@ -1118,7 +1199,7 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
           },
         );
       }
-    } else if (packagexPlatform == PackagexPlatform.web) {
+    } else if (packagexPlatform == PackagexPlatformType.web) {
       if (is_app) {
         await packagex_shell.shell(
           executable: "flutter",
@@ -1182,21 +1263,7 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
         }
       }
     }
-    File file_packagex_release = File(p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}.json"));
-    Map json_data = {
-      "name": "${pubspec.packagex.flutter_name ?? pubspec.name}".trim(),
-      ...pubspec.rawData,
-      ...pubspec.packagex.flutter_commands.rawData,
-    };
-    json_data.removeByKeys([
-      "environment",
-      "dependencies",
-      "dev_dependencies",
-      "flutter",
-      "packagex",
-      "msix_config",
-    ]);
-    await file_packagex_release.writeAsString(json_data.toStringifyPretty());
+    await file_packagex_release.writeAsString(json_data_package_detail.toStringifyPretty(2));
     return {"@type": ""};
   }
 
@@ -1273,7 +1340,7 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
     RepositorySlug repositorySlug = RepositorySlug(github_username, pubspec.packagex.name ?? "");
 
     List<FileSystemEntity> files = await Future(() async {
-      return directory_packagex.listSync().where((e) => [".deb", ".apk", ".msix"].contains(p.extension(e.path))).where((element) {
+      return directory_packagex.listSync().where((e) => [".deb", ".apk", ".msix", ".json"].contains(p.extension(e.path))).where((element) {
         if (RegExp(pubspec.name ?? "", caseSensitive: false).hashData(element.path)) {
           return true;
         }
@@ -1377,8 +1444,9 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
 
   Future<void> installPackageFromFile({
     required File file,
-    required void Function(String data) onData,
-    required void Function() onDone,
+    required FutureOr<void> Function(String data) onData,
+    required FutureOr<void> Function() onDone,
+    bool isPrint = true,
   }) async {
     await packagex_shell.shell(
       executable: "dpkg",
@@ -1387,15 +1455,19 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
         "-i",
         file.path,
       ],
-      onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-        stdout.add(data);
-        onData(utf8.decode(data));
+      onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) async {
+        if (isPrint) {
+          stdout.add(data);
+        }
+        await onData(utf8.decode(data, allowMalformed: true));
       },
-      onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-        stderr.add(data);
-        onData(utf8.decode(data));
+      onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) async {
+        if (isPrint) {
+          stderr.add(data);
+        }
+        await onData(utf8.decode(data, allowMalformed: true));
       },
     );
-    onDone();
+    await onDone();
   }
 }

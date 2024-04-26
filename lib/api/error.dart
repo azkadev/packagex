@@ -2,16 +2,21 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-class Error extends JsonScheme {
-  Error(super.rawData);
 
+ 
+class Error extends JsonScheme {
+
+  
+  Error(super.rawData);
+   
   static Map get defaultData {
-    return {"@type": "error", "description": "", "message": ""};
+    return {"@type":"error","description":"","message":""};
   }
 
+  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false) {
+      if (rawData["@type"] is String == false){
         return null;
       }
       return rawData["@type"] as String;
@@ -20,9 +25,16 @@ class Error extends JsonScheme {
     }
   }
 
+  
+  set special_type(String? value) {
+    rawData["@type"] = value;
+  }
+
+
+  
   String? get description {
     try {
-      if (rawData["description"] is String == false) {
+      if (rawData["description"] is String == false){
         return null;
       }
       return rawData["description"] as String;
@@ -31,9 +43,16 @@ class Error extends JsonScheme {
     }
   }
 
+  
+  set description(String? value) {
+    rawData["description"] = value;
+  }
+
+
+  
   String? get message {
     try {
-      if (rawData["message"] is String == false) {
+      if (rawData["message"] is String == false){
         return null;
       }
       return rawData["message"] as String;
@@ -42,21 +61,36 @@ class Error extends JsonScheme {
     }
   }
 
+  
+  set message(String? value) {
+    rawData["message"] = value;
+  }
+
+
+  
   static Error create({
+
     String special_type = "error",
     String? description,
     String? message,
-  }) {
+})  {
     // Error error = Error({
-    Map error_data_create_json = {
+Map error_data_create_json = {
+  
       "@type": special_type,
       "description": description,
       "message": message,
-    };
 
-    error_data_create_json.removeWhere((key, value) => value == null);
-    Error error_data_create = Error(error_data_create_json);
 
-    return error_data_create;
-  }
+};
+
+
+          error_data_create_json.removeWhere((key, value) => value == null);
+Error error_data_create = Error(error_data_create_json);
+
+return error_data_create;
+
+
+
+      }
 }

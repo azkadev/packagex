@@ -42,40 +42,26 @@ Future<void> shell({
     includeParentEnvironment: includeParentEnvironment,
     runInShell: runInShell,
     mode: mode,
-  );
-  Completer completer = Completer();
+  ); 
 
   var stdout_shell = shell.stdout.listen(
     (List<int> data) {
-      onStdout(data, executable, arguments, workingDirectory, environment,
-          includeParentEnvironment, runInShell, mode);
-    },
-    onDone: () {
-      completer.complete();
-      // is_complete = true;
-    },
-    cancelOnError: true,
+      onStdout(data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode);
+    }, 
   );
   var stderr_shell = shell.stderr.listen(
     (List<int> data) {
-      onStderr(data, executable, arguments, workingDirectory, environment,
-          includeParentEnvironment, runInShell, mode);
-    },
-    onDone: () {
-      // is_complete = true;
-      completer.complete();
-    },
-    cancelOnError: true,
+      onStderr(data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode);
+    }, 
   );
 
   // while (true) {
   // await Future.delayed(Duration(milliseconds: 1));
-  await completer.future;
+  await shell.exitCode;
   // if (is_complete) {
   await stdout_shell.cancel();
 
-  await stderr_shell.cancel();
-  shell.kill(ProcessSignal.sigkill);
+  await stderr_shell.cancel(); 
   return;
   // }
   // }

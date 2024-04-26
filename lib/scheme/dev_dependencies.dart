@@ -26,6 +26,11 @@ class DevDependencies extends JsonScheme {
     }
   }
 
+  
+  set special_type(String? value) {
+    rawData["@type"] = value;
+  }
+
 
   
   String? get lints {
@@ -39,6 +44,11 @@ class DevDependencies extends JsonScheme {
     }
   }
 
+  
+  set lints(String? value) {
+    rawData["lints"] = value;
+  }
+
 
   
   String? get test {
@@ -50,6 +60,11 @@ class DevDependencies extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set test(String? value) {
+    rawData["test"] = value;
   }
 
 
@@ -67,6 +82,13 @@ class DevDependencies extends JsonScheme {
 
 
   
+  set packagex(DevDependenciesExtra value) {
+    rawData["packagex"] = value.toJson();
+  }
+
+
+
+  
   String? get msix {
     try {
       if (rawData["msix"] is String == false){
@@ -76,6 +98,11 @@ class DevDependencies extends JsonScheme {
     } catch (e) {
       return null;
     }
+  }
+
+  
+  set msix(String? value) {
+    rawData["msix"] = value;
   }
 
 
