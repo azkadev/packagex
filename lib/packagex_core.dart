@@ -1450,7 +1450,7 @@ To: ${file_cli.path}
             "Finished Build: ${packagexPlatformTypes.map((e) => e.name.toUpperCaseFirstData()).join(", ")}");
   }
 
-  Future<void> installPackageFromUrl({
+  Future<int> installPackageFromUrl({
     required String url,
     FetchOption? options,
     Encoding? encoding,
@@ -1472,9 +1472,9 @@ To: ${file_cli.path}
       await file.delete();
     }
     await file.writeAsBytes(response.bodyBytes);
-    await installPackageFromFile(file: file, onData: onData, onDone: onDone)
-        .listen((event) {})
-        .asFuture();
+    return await installPackageFromFile(
+        file: file, onData: onData, onDone: onDone);
+    // .listen((event) {}).asFuture();
   }
 
   Future<void> installPackage({
@@ -1650,12 +1650,12 @@ To: ${file_cli.path}
     onUpdate("Finished");
   }
 
-  Stream<PackagexApiStatus> installPackageFromFile({
+  Future<int> installPackageFromFile({
     required File file,
     required FutureOr<void> Function(String data) onData,
     required FutureOr<void> Function() onDone,
     bool isPrint = true,
-  }) async* {
+  }) async {
     Process process = await Process.start(
       "dpkg",
       [
@@ -1664,22 +1664,20 @@ To: ${file_cli.path}
         file.path,
       ],
     );
-    process.stderr.listen((event) {
-      stderr.add(event);
+    process.stderr.listen((data) async {
+      if (isPrint) {
+        stdout.add(data);
+      }
+      await onData(utf8.decode(data, allowMalformed: true));
     });
-    process.stdout.listen((event) {
-      stdout.add(event);
+    process.stdout.listen((data) async {
+      if (isPrint) {
+        stdout.add(data);
+      }
+      await onData(utf8.decode(data, allowMalformed: true));
     });
     int exit_code = await (process.exitCode);
-    if (exit_code != 0) {
-      yield PackagexApiStatus(
-          packagexApiStatusType: PackagexApiStatusType.failed,
-          value: "Failed Create Project:");
-      return;
-    } else {
-      yield PackagexApiStatus(
-          packagexApiStatusType: PackagexApiStatusType.succes,
-          value: "Succes Create Project:");
-    }
+    await onDone();
+    return exit_code;
   }
 }

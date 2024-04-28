@@ -263,7 +263,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.50"
+    version: "0.0.51"
   path:
     dependency: transitive
     description:
@@ -376,6 +376,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  system_info_fetch:
+    dependency: transitive
+    description:
+      name: system_info_fetch
+      sha256: "264a33576e612888f640d625631fef9f2daf8cc41078a1138adbd75510771d22"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.14"
   term_glyph:
     dependency: transitive
     description:

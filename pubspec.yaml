@@ -1,6 +1,6 @@
 name: packagex
 description: A library for package dart or flutter to specific platform.
-version: 0.0.51
+version: 0.0.53
 homepage: https://youtube.com/@azkadev
 repository: https://github.com/azkadev/packagex.git
 
@@ -35,6 +35,7 @@ dependencies:
   universal_io: ^2.2.2
   yaml: ^3.1.2
   yaml_writer: '^2.0.0'
+  system_info_fetch: ^0.0.14
 
 packagex:
   

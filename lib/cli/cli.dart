@@ -45,6 +45,7 @@ import 'package:packagex/packagex.dart';
 import 'package:general_lib/general_lib.dart';
 import 'package:packagex/scheme/packagex_pubspec.dart';
 import 'package:path/path.dart' as p;
+import 'package:system_info_fetch/system_info_fetch.dart';
 import "package:yaml/yaml.dart" as yaml;
 import "package:path/path.dart" as path;
 
@@ -54,6 +55,10 @@ class PackagexEnvironment {
   PackagexEnvironment();
 
   static bool get is_not_interactive {
+    if (RegExp(r"virtual", caseSensitive: false)
+        .hashData(SystemInfoFetch.get_model)) {
+      return true;
+    }
     return ((Platform.environment["packagex_is_no_interactive"] ?? "").trim() ==
         "true");
   }
@@ -201,12 +206,8 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     } else {
       File file = File(package_name);
       if (file.existsSync()) {
-        await packagex
-            .installPackageFromFile(
-                file: file, onData: (data) {}, onDone: () {})
-            .listen((event) {
-          printed(event);
-        }).asFuture();
+        await packagex.installPackageFromFile(
+            file: file, onData: (data) {}, onDone: () {});
       } else {
         // Platform.pathSeparator;
 
