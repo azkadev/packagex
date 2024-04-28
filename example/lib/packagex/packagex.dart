@@ -36,24 +36,20 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 import 'dart:convert';
 
 class PackagexProjectExample {
-
-  static bool isSame({
-    required String data
-  }) {
+  static bool isSame({required String data}) {
     return [default_data_to_string, json.encode(default_data)].contains(data);
   }
 
-    static String get default_data_to_string {
-      return (JsonEncoder.withIndent(" " * 2).convert(default_data));
-    }
+  static String get default_data_to_string {
+    return (JsonEncoder.withIndent(" " * 2).convert(default_data));
+  }
 
-    static Map get default_data {
-return {
-  "name": "example",
-  "description": "A sample command-line application.",
-  "version": "1.0.0",
-  "publish_to": "none"
-};
-    }
-
+  static Map get default_data {
+    return {
+      "name": "example",
+      "description": "A sample command-line application.",
+      "version": "1.0.0",
+      "publish_to": "none"
+    };
+  }
 }

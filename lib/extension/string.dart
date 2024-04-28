@@ -34,7 +34,9 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 <!-- END LICENSE --> */
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:collection/collection.dart';
 import 'package:general_lib/general_lib.dart';
+import 'package:packagex/packagex_core.dart';
 
 extension StringPackagexExtensionOnNull on String? {
   String packagex_utils_extension_toLinuxProgram() {
@@ -60,5 +62,43 @@ extension StringPackagexExtensionOn on String {
     }
 
     return text;
+  }
+
+  List<PackagexPlatformType> toPackagexPlatformTypes({
+    bool isAutoPlatformCurrent = true,
+  }) {
+    List<String> texts = split(",");
+    List<PackagexPlatformType> packagexPlatformTypes = [];
+    for (String text in texts) {
+      PackagexPlatformType? packagexPlatformType = PackagexPlatformType.values
+          .firstWhereOrNull((element) =>
+              element.name.toLowerCase() == text.toLowerCase().trim());
+      if (packagexPlatformType != null) {
+        if (!packagexPlatformTypes.contains(packagexPlatformType)) {
+          packagexPlatformTypes.add(packagexPlatformType);
+        }
+      }
+    }
+    if (packagexPlatformTypes.isEmpty) {
+      if (Dart.isAndroid) {
+        packagexPlatformTypes.add(PackagexPlatformType.android);
+      }
+      if (Dart.isIOS) {
+        packagexPlatformTypes.add(PackagexPlatformType.ios);
+      }
+      if (Dart.isLinux) {
+        packagexPlatformTypes.add(PackagexPlatformType.linux);
+      }
+      if (Dart.isMacOS) {
+        packagexPlatformTypes.add(PackagexPlatformType.macos);
+      }
+      if (Dart.isWeb) {
+        packagexPlatformTypes.add(PackagexPlatformType.web);
+      }
+      if (Dart.isWindows) {
+        packagexPlatformTypes.add(PackagexPlatformType.windows);
+      }
+    }
+    return packagexPlatformTypes.toSet().toList();
   }
 }
