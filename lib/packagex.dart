@@ -33,6 +33,8 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 
 <!-- END LICENSE --> */ 
 
+export "package:packagex/extension/packagex_config.dart";
+export "package:packagex/extension/string.dart";
 export "package:packagex/packagex_core.dart";
 export "package:packagex/packagex_api_status.dart";
 export "package:packagex/packagex_platform_type.dart";

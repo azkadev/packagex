@@ -1,0 +1,269 @@
+{
+  "@type": "configRuntime",
+  "title": "db_telegram",
+  "id": "lifetime_01",
+  "name_db_telegram_bot": "",
+  "app_icon": "",
+  "app_title": "",
+  "app_id": "",
+  "app_is_development": false,
+  "app_origin_title": "",
+  "is_core": false,
+  "app_origin_id": "",
+  "platform_username": "",
+  "platform_id": "",
+  "app_is_allow_skip_stars_github": false,
+  "api_url": "",
+  "is_private_release": false,
+  "is_application_limit_features": false,
+  "api_crypto_keys": [
+    ""
+  ],
+  "owner_chat_id": "@",
+  "log_chat_id": 0,
+  "log": {
+    "@type": "log",
+    "command_start_chat_id": 0,
+    "command_start_chat_id_blacklist_user": 0,
+    "is_log_msg_text_chat_id": false,
+    "is_log_action_chat_id": false,
+    "log_action_chat_id": 0,
+    "msg_text_chat_id": 0,
+    "work_chat_id": 0,
+    "report_chat_id": 0,
+    "is_bot_api": true,
+    "reclone_bot_chat_id": 0,
+    "token_bot": ""
+  },
+  "path_tdlib": "libtdjson.so",
+  "creator_tg_user_ids": [
+    0
+  ],
+  "gban_tg_user_ids": [
+    0
+  ],
+  "github_usernames": [
+    "Sa"
+  ],
+  "app_is_release_playstore": false,
+  "environment": {
+    "@type": "environment",
+    "is_fambest_promote": false,
+    "is_memory_limited": false,
+    "is_internet_limited": false,
+    "is_skip_database_setting_import_script": false,
+    "is_as_api_only": false,
+    "is_auto_clean": true,
+    "is_experimental": false,
+    "bot_is_skip_old_message": false,
+    "user_is_skip_old_message": false,
+    "is_stop_update": false,
+    "is_api_direct": true,
+    "is_allow_free_tg_ubot": false,
+    "file_limit_size": 0,
+    "skip_old_chat_types": [
+      "group",
+      "private"
+    ],
+    "is_use_tdlib": false,
+    "tg_bot_api_url": "http://0.0.0.0:9000",
+    "server_port": 8080,
+    "server_host": "0.0.0.0",
+    "work_telegram_chat_id": 0,
+    "is_general_global_api_direct_to_database": true,
+    "general_apis_url": "",
+    "general_apis_token": "",
+    "general_apis_crypto_keys": [
+      ""
+    ],
+    "is_skip_get_db_user": false,
+    "is_skip_chat_group": false,
+    "is_skip_chat_channel": false,
+    "is_skip_chat_private": false,
+    "is_skip_secret_data_user": false,
+    "is_auto_report_user": false,
+    "is_skip_force_terms": true,
+    "is_report_user_only": false,
+    "is_no_limitation": false,
+    "telegram_log_token_bot": "",
+    "telegram_api_id": 0,
+    "telegram_api_hash": "",
+    "secret_data_telegram_username": "Secret_Data_Shield_Bot",
+    "price_raffle": 5000,
+    "fee_top_up_type": "fixed",
+    "fee_top_up_price_fixed": 2500,
+    "price_top_up_minimal": 25000,
+    "price_top_up_maximal": 25000000,
+    "price_service": {
+      "@type": "price_service",
+      "developer_app_only_open_source": 5000000,
+      "developer_app_only_close_source": 2500000,
+      "developer_full_stack_open_source": 8000000,
+      "developer_full_stack_close_source": 4000000,
+      "developer_server_only_open_source": 5000000,
+      "developer_server_only_close_source": 2500000,
+      "developer_app_ui_only_open_source": 500000,
+      "developer_app_ui_only_close_source": 50000,
+      "developer_bot_social_media_open_source": 1000000,
+      "developer_bot_social_media_close_source": 500000,
+      "developer_hardware_open_source": 100000000,
+      "developer_hardware_close_source": 50000000,
+      "developer_maintance": 100000,
+      "partner_random": 50000000,
+      "partner_target": 500000000,
+      "partner_criteria": 5000000000,
+      "promote_broadcast_regular": 100000,
+      "promote_broadcast_premium": 500000,
+      "promote_broadcast_ultra": 1000000,
+      "promote_sounding_regular": 200000,
+      "promote_sounding_premium": 1000000,
+      "promote_sounding_ultra": 2000000,
+      "promote_neural_regular": 300000,
+      "promote_neural_premium": 1500000,
+      "promote_neural_ultra": 3000000,
+      "terminate_social_media_fight_back": 50000000,
+      "terminate_social_media_report": 75000000,
+      "terminate_social_media_send_to_you": 100000000,
+      "terminate_real_life_fight_back": 100000000,
+      "terminate_real_life_report": 150000000,
+      "terminate_real_life_send_to_you": 200000000
+    }
+  },
+  "database": {
+    "@type": "hive",
+    "database_type": "supabase",
+    "supabase_id": "",
+    "supabase_key": "",
+    "ai": {
+      "@type": "supabaseDbData",
+      "supabase_url": "",
+      "supabase_key": ""
+    },
+    "global_data_store": {
+      "@type": "supabaseDbData",
+      "supabase_url": "",
+      "supabase_key": ""
+    },
+    "ads_gateway": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    },
+    "coinlox": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    },
+    "envivore": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    },
+    "galaxeus": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    },
+    "glx": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    },
+    "hexaminate": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    },
+    "meesagee": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    },
+    "roleplayer": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    },
+    "specta": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    },
+    "secret_data": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    },
+    "clone_bot": {
+      "@type": "supabaseDbData",
+      "key": "",
+      "url": ""
+    }
+  },
+  "payment_gateway": {
+    "@type": "xenditData",
+    "xen_key_live": "",
+    "xen_key_test": ""
+  },
+  "data_bots": [
+    {
+      "@type": "dataClientBot",
+      "id": 0,
+      "client_id": 0,
+      "created_at": "2022-12-26T05:26:40.500935+00:00",
+      "client_user_id": 0,
+      "client_title": "",
+      "client_token": "",
+      "owner_user_id": 0,
+      "client_type": "",
+      "from_bot_type": null,
+      "can_join_groups": false,
+      "can_read_all_group_messages": false,
+      "from_bot_user_id": 0,
+      "expire_date": 0,
+      "client_username": "",
+      "version": ""
+    }
+  ],
+  "tdlib_option": {
+    "@type": "tdlib_option",
+    "use_file_database": true,
+    "use_chat_info_database": true,
+    "use_message_database": true,
+    "use_secret_chats": true,
+    "api_id": 0,
+    "api_hash": "",
+    "database_directory": "tg_db",
+    "files_directory": "tg_file",
+    "enable_storage_optimizer": true,
+    "system_language_code": "en",
+    "new_verbosity_level": 0,
+    "application_version": "v1",
+    "device_model": "Telegram Client HexaMinate @azkadev Galaxeus",
+    "system_version": "",
+    "database_key": "",
+    "update_time_out": 0.0,
+    "max_client": 0
+  },
+  "telegram_bot_global_force_subscribes_privates": [
+    {
+      "client_user_id": 0,
+      "client_token": "",
+      "client_username": ""
+    }
+  ],
+  "telegram_bot_global_logs_publics": [
+    {
+      "client_user_id": 0,
+      "client_token": "",
+      "client_username": ""
+    }
+  ],
+  "accounts": [],
+  "config_force": {
+    "@type": "configForce"
+  },
+  "config_init": {
+    "@type": "configInit"
+  }
+}

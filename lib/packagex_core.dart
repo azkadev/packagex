@@ -42,6 +42,7 @@ import "package:mime/mime.dart";
 import "package:packagex/extension/string.dart";
 import "package:packagex/packagex_api_status.dart";
 import "package:packagex/packagex_platform_type.dart";
+import "package:packagex/scheme/packagex_config.dart";
 import "package:packagex/scheme/scheme.dart";
 import "package:universal_io/io.dart";
 
@@ -62,7 +63,9 @@ class Packagex {
     required String newName,
     required Directory directoryPackage,
     required bool isApplication,
+    required PackagexConfig? packagexConfig,
   }) async* {
+    packagexConfig ??= PackagexConfig({});
     Directory directory_project = await Future(() async {
       return Directory(Directory(path.join(directoryPackage.uri.toFilePath(), newName.trim())).uri.toFilePath());
     });
@@ -145,8 +148,10 @@ class Packagex {
     packagexPubspec.rawData.general_lib_utils_updateMapIfNotSameOrEmptyOrNull(data: packagexPubspec_default.rawData, ignoreKeys: ["@type"]);
     packagexPubspec.rawData.general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
     yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Remove Pubspec Keys: [\"@type\"] ${path.basename(file_pubspec.path)}");
-
     await file_pubspec.writeAsString(YamlWriter().write(packagexPubspec.toJson()));
+
+    packagexPubspec.packagex.rawData.general_lib_utils_updateMapWithReplace(data: packagexConfig.rawData, ignoreKeys: ["@type"]);
+    packagexPubspec.rawData.general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
     if (isApplication) {
       if (!packagexPubspec.dev_dependencies.rawData.containsKey("msix")) {
         String message = "Add Package: Msix --dev";
@@ -263,6 +268,7 @@ exit 0
     List<String> default_debian_postrms_packagex_linux = [
       "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
       "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
+      "rm -rf /usr/local/share/${project_name.packagex_utils_extension_toLinuxProgram()}",
     ];
     if (file_debian_postrm_packagex_linux.existsSync() == false) {
       await file_debian_postrm_packagex_linux.writeAsString("""
@@ -270,6 +276,8 @@ exit 0
 ${default_debian_postrms_packagex_linux.join("\n")}
 """);
     } else {
+      default_debian_postrms_packagex_linux.removeAt(0);
+      default_debian_postrms_packagex_linux.removeAt(0);
       String origin_data = await file_debian_postrm_packagex_linux.readAsString();
       List<String> origin_datas = origin_data.split("\n").map((e) => e.trim()).toList();
       bool is_found_update = false;
@@ -287,10 +295,27 @@ ${default_debian_postrms_packagex_linux.join("\n")}
       await file_debian_postrm_packagex_linux.writeAsString(origin_datas.join("\n"));
     }
 
+    List<String> folder_bins = [ 
+      path.join(directory_packagex_linux.path, "usr", "bin"),
+      path.join(directory_packagex_linux.path, "usr", "local", "bin"),
+    ];
+
+    for (var i = 0; i < folder_bins.length; i++) {
+      String folder_bin = folder_bins[i];
+
+      File file_bin_packagex_linux_gitignore = File(path.join(folder_bin, ".gitignore"));
+      if (file_bin_packagex_linux_gitignore.parent.existsSync() == false) {
+        await file_bin_packagex_linux_gitignore.parent.create(recursive: true);
+      }
+      await file_bin_packagex_linux_gitignore.writeAsString("""* 
+!.gitignore""".trim());
+    }
+
     File file_gitignore_packagex_linux = File(path.join(directory_packagex_linux.path, ".gitignore"));
     if (file_gitignore_packagex_linux.parent.existsSync() == false) {
       await file_gitignore_packagex_linux.parent.create(recursive: true);
     }
+
     List<String> default_gitignores_packagex_linux = [
       "usr/bin/${project_name}",
       "usr/share/${project_name}",
@@ -368,10 +393,10 @@ StartupNotify=true
   Stream<PackagexApiStatus> build({
     required Directory directoryBase,
     required List<PackagexPlatformType> packagexPlatformTypes,
-    String? path_output,
-    String? name_output,
-    bool cancelOnError = false,
+    required Directory? directoryBuild,
+    required PackagexConfig? packagexConfig,
   }) async* {
+    packagexConfig ??= PackagexConfig({});
     yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting Build: ${packagexPlatformTypes.map((e) => e.name.toUpperCaseFirstData()).join(", ")}");
 
     File file_pubspec = File(path.join(directoryBase.path, "pubspec.yaml"));
@@ -379,6 +404,7 @@ StartupNotify=true
       newName: path.basename(directoryBase.path),
       directoryPackage: directoryBase.parent,
       isApplication: false,
+      packagexConfig: packagexConfig,
     );
     await for (var event in strm) {
       yield event;
@@ -387,7 +413,11 @@ StartupNotify=true
 
     PackagexPubspec packagexPubspec = PackagexPubspec(yaml_code.clone());
 
-    Directory directory_build_packagex = Directory(path_output ?? path.join(directoryBase.path, "build", "packagex"));
+    packagexPubspec.packagex.rawData.general_lib_utils_updateMapWithReplace(data: packagexConfig.rawData, ignoreKeys: ["@type"]);
+    packagexPubspec.rawData.general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
+
+    Directory directory_build_packagex = directoryBuild ?? Directory(path.join(directoryBase.path, "build", "packagex"));
+    yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Directory Build: ${directory_build_packagex.uri.toFilePath()}");
 
     File file_script_pkgx = File(path.join(directoryBase.path, "lib", "packagex", "packagex.dart"));
     if (!file_script_pkgx.parent.existsSync()) {
