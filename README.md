@@ -1,4 +1,13 @@
- 
+# Packagex
+
+Packagex is library or program for help you bundling program to any package 
+Example: example.deb, example-web.zip, example.ipa, example.msix
+
+## Features
+
+1. [x] Bundling Cross Platform Application & Cli
+2. [x] Publish To Github Release
+
 
 <!-- START GLOBAL CORPORATION -->
 <h3 align="center">

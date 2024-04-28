@@ -13,7 +13,7 @@ platforms:
   windows:
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.3.3 <4.0.0"
 
 dev_dependencies:
   lints: ^3.0.0
@@ -22,7 +22,7 @@ dev_dependencies:
 
 executables:
   packagex: packagex
-  
+
 dependencies:
   # archive: ^3.4.10
   collection: ^1.18.0
@@ -34,11 +34,10 @@ dependencies:
   path: ^1.9.0
   universal_io: ^2.2.2
   yaml: ^3.1.2
-  yaml_writer: '^2.0.0'
+  yaml_writer: "^2.0.0"
   system_info_fetch: ^0.0.14
 
 packagex:
-  
   name: packagex
   dart_target: packagex
   flutter_target: main
@@ -49,8 +48,7 @@ packagex:
     split-debug-info: 0.0.5
   project_id: "azkadev.packagex"
   github_username: azkadev
-  
-msix_config: 
+
+msix_config:
   display_name: packagex
   install_certificate: false
-   

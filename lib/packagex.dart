@@ -31,5 +31,8 @@ jadi sebelum nego kami sudah melakukan berbagai konsekuensi jika nego tidak sesu
 Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba tiba di potong akhirnya bantuan / software kadang tidak lengkap
 
 
-<!-- END LICENSE --> */
-export "packagex_core.dart";
+<!-- END LICENSE --> */ 
+
+export "package:packagex/packagex_core.dart";
+export "package:packagex/packagex_api_status.dart";
+export "package:packagex/packagex_platform_type.dart";

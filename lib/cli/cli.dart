@@ -242,6 +242,7 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     Progress progress = logger.progress("Start Publish");
     await packagex.publish(
       tokenGithub: tokenGithub,
+      directoryBase: Directory.current,
       onUpdate: (update) {
         progress.update(update);
       },

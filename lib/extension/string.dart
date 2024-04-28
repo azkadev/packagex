@@ -36,15 +36,23 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 
 import 'package:collection/collection.dart';
 import 'package:general_lib/general_lib.dart';
-import 'package:packagex/packagex_core.dart';
+import 'package:packagex/packagex_platform_type.dart';
 
+/// Set Extension Packagex
 extension StringPackagexExtensionOnNull on String? {
+  /// Convert any text symbol
+  /// example:
+  /// "slebew_corp" converted to "slebew-corp"
   String packagex_utils_extension_toLinuxProgram() {
     return (this ?? "").packagex_utils_extension_toLinuxProgram();
   }
 }
 
+/// Set Extension Packagex
 extension StringPackagexExtensionOn on String {
+  /// Convert any text symbol
+  /// example:
+  /// "slebew_corp" converted to "slebew-corp"
   String packagex_utils_extension_toLinuxProgram() {
     String text = this;
     List<RegExpReplace> regExpReplaces = [
@@ -64,15 +72,16 @@ extension StringPackagexExtensionOn on String {
     return text;
   }
 
+  /// Convert any text symbol
+  /// example:
+  /// "linux" converted to PackagexPlatformType.linux
   List<PackagexPlatformType> toPackagexPlatformTypes({
     bool isAutoPlatformCurrent = true,
   }) {
     List<String> texts = split(",");
     List<PackagexPlatformType> packagexPlatformTypes = [];
     for (String text in texts) {
-      PackagexPlatformType? packagexPlatformType = PackagexPlatformType.values
-          .firstWhereOrNull((element) =>
-              element.name.toLowerCase() == text.toLowerCase().trim());
+      PackagexPlatformType? packagexPlatformType = PackagexPlatformType.values.firstWhereOrNull((element) => element.name.toLowerCase() == text.toLowerCase().trim());
       if (packagexPlatformType != null) {
         if (!packagexPlatformTypes.contains(packagexPlatformType)) {
           packagexPlatformTypes.add(packagexPlatformType);
