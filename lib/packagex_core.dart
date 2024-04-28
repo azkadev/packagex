@@ -3,33 +3,29 @@
 import "dart:async";
 import 'dart:convert';
 import "dart:io";
-import "package:general_lib/scheme/json_dart.dart";
 import "package:github/github.dart";
 import "package:http/http.dart";
 import "package:mime/mime.dart";
+import "package:packagex/extension/string.dart";
+import "package:packagex/scheme/scheme.dart";
 import "package:universal_io/io.dart";
 
 import 'package:general_lib/general_lib.dart';
-import 'package:path/path.dart' as p;
-import "extension/directory.dart";
-import "scheme/scheme.dart" as packagex_scheme;
+// import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
 import "package:yaml/yaml.dart" as yaml;
-import "shell/shell.dart" as packagex_shell;
-import "api/api.dart" as packagex_api;
+import "package:yaml_writer/yaml_writer.dart";
 
 import "package:collection/collection.dart";
 
 enum PackagexPlatformType {
-  current,
   android,
   ios,
   linux,
   macos,
   windows,
   web,
-  all,
 }
-
 
 enum PackagexApiStatusType {
   succes,
@@ -42,468 +38,374 @@ enum PackagexApiStatusType {
 }
 
 class PackagexApiStatus {
+  String status_id;
   String value;
   PackagexApiStatusType packagexApiStatusType;
   PackagexApiStatus({
+    this.status_id = "",
     required this.packagexApiStatusType,
     required this.value,
   });
 }
-/// 
+
+///
 class Packagex {
-  /// 
+  ///
   Packagex();
 
-  Future<Map> request({
-    required Map jsonData,
-  }) async {
-    JsonDart jsonDart = JsonDart(jsonData);
-
-    if (RegExp(r"^(createPackage)$", caseSensitive: false).hashData(jsonDart["@type"])) {}
-    if (RegExp(r"^(buildPackage)$", caseSensitive: false).hashData(jsonDart["@type"])) {
-      packagex_api.BuildPackage buildPackage = packagex_api.BuildPackage(jsonData);
-
-      return await build(
-        packagexPlatform: (PackagexPlatformType.values.firstWhereOrNull((element) => element.name == (buildPackage.platform ?? "current"))),
-        path_current: buildPackage.path_current,
-        packagexConfig: packagex_scheme.Packagex(
-          buildPackage.build_config.rawData,
-        ),
-      );
-    }
-
-    return {
-      "@type": "error",
-      "message": "method_not_found",
-      "description": "Method not found",
-    };
-  }
-
-  Future<Map> clean({
-    String? path_current,
-  }) async {
-    path_current ??= Directory.current.path;
-    Directory directory_package = Directory(path_current);
-    void remove(Directory directory) {
-      List<FileSystemEntity> dirs = directory.listSync();
-
-      for (var i = 0; i < dirs.length; i++) {
-        FileSystemEntity dir = dirs[i];
-        if (dir is Directory) {
-          try {
-            String base_name = p.basename(dir.path);
-            if (base_name == "packagex" || base_name == "packaging") {
-              dir.deleteSync(
-                recursive: true,
-              );
-            } else {
-              remove(dir.absolute);
-            }
-          } catch (e) {}
-        }
-      }
-    }
-
-    remove(Directory.current);
-    return {
-      "@type": "ok",
-    };
-  }
-
   Stream<PackagexApiStatus> create({
-    required String name,
+    required String newName,
+    required Directory directoryPackage,
+    required bool isApplication,
   }) async* {
-    Directory directory_package = Directory(p.join(Directory.current.path, name));
-    if (name == ".") {
-      directory_package = Directory(p.join(Directory.current.path));
-    }
-    String package_name = p.basename(directory_package.path);
-    packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec({});
+    Directory directory_project = await Future(() async {
+      return Directory(Directory(path.join(directoryPackage.uri.toFilePath(), newName.trim())).uri.toFilePath());
+    });
+    String project_name = path.basename(directory_project.path);
+    yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Started Create Project: ${project_name}");
 
-    File file_pubspec = File(p.join(directory_package.path, "pubspec.yaml"));
-
-    if (file_pubspec.existsSync()) {
-      Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
-      pubspec.rawData = yaml_code.clone();
-    } else {
-      await packagex_shell.shell(
-        executable: "dart",
-        arguments: [
+    File file_pubspec = File(path.join(directory_project.path, "pubspec.yaml"));
+    if (file_pubspec.existsSync() == false) {
+      yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Started Create Project: ${(isApplication) ? "flutter" : "dart"} ${project_name}");
+      List<String> arguments = () {
+        List<String> defaults_args = [
           "create",
-          name,
-          "--force",
+          newName,
           "--no-pub",
-        ],
-        workingDirectory: Directory.current.path,
-        runInShell: true,
-        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stdout.add(data);
-        },
-        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stderr.add(data);
-        },
+        ];
+        if (isApplication) {
+          defaults_args.addAll([
+            "--offline",
+          ]);
+        } else {
+          defaults_args.addAll([
+            "--force",
+          ]);
+        }
+        return defaults_args;
+      }();
+      Process process = await Process.start(
+        (isApplication) ? "flutter" : "dart",
+        arguments,
+        workingDirectory: directory_project.parent.uri.toFilePath(),
       );
+      process.stderr.listen((event) {
+        stderr.add(event);
+      });
+      process.stdout.listen((event) {
+        stdout.add(event);
+      });
+      int exit_code = await (process.exitCode);
+      if (exit_code != 0) {
+        yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed Create Project: ${(isApplication) ? "flutter" : "dart"} ${project_name}");
+        return;
+      } else {
+        yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes Create Project: ${(isApplication) ? "flutter" : "dart"} ${project_name}");
+      }
+    }
 
-      while (true) {
-        await Future.delayed(Duration(microseconds: 1));
-        if (file_pubspec.existsSync()) {
-          Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
-          pubspec.rawData = yaml_code.clone();
-          break;
+    PackagexPubspec packagexPubspec = PackagexPubspec({});
+
+    Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
+    packagexPubspec.rawData = yaml_code.clone();
+    yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Started Check Pubspec Configuration: ${path.basename(file_pubspec.path)}");
+
+    PackagexPubspec packagexPubspec_default = PackagexPubspec.create(
+      packagex: PackagexConfig.create(
+        name: project_name,
+        dart_name: project_name,
+        flutter_target: "main",
+        dart_target: project_name,
+        flutter_name: project_name,
+        is_without_platform_name: true,
+        flutter_commands: PackagexConfigFlutterCommands.create(
+          obfuscate: true,
+          split_debug_info: "0.0.0",
+          build_name: "0.0.0",
+          build_number: 1,
+          split_per_abi: true,
+          no_tree_shake_icons: true,
+        ),
+        project_id: "azkadev.packagex",
+        github_is_org: false,
+        github_username: "azkadev",
+      ),
+      msix_config: PackagexMsixConfig.create(
+        display_name: project_name,
+        install_certificate: false,
+      ),
+    );
+    yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Update Pubspec Configuration: ${path.basename(file_pubspec.path)}");
+
+    packagexPubspec.rawData.general_lib_utils_updateMapIfNotSameOrEmptyOrNull(data: packagexPubspec_default.rawData, ignoreKeys: ["@type"]);
+    packagexPubspec.rawData.general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
+    yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Remove Pubspec Keys: [\"@type\"] ${path.basename(file_pubspec.path)}");
+
+    await file_pubspec.writeAsString(YamlWriter().write(packagexPubspec.toJson()));
+    if (isApplication) {
+      if (!packagexPubspec.dev_dependencies.rawData.containsKey("msix")) {
+        String message = "Add Package: Msix --dev";
+        yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting ${message}");
+        Process process = await Process.start(
+          "flutter",
+          ["pub", "add", "--dev", "msix"],
+          workingDirectory: directory_project.parent.uri.toFilePath(),
+        );
+        process.stderr.listen((event) {
+          stderr.add(event);
+        });
+        process.stdout.listen((event) {
+          stdout.add(event);
+        });
+        int exit_code = await (process.exitCode);
+        if (exit_code != 0) {
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+          return;
+        } else {
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
         }
       }
     }
-    if (pubspec["name"] == null) {
-      pubspec["name"] = package_name;
-    }
-    if (pubspec["packagex"] is Map == false) {
-      await file_pubspec.writeAsString("""
+    // linux
 
-packagex:
-  name: ${pubspec.name}
-  dart_target: ${pubspec.name}
-  flutter_target: main
-  dart_name: ${pubspec.name}
-  flutter_name: ${pubspec.name}
-  is_without_platform_name: true
-  flutter_commands:
-    obfuscate: true
-    split-debug-info: "0.0.5"
-    build-name: "0.0.5"
-    build-number: 40
-    split-per-abi: true
-    no-tree-shake-icons: false
-
-  project_id: "azkadev.packagex"
-  github_username: azkadev
-  github_is_org: false
-  
-""", mode: FileMode.writeOnlyAppend);
-    }
-    if (pubspec["msix_config"] is Map == false) {
-      await file_pubspec.writeAsString("""
-
-msix_config: 
-  display_name: ${pubspec.name}
-  install_certificate: false
-  # publisher_display_name: Azkadev
-  # identity_name: org.azkadev.${package_name}
-  # msix_version: 0.0.0.0
-  # capabilities: internetClient, location, microphone, webcam
-""", mode: FileMode.writeOnlyAppend);
-    }
-
-    if (!pubspec.dev_dependencies.rawData.containsKey("msix")) {
-      await packagex_shell.shell(
-        executable: "flutter",
-        arguments: ["pub", "add", "--dev", "msix"],
-        workingDirectory: directory_package.path,
-        runInShell: true,
-        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stdout.add(data);
-        },
-        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stderr.add(data);
-        },
-      );
-    }
-
-    if (pubspec["homepage"] == null) {
-      pubspec["homepage"] = "https://github.com/azkadev";
-    }
-
-    package_name = package_name.toString().replaceAll(RegExp(r"([_])"), "-");
     String scripts = """
-Maintainer: "${pubspec["maintaner"] ?? "azkadev"} <${pubspec["maintaner"] ?? "azkadev"}@noemail.com>"
-Package: ${package_name}
-Version: ${pubspec.version}
+Maintainer: "anonymous@noemail.com>"
+Package: ${(packagexPubspec.name ?? project_name).packagex_utils_extension_toLinuxProgram()}
+Version: ${packagexPubspec.version}
 Section: x11
 Priority: optional
 Architecture: {{architecture_os}}
 Essential: no
 Installed-Size: 0
-Description: "${pubspec.description}"
-Homepage: "${pubspec.homepage}"
-"""
-        .replaceAllMapped(RegExp(r"({{architecture_os}})", caseSensitive: false), (match) {
+Description: "-"
+Homepage: "-"
+""";
+    scripts = scripts.replaceAllMapped(RegExp(r"({{architecture_os}})", caseSensitive: false), (match) {
       if (Platform.isAndroid) {
         return "all";
       } else {
         return "all";
       }
     });
+    // create folder
+    //
+    List<List<String>> packagex_linux_folders = [
+      ["DEBIAN"],
+      ["usr", "bin"],
+      ["usr", "lib"],
+      ["usr", "local"],
+      ["usr", "local", "bin"],
+      ["usr", "local", "lib"],
+      ["usr", "share", "applications"],
+      ["usr", "share", project_name.packagex_utils_extension_toLinuxProgram()],
+    ];
+    Directory directory_packagex_linux = Directory(path.join(directory_project.path, "linux", "packagex"));
+    for (var i = 0; i < packagex_linux_folders.length; i++) {
+      Directory directory_procces = Directory(path.join(directory_packagex_linux.path, path.joinAll(packagex_linux_folders[i])));
+      if (directory_procces.existsSync() == false) {
+        await directory_procces.create(recursive: true);
+      }
+    }
+
+    File file_debian_control_packagex_linux = File(path.join(directory_packagex_linux.path, "DEBIAN", "control"));
+    if (file_debian_control_packagex_linux.parent.existsSync() == false) {
+      await file_debian_control_packagex_linux.parent.create(recursive: true);
+    }
+    if (file_debian_control_packagex_linux.existsSync() == false) {
+      await file_debian_control_packagex_linux.writeAsString(scripts);
+    }
+
+    File file_debian_postinst_packagex_linux = File(path.join(directory_packagex_linux.path, "DEBIAN", "postinst"));
+    if (file_debian_postinst_packagex_linux.parent.existsSync() == false) {
+      await file_debian_postinst_packagex_linux.parent.create(recursive: true);
+    }
+    List<String> default_debian_postinsts_packagex_linux = [
+      "ln -s /usr/share/${project_name.packagex_utils_extension_toLinuxProgram()}/${project_name} /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
+      "chmod +x /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
+    ];
+    if (file_debian_postinst_packagex_linux.existsSync() == false) {
+      await file_debian_postinst_packagex_linux.writeAsString("""
+#!/usr/bin/env sh
+${default_debian_postinsts_packagex_linux.join("\n")}
+exit 0
+""");
+    } else {
+      String origin_data = await file_debian_postinst_packagex_linux.readAsString();
+      List<String> origin_datas = origin_data.split("\n").map((e) => e.trim()).toList();
+      origin_datas.removeWhere((element) => element.trim() == "exit 0");
+      bool is_found_update = false;
+      for (var i = 0; i < default_debian_postinsts_packagex_linux.length; i++) {
+        String default_debian_postinst_packagex_linux = default_debian_postinsts_packagex_linux[i];
+        if (!origin_datas.contains(default_debian_postinst_packagex_linux)) {
+          is_found_update = true;
+          origin_datas.add(default_debian_postinst_packagex_linux);
+        }
+      }
+      if (origin_datas.contains("#!/usr/bin/env sh") == false) {
+        origin_datas.insert(0, "#!/usr/bin/env sh");
+      }
+      if (origin_datas.contains("exit 0") == false) {
+        origin_datas.add("exit 0");
+      }
+
+      await file_debian_postinst_packagex_linux.writeAsString(origin_datas.join("\n"));
+    }
+
+    File file_debian_postrm_packagex_linux = File(path.join(directory_packagex_linux.path, "DEBIAN", "postrm"));
+    if (file_debian_postrm_packagex_linux.parent.existsSync() == false) {
+      await file_debian_postrm_packagex_linux.parent.create(recursive: true);
+    }
+    List<String> default_debian_postrms_packagex_linux = [
+      "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
+      "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
+    ];
+    if (file_debian_postrm_packagex_linux.existsSync() == false) {
+      await file_debian_postrm_packagex_linux.writeAsString("""
+#!/usr/bin/env sh
+${default_debian_postrms_packagex_linux.join("\n")}
+""");
+    } else {
+      String origin_data = await file_debian_postrm_packagex_linux.readAsString();
+      List<String> origin_datas = origin_data.split("\n").map((e) => e.trim()).toList();
+      bool is_found_update = false;
+      for (var i = 0; i < default_debian_postrms_packagex_linux.length; i++) {
+        String default_debian_postrm_packagex_linux = default_debian_postrms_packagex_linux[i];
+        if (!origin_datas.contains(default_debian_postrm_packagex_linux)) {
+          is_found_update = true;
+          origin_datas.add(default_debian_postrm_packagex_linux);
+        }
+      }
+      if (origin_datas.contains("#!/usr/bin/env sh") == false) {
+        origin_datas.insert(0, "#!/usr/bin/env sh");
+      }
+
+      await file_debian_postrm_packagex_linux.writeAsString(origin_datas.join("\n"));
+    }
+
+    File file_gitignore_packagex_linux = File(path.join(directory_packagex_linux.path, ".gitignore"));
+    if (file_gitignore_packagex_linux.parent.existsSync() == false) {
+      await file_gitignore_packagex_linux.parent.create(recursive: true);
+    }
+    List<String> default_gitignores_packagex_linux = [
+      "usr/bin/${project_name}",
+      "usr/share/${project_name}",
+      "usr/local/bin/${project_name}",
+      "usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
+      "usr/share/${project_name.packagex_utils_extension_toLinuxProgram()}",
+      "usr/local/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
+      "usr/local/share/${project_name.packagex_utils_extension_toLinuxProgram()}",
+    ];
+    if (file_gitignore_packagex_linux.existsSync() == false) {
+      await file_gitignore_packagex_linux.writeAsString(default_gitignores_packagex_linux.join("\n"));
+    } else {
+      String origin_data = await file_gitignore_packagex_linux.readAsString();
+      List<String> origin_datas = origin_data.split("\n");
+      bool is_found_update = false;
+      for (var i = 0; i < default_gitignores_packagex_linux.length; i++) {
+        String default_gitignore_packagex_linux = default_gitignores_packagex_linux[i];
+        if (!origin_datas.contains(default_gitignore_packagex_linux)) {
+          is_found_update = true;
+          origin_datas.add(default_gitignore_packagex_linux);
+        }
+      }
+      await file_gitignore_packagex_linux.writeAsString(origin_datas.join("\n"));
+    }
+
     String app_desktop_linux = """
 [Desktop Entry]
 Type=Application
-Version=0.0.0
-Name=${package_name}
+Version=${packagexPubspec.version}
+Name=${project_name.split("_").map((e) => e.toUpperCaseFirstData()).join(" ")}
 GenericName=General Application
-Exec=${package_name} -- %u
+Exec=${project_name.packagex_utils_extension_toLinuxProgram()}-app -- %u
 Categories=Music;Media;
 Keywords=Hello;World;Test;Application;
 StartupNotify=true
-
 """;
-    Future<void> createFolders({
-      required Directory directory,
-      required List<List<String>> folders,
-    }) async {
-      await directory.autoCreate();
-      for (var i = 0; i < folders.length; i++) {
-        List<String> res = folders[i];
-        Directory dir = Directory(p.joinAll([directory.path, ...res]));
-        await dir.autoCreate();
-      }
-      try {
-        await File(p.join(directory.path, "DEBIAN", "control")).writeAsString(scripts);
-      } catch (e) {}
-      try {
-        await File(p.join(directory.path, "DEBIAN", "postinst")).writeAsString("""
-#!/usr/bin/env sh
-ln -s /usr/share/${package_name}/${pubspec.name!} /usr/bin/${package_name}
-chmod +x /usr/bin/${package_name}
-exit 0
-""");
-      } catch (e) {}
-      try {
-        await File(p.join(directory.path, "DEBIAN", "postrm")).writeAsString("""
-#!/usr/bin/env sh
-rm /usr/bin/${package_name} 
-exit 0
-""");
-      } catch (e) {}
-      try {
-        await File(p.join(directory.path, ".gitignore")).writeAsString("""
-usr/bin/${pubspec.name}
-usr/share/${pubspec.name}
-usr/local/bin/${pubspec.name}
-usr/local/share/${pubspec.name}
-""");
-      } catch (e) {}
-      try {
-        await File(p.join(directory.path, "usr", "share", "applications", "${package_name}.desktop")).writeAsString(app_desktop_linux);
-      } catch (e) {}
-
-      return;
+    File file_application_packagex_linux = File(path.join(directory_packagex_linux.path, "usr", "share", "applications", "${project_name}.desktop"));
+    if (file_application_packagex_linux.parent.existsSync() == false) {
+      await file_application_packagex_linux.parent.create(recursive: true);
     }
 
-    if (!directory_package.existsSync()) {
-      await directory_package.create(recursive: true);
+    if (file_application_packagex_linux.existsSync() == false) {
+      await file_application_packagex_linux.writeAsString(app_desktop_linux);
     }
-
-    await createFolders(
-      directory: Directory(p.join(directory_package.path, "android", "packagex")),
-      folders: [
-        ["DEBIAN"],
-        ["usr", "bin"],
-        ["usr", "lib"],
-        ["usr", "local"],
-        ["usr", "local", "bin"],
-        ["usr", "local", "lib"],
-        ["usr", "share", "applications"],
-        ["usr", "share", pubspec.name!],
-      ],
-    );
-    await createFolders(
-      directory: Directory(p.join(directory_package.path, "ios", "packagex")),
-      folders: [],
-    );
-
-    await createFolders(
-      directory: Directory(p.join(directory_package.path, "linux", "packagex")),
-      folders: [
-        ["DEBIAN"],
-        ["usr", "bin"],
-        ["usr", "lib"],
-        ["usr", "local"],
-        ["usr", "local", "bin"],
-        ["usr", "local", "lib"],
-        ["usr", "share", "applications"],
-        ["usr", "share", pubspec.name!],
-      ],
-    );
-    await createFolders(
-      directory: Directory(p.join(directory_package.path, "macos", "packagex")),
-      folders: [],
-    );
-    await createFolders(
-      directory: Directory(p.join(directory_package.path, "windows", "packagex")),
-      folders: [],
-    );
-
-    if (Platform.isAndroid) {
-      await packagex_shell.shell(
-        executable: "chmod",
-        arguments: [
-          "775",
-          p.join(directory_package.path, "android", "packagex", "DEBIAN", "postinst"),
-        ],
-        runInShell: true,
-        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stdout.add(data);
-        },
-        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stderr.add(data);
-        },
-      );
-      await packagex_shell.shell(
-        executable: "chmod",
-        arguments: [
-          "775",
-          p.join(directory_package.path, "android", "packagex", "DEBIAN", "postrm"),
-        ],
-        runInShell: true,
-        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stdout.add(data);
-        },
-        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stderr.add(data);
-        },
-      );
-    }
-
     if (Platform.isLinux) {
-      await packagex_shell.shell(
-        executable: "chmod",
-        arguments: [
+      String message = "Set Permission 775: ${file_debian_postinst_packagex_linux.path} ${file_debian_postrm_packagex_linux.path}";
+      yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting ${message}");
+      Process process = await Process.start(
+        "chmod",
+        [
           "775",
-          p.join(directory_package.path, "linux", "packagex", "DEBIAN", "postinst"),
+          file_debian_postinst_packagex_linux.path,
+          file_debian_postrm_packagex_linux.path,
         ],
         runInShell: true,
-        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stdout.add(data);
-        },
-        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stderr.add(data);
-        },
+        workingDirectory: directory_project.parent.uri.toFilePath(),
       );
-      await packagex_shell.shell(
-        executable: "chmod",
-        arguments: [
-          "775",
-          p.join(directory_package.path, "linux", "packagex", "DEBIAN", "postrm"),
-        ],
-        runInShell: true,
-        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stdout.add(data);
-        },
-        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stderr.add(data);
-        },
-      );
+      process.stderr.listen((event) {
+        stderr.add(event);
+      });
+      process.stdout.listen((event) {
+        stdout.add(event);
+      });
+      int exit_code = await (process.exitCode);
+      if (exit_code != 0) {
+        yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+        return;
+      } else {
+        yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
+      }
     }
-
-    return {};
+    yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Finished Create Project: ${project_name}");
   }
 
-  Future<Map> build({
-    PackagexPlatformType? packagexPlatform,
-    required String? path_current,
+  Stream<PackagexApiStatus> build({
+    required Directory directoryBase,
+    required List<PackagexPlatformType> packagexPlatformTypes,
     String? path_output,
     String? name_output,
-    packagex_scheme.Packagex? packagexConfig,
     bool cancelOnError = false,
-  }) async {
-    path_current ??= Directory.current.path;
-    packagexConfig ??= packagex_scheme.Packagex({});
-    packagexPlatform ??= PackagexPlatformType.current;
-    if (packagexPlatform == PackagexPlatformType.current) {
-      if (Platform.isLinux) {
-        packagexPlatform = PackagexPlatformType.linux;
-      }
-      if (Platform.isMacOS) {
-        packagexPlatform = PackagexPlatformType.macos;
-      }
-      if (Platform.isAndroid) {
-        packagexPlatform = PackagexPlatformType.android;
-      }
-      if (Platform.isWindows) {
-        packagexPlatform = PackagexPlatformType.windows;
-      }
-    }
-    String basename = p.basename(path_current);
-    Directory directory_current = Directory(path_current);
+  }) async* {
+    yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting Build: ${packagexPlatformTypes.map((e) => e.name.toUpperCaseFirstData()).join(", ")}");
 
-    File file_pubspec = File(p.join(directory_current.path, "pubspec.yaml"));
+    File file_pubspec = File(path.join(directoryBase.path, "pubspec.yaml"));
+
+    if (!file_pubspec.existsSync()) {
+      // var strm = create(
+      //   newName: path.basename(directoryBase.path),
+      //   directoryPackage: directoryBase.parent,
+      //   isApplication: false,
+      // );
+      // await for (var event in strm) {
+      //   yield event;
+      // }
+    } else {}
+
+    var strm = create(
+      newName: path.basename(directoryBase.path),
+      directoryPackage: directoryBase.parent,
+      isApplication: false,
+    );
+    await for (var event in strm) {
+      yield event;
+    }
     Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
 
-    packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(yaml_code.clone());
-    if (pubspec["name"] == null) {
-      pubspec["name"] = basename;
+    PackagexPubspec packagexPubspec = PackagexPubspec(yaml_code.clone());
+
+    Directory directory_build_packagex = Directory(path_output ?? path.join(directoryBase.path, "build", "packagex"));
+
+    File file_script_pkgx = File(path.join(directoryBase.path, "lib", "packagex", "packagex.dart"));
+    if (!file_script_pkgx.parent.existsSync()) {
+      await file_script_pkgx.parent.create(
+        recursive: true,
+      );
     }
-    if (pubspec["packagex"] is Map == false) {
-      pubspec["packagex"] = {};
-    }
-
-    packagexConfig.rawData.forEach((key, value) {
-      if (value != null) {
-        pubspec["msix_config"][key.toString()] = value;
-        pubspec["packagex"][key.toString()] = value;
-      }
-    });
-    File script_cli = File(p.join(directory_current.path, "bin", "${pubspec.packagex.dart_target ?? pubspec.name}.dart"));
-    File script_app = File(p.join(directory_current.path, "lib", "${pubspec.packagex.flutter_target ?? "main"}.dart"));
-    bool is_app = false;
-    bool is_cli = false;
-    if (script_app.existsSync()) {
-      is_app = true;
-    }
-    if (script_cli.existsSync()) {
-      is_cli = true;
-    }
-
-    List<String> flutter_commands = [];
-
-    pubspec.packagex.flutter_commands.rawData.forEach((key, value) {
-      String key_args_flutter = "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
-      if (key_args_flutter == "--obfuscate") {
-        if (value == true) {
-          flutter_commands.add(key_args_flutter);
-        }
-      }
-      if (key_args_flutter == "--split-per-abi") {
-        if (value == true) {
-          if (packagexPlatform == PackagexPlatformType.android) {
-            flutter_commands.add(key_args_flutter);
-          }
-        }
-      }
-      if (key_args_flutter == "--no-tree-shake-icons") {
-        if (value == true) {
-          flutter_commands.add(key_args_flutter);
-        }
-      }
-
-      if (key_args_flutter == "--split-debug-info") {
-        flutter_commands.add("${key_args_flutter}=${value}");
-      }
-      if (key_args_flutter == "--build-name") {
-        flutter_commands.add("${key_args_flutter}=${value}");
-      }
-      if (key_args_flutter == "--build-number") {
-        flutter_commands.add("${key_args_flutter}");
-        flutter_commands.add("${value}");
-      }
-    });
-
-    Directory directory_build_packagex = Directory(path_output ?? p.join(directory_current.path, "build", "packagex"));
-    bool is_auto_delete = Platform.environment["packagex_is_auto_delete"] == "true";
-    if (is_auto_delete) {
-      if (directory_build_packagex.existsSync()) {
-        await directory_build_packagex.delete(recursive: true);
-      }
-
-      await directory_build_packagex.create(recursive: true);
-    } else {
-      if (directory_build_packagex.existsSync() == false) {
-        await directory_build_packagex.create(recursive: true);
-      }
-    }
-    File file_packagex_release = File(p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}.json"));
     Map json_data_package_detail = {
-      "name": "${pubspec.packagex.flutter_name ?? pubspec.name}".trim(),
-      ...pubspec.rawData,
-      ...pubspec.packagex.flutter_commands.rawData,
+      "name": "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}".trim(),
+      ...packagexPubspec.rawData,
+      ...packagexPubspec.packagex.flutter_commands.rawData,
     };
     json_data_package_detail.removeByKeys([
       "environment",
@@ -514,757 +416,845 @@ usr/local/share/${pubspec.name}
       "msix_config",
     ]);
 
-    Directory directory_packagex_script = Directory(p.join(
-      path_current,
-      "lib",
-      "packagex",
-    ));
-
-    if (!directory_packagex_script.existsSync()) {
-      await directory_packagex_script.create(
-        recursive: true,
-      );
-    }
-
-    File file_script_pkgx = File(p.join(directory_packagex_script.path, "packagex.dart"));
-
-    String content_Scitps = """
+    String packagex_script_project = """
 // ignore_for_file: non_constant_identifier_names
 import 'dart:convert';
 
-class PackagexProject${(pubspec.packagex.flutter_name ?? pubspec.name ?? "").split("_").map((e) => e.toUpperCaseFirstData()).join("").toUpperCaseFirstData()} {
+class PackagexProject${(packagexPubspec.packagex.flutter_name ?? packagexPubspec.name ?? "").split("_").map((e) => e.toUpperCaseFirstData()).join("").toUpperCaseFirstData()} {
 
-    
   static bool isSame({
     required String data
   }) {
     return [default_data_to_string, json.encode(default_data)].contains(data);
-  } 
-
+  }
 
     static String get default_data_to_string {
       return (JsonEncoder.withIndent(" " * 2).convert(default_data));
     }
 
-
     static Map get default_data {
 return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
     }
 
-     
 }
 """
         .trim();
+    await file_script_pkgx.writeAsString(packagex_script_project);
 
-//     json_data_package_detail.forEach((key, value) {
-//       content_Scitps += "\n";
-//       content_Scitps += """
-// static dynamic get ${key.toString().replaceAll(RegExp("@"), "special_")} {
-//   return ${value};
-// }
-// """
-//           .trim();
-//                 content_Scitps += "\n";
-//     });
-//
-    await file_script_pkgx.writeAsString(content_Scitps);
+    bool is_auto_delete = Platform.environment["packagex_is_auto_delete"] == "true";
+    if (is_auto_delete) {
+      if (directory_build_packagex.existsSync()) {
+        await directory_build_packagex.delete(recursive: true);
+      }
+      await directory_build_packagex.create(recursive: true);
+    } else {
+      if (directory_build_packagex.existsSync() == false) {
+        await directory_build_packagex.create(recursive: true);
+      }
+    }
 
-    if (packagexPlatform == PackagexPlatformType.linux) {
-      if (!Platform.isLinux) {
-        return {
-          "@type": "error",
-          "message": "platform_not_supported",
-          "description": "Package linux hanya bisa di perangkat linux saja !",
-        };
+    File file_packagex_release = File(path.join(directory_build_packagex.path, "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}.json"));
+    await file_packagex_release.writeAsString(json_data_package_detail.toStringifyPretty(2));
+
+    for (PackagexPlatformType packagex_platform_type in packagexPlatformTypes) {
+      PackagexPlatformType packagexPlatformType = packagex_platform_type;
+
+      File script_cli = File(path.join(directoryBase.path, "bin", "${packagexPubspec.packagex.dart_target ?? packagexPubspec.name}.dart"));
+      File script_app = File(path.join(directoryBase.path, "lib", "${packagexPubspec.packagex.flutter_target ?? "main"}.dart"));
+      bool is_app = false;
+      bool is_cli = false;
+      if (script_app.existsSync()) {
+        is_app = true;
+      }
+      if (script_cli.existsSync()) {
+        is_cli = true;
       }
 
-      String path_linux_package = p.join(
-        path_current,
-        "linux",
-        "packagex",
-      );
+      List<String> flutter_commands = [];
 
-      String path_app_deb = p.join(
-        path_linux_package,
-        "usr",
-        "share",
-        pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
-      );
-
-      try {
-        await packagex_shell.shell(
-          executable: "chmod",
-          arguments: ["775", p.join(path_linux_package, "DEBIAN", "postinst")],
-          runInShell: true,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-      } catch (e) {}
-      try {
-        await packagex_shell.shell(
-          executable: "chmod",
-          arguments: ["775", p.join(path_linux_package, "DEBIAN", "postrm")],
-          runInShell: true,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-      } catch (e) {}
-
-      if (is_app) {
-        try {
-          if (Directory(path_app_deb).existsSync()) {
-            await Directory(path_app_deb).delete(recursive: true);
-            await Directory(path_app_deb).create(recursive: true);
-          } else {
-            await Directory(path_app_deb).create(recursive: true);
+      packagexPubspec.packagex.flutter_commands.rawData.forEach((key, value) {
+        String key_args_flutter = "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
+        if (key_args_flutter == "--obfuscate") {
+          if (value == true) {
+            flutter_commands.add(key_args_flutter);
           }
-        } catch (e) {}
-      }
-      File file_cli = File(p.join(
-        path_linux_package,
-        "usr",
-        "bin",
-        "${pubspec.packagex.dart_name ?? pubspec.name!.replaceAll(RegExp(r"([_])"), "-")}${(pubspec.packagex.is_without_platform_name == true) ? "" : "-cli-linux"}",
-      ));
-      File file_app = File(p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}${(pubspec.packagex.is_without_platform_name == true) ? "" : "-linux"}.deb"));
-
-      if (is_cli) {
-        await packagex_shell.shell(
-          executable: "dart",
-          arguments: [
-            "compile",
-            "exe",
-            script_cli.path,
-            "-o",
-            file_cli.path,
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-        try {
-          await packagex_shell.shell(
-            executable: "chmod",
-            arguments: ["775", file_cli.path],
-            runInShell: true,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
-          );
-        } catch (e) {}
-      }
-
-      if (is_app) {
-        await packagex_shell.shell(
-          executable: "flutter",
-          arguments: [
-            "build",
-            "linux",
-            "--release",
-            "--target=${script_app.path}",
-            ...flutter_commands,
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-        String path_app = p.join(directory_current.path, "build", "linux", "x64", "release", "bundle", ".");
-        await packagex_shell.shell(
-          executable: "cp",
-          arguments: [
-            "-rf",
-            path_app,
-            path_app_deb,
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-      }
-
-      if (is_app || is_cli) {
-        try {
-          await packagex_shell.shell(
-            executable: "chmod",
-            arguments: ["-R", "775", path_linux_package],
-            runInShell: true,
-            workingDirectory: directory_current.path,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
-          );
-        } catch (e) {}
-        try {
-          await packagex_shell.shell(
-            executable: "chmod",
-            arguments: ["-R", "775", path_linux_package],
-            workingDirectory: directory_current.path,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
-          );
-        } catch (e) {}
-        await packagex_shell.shell(
-          executable: "dpkg-deb",
-          arguments: [
-            "--build",
-            "--root-owner-group",
-            path_linux_package,
-            file_app.path,
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-        try {
-          if (file_cli.existsSync()) {
-            await file_cli.delete(recursive: true);
-          }
-        } catch (e) {}
-      }
-    } else if (packagexPlatform == PackagexPlatformType.windows) {
-      if (!Platform.isWindows) {
-        return {"@type": "error", "message": "platform_not_supported", "description": "Package windows hanya bisa di perangkat windows saja !"};
-      }
-      // output ??= p.join(directory_build_packagex.path, );
-      if (!pubspec.dev_dependencies.rawData.containsKey("msix")) {
-        await packagex_shell.shell(
-          executable: "flutter",
-          arguments: ["pub", "add", "--dev", "msix"],
-          workingDirectory: directory_current.path,
-          runInShell: true,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-      }
-
-      if (is_cli) {
-        await packagex_shell.shell(
-          executable: "dart",
-          arguments: [
-            "compile",
-            "exe",
-            script_cli.path,
-            "-o",
-            p.join(directory_build_packagex.path, "${pubspec.packagex.dart_name ?? pubspec.name}${(pubspec.packagex.is_without_platform_name == true) ? "" : "-cli-windows"}.exe"),
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-      }
-
-      if (is_app) {
-        List<String> args_msix = [];
-        List<String> msix_args = [
-          "--display-name",
-          "--publisher-display-name",
-          "--identity-name",
-          "--version",
-          "--logo-path",
-          "--trim-logo",
-          "--capabilities",
-          "--languages",
-          "--file-extension",
-          "--protocol-activation",
-          "--app-uri-handler-hosts",
-          "--execution-alias",
-          "--enable-at-startup",
-          "--store",
-          "--certificate-path",
-          "--certificate-password",
-          "--publisher",
-          "--signtool-options",
-          "--sign-msix",
-          "--install-certificate",
-        ];
-        pubspec.msix_config.rawData.forEach((key, value) {
-          if (value is String && value.isNotEmpty) {
-            String key_args_msix = "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
-            if (!msix_args.contains(key_args_msix)) {
-              return;
-            }
-            if (key_args_msix == "--version") {
-              List<String> versions = value.toString().split(".");
-              if (versions.length != 4) {
-                value = "0.0.0.0";
-              }
-            }
-            args_msix.add(key_args_msix);
-            args_msix.add(value);
-          }
-        });
-
-        await packagex_shell.shell(
-          executable: "flutter",
-          arguments: [
-            "pub",
-            "run",
-            "msix:create",
-            "--windows-build-args",
-            "--target=${script_app.path} ${flutter_commands.join(" ")}",
-            "-o",
-            directory_build_packagex.path,
-            "-n",
-            "${pubspec.packagex.flutter_name ?? pubspec.name}${(pubspec.packagex.is_without_platform_name == true) ? "" : "-app-windows"}",
-            ...args_msix,
-          ],
-          workingDirectory: directory_current.path,
-          runInShell: true,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-      }
-    } else if (packagexPlatform == PackagexPlatformType.macos) {
-      if (!Platform.isMacOS) {
-        return {"@type": "error", "message": "platform_not_supported", "description": "Package macos hanya bisa di perangkat macos saja !"};
-      }
-      if (is_cli) {
-        await packagex_shell.shell(
-          executable: "dart",
-          arguments: [
-            "compile",
-            "exe",
-            script_cli.path,
-            "-o",
-            p.join(directory_build_packagex.path, "${pubspec.packagex.dart_name ?? pubspec.name}${(pubspec.packagex.is_without_platform_name == true) ? "" : "-cli-macos"}"),
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-      }
-
-      if (is_app) {
-        await packagex_shell.shell(
-          executable: "flutter",
-          arguments: [
-            "build",
-            "macos",
-            "--release",
-            "--target=${script_app.path}",
-            ...flutter_commands,
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-      }
-    } else if (packagexPlatform == PackagexPlatformType.android) {
-      if (is_app) {
-        await packagex_shell.shell(
-          executable: "flutter",
-          arguments: [
-            "build",
-            "apk",
-            "--release",
-            "--split-per-abi",
-            "--target=${script_app.path}",
-            ...flutter_commands,
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-
-        Directory directory_apk = Directory(p.join(directory_current.path, "build", "app", "outputs", "flutter-apk"));
-        List<FileSystemEntity> dirs = directory_apk.listSync();
-        for (var i = 0; i < dirs.length; i++) {
-          FileSystemEntity dir = dirs[i];
-          try {
-            if (dir is Directory) {
-            } else if (dir is File) {
-              if (p.extension(dir.path) != ".apk") {
-                continue;
-              }
-              if (p.basename(dir.path) == "app-release.apk") {
-                continue;
-              }
-              await dir.absolute.copy(p.join(directory_build_packagex.path, p.basename(dir.path).replaceAll(RegExp("^(app)", caseSensitive: false), "${pubspec.packagex.flutter_name ?? pubspec.name}")));
-              await dir.absolute.delete(
-                recursive: true,
-              );
-            }
-          } catch (e) {}
         }
-      }
-
-      if (is_cli) {
-        if (!Platform.isAndroid) {
-          return {
-            "@type": "error",
-            "message": "platform_not_supported",
-            "description": "Package Android hanya bisa di perangkat android saja !",
-          };
+        if (key_args_flutter == "--split-per-abi") {
+          if (value == true) {
+            if (packagexPlatformType == PackagexPlatformType.android) {
+              flutter_commands.add(key_args_flutter);
+            }
+          }
+        }
+        if (key_args_flutter == "--no-tree-shake-icons") {
+          if (value == true) {
+            flutter_commands.add(key_args_flutter);
+          }
         }
 
-        String path_android_package = p.join(
-          path_current,
-          "android",
+        if (key_args_flutter == "--split-debug-info") {
+          flutter_commands.add("${key_args_flutter}=${value}");
+        }
+        if (key_args_flutter == "--build-name") {
+          flutter_commands.add("${key_args_flutter}=${value}");
+        }
+        if (key_args_flutter == "--build-number") {
+          flutter_commands.add("${key_args_flutter}");
+          flutter_commands.add("${value}");
+        }
+      });
+
+      yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting Build: ${packagexPlatformType.name}");
+      if (packagexPlatformType == PackagexPlatformType.linux) {
+        if (!Platform.isLinux) {
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Package linux hanya bisa di perangkat linux saja !");
+          continue;
+        }
+
+        Directory directory_linux_package = Directory(path.join(
+          directoryBase.path,
+          "linux",
           "packagex",
-        );
+        ));
 
-        String path_app_deb = p.join(
-          path_android_package,
+        Directory directory_app_deb = Directory(path.join(
+          directory_linux_package.path,
           "usr",
           "share",
-          pubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
-        );
-
-        try {
-          await packagex_shell.shell(
-            executable: "chmod",
-            arguments: ["775", p.join(path_android_package, "DEBIAN", "postinst")],
-            runInShell: true,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
-          );
-        } catch (e) {}
-        try {
-          await packagex_shell.shell(
-            executable: "chmod",
-            arguments: ["775", p.join(path_android_package, "DEBIAN", "postrm")],
-            runInShell: true,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
-          );
-        } catch (e) {}
+          (packagexPubspec.name ?? "").replaceAll(RegExp(r"([_])"), "-"),
+        ));
 
         if (is_app) {
-          try {
-            if (Directory(path_app_deb).existsSync()) {
-              await Directory(path_app_deb).delete(recursive: true);
-              await Directory(path_app_deb).create(recursive: true);
-            } else {
-              await Directory(path_app_deb).create(recursive: true);
-            }
-          } catch (e) {}
+          if (directory_app_deb.existsSync()) {
+            await directory_app_deb.delete(recursive: true);
+            await directory_app_deb.create(recursive: true);
+          } else {
+            await directory_app_deb.create(recursive: true);
+          }
         }
-        File file_cli = File(p.join(
-          path_android_package,
+        String message = "Set Permission: ${path.join(directory_linux_package.path, "DEBIAN")}";
+        yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting ${message}");
+        Process process = await Process.start(
+          "chmod",
+          [
+            "-R",
+            "775",
+            path.join(directory_linux_package.path, "DEBIAN"),
+          ],
+          runInShell: true,
+        );
+        process.stderr.listen((event) {
+          stderr.add(event);
+        });
+        process.stdout.listen((event) {
+          stdout.add(event);
+        });
+        int exit_code = await (process.exitCode);
+        if (exit_code != 0) {
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+          return;
+        } else {
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
+        }
+
+        File file_cli = File(path.join(
+          directory_linux_package.path,
           "usr",
           "bin",
-          "${pubspec.packagex.dart_name ?? pubspec.name!.replaceAll(RegExp(r"([_])"), "-")}${(pubspec.packagex.is_without_platform_name == true) ? "" : "-cli-android"}",
+          "${packagexPubspec.packagex.dart_name ?? packagexPubspec.name!.replaceAll(RegExp(r"([_])"), "-")}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-linux"}",
         ));
-        File file_app = File(p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}${(pubspec.packagex.is_without_platform_name == true) ? "" : "-android"}.deb"));
+        File file_app = File(path.join(directory_build_packagex.path, "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-linux"}.deb"));
 
         if (is_cli) {
-          await packagex_shell.shell(
-            executable: "dart",
-            arguments: [
+          String message = """
+Compile Script Dart: 
+
+From: ${script_cli.path}
+To: ${file_cli.path}
+"""
+              .trim();
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting ${message}");
+          Process process = await Process.start(
+            "dart",
+            [
               "compile",
               "exe",
               script_cli.path,
               "-o",
               file_cli.path,
             ],
-            workingDirectory: directory_current.path,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
+            workingDirectory: directoryBase.path,
           );
-
-          try {
-            await packagex_shell.shell(
-              executable: "chmod",
-              arguments: ["775", file_cli.path],
-              workingDirectory: directory_current.path,
-              onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stdout.add(data);
-              },
-              onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stderr.add(data);
-              },
-            );
-          } catch (e) {}
-          try {
-            await packagex_shell.shell(
-              executable: "chmod",
-              arguments: ["775", file_cli.path],
-              runInShell: true,
-              workingDirectory: directory_current.path,
-              onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stdout.add(data);
-              },
-              onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stderr.add(data);
-              },
-            );
-          } catch (e) {}
+          process.stderr.listen((event) {
+            stderr.add(event);
+          });
+          process.stdout.listen((event) {
+            stdout.add(event);
+          });
+          int exit_code = await (process.exitCode);
+          if (exit_code != 0) {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+            return;
+          } else {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
+          }
+        }
+        if (is_cli) {
+          String message = "Set Permission: ${file_cli.path}";
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting ${message}");
+          Process process = await Process.start(
+            "chmod",
+            [
+              "775",
+              file_cli.path,
+            ],
+            runInShell: true,
+          );
+          process.stderr.listen((event) {
+            stderr.add(event);
+          });
+          process.stdout.listen((event) {
+            stdout.add(event);
+          });
+          int exit_code = await (process.exitCode);
+          if (exit_code != 0) {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+            return;
+          } else {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
+          }
         }
 
         if (is_app) {
-          // await packagex_shell.shell(
-          //   executable: "flutter",
-          //   arguments: [
-          //     "build",
-          //     "linux",
-          //     "--release",
-          //     "--target=${script_app.path}",
-          //     ...flutter_commands,
-          //   ],
-          //   workingDirectory: directory_current.path,
-          //   onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          //     stdout.add(data);
-          //   },
-          //   onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          //     stderr.add(data);
-          //   },
-          // );
-          // String path_app = p.join(directory_current.path, "build", "android", "x64", "release", "bundle", ".");
-          // await packagex_shell.shell(
-          //   executable: "cp",
-          //   arguments: [
-          //     "-rf",
-          //     path_app,
-          //     path_app_deb,
-          //   ],
-          //   workingDirectory: directory_current.path,
-          //   onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          //     stdout.add(data);
-          //   },
-          //   onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          //     stderr.add(data);
-          //   },
-          // );
+          String message = " Flutter Build:";
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting ${message}");
+          Process process = await Process.start(
+            "flutter",
+            [
+              "build",
+              "linux",
+              "--release",
+              "--target=${script_app.path}",
+              ...flutter_commands,
+            ],
+            workingDirectory: directoryBase.path,
+          );
+          process.stderr.listen((event) {
+            stderr.add(event);
+          });
+          process.stdout.listen((event) {
+            stdout.add(event);
+          });
+          int exit_code = await (process.exitCode);
+          if (exit_code != 0) {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+            return;
+          } else {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
+          }
+        }
+        if (is_app) {
+          String path_app = path.join(directoryBase.path, "build", "linux", "x64", "release", "bundle", ".");
+
+          String message = "Copy App Files: From ${path_app} To ${directory_app_deb.path} ";
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting ${message}");
+          Process process = await Process.start(
+            "cp",
+            [
+              "-rf",
+              path_app,
+              directory_app_deb.path,
+            ],
+            workingDirectory: directoryBase.path,
+          );
+          process.stderr.listen((event) {
+            stderr.add(event);
+          });
+          process.stdout.listen((event) {
+            stdout.add(event);
+          });
+          int exit_code = await (process.exitCode);
+          if (exit_code != 0) {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+            return;
+          } else {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
+          }
         }
 
         if (is_app || is_cli) {
-          try {
-            await packagex_shell.shell(
-              executable: "chmod",
-              arguments: ["-R", "775", path_android_package],
-              runInShell: true,
-              workingDirectory: directory_current.path,
-              onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stdout.add(data);
-              },
-              onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stderr.add(data);
-              },
-            );
-          } catch (e) {}
-          try {
-            await packagex_shell.shell(
-              executable: "chmod",
-              arguments: ["-R", "775", path_android_package],
-              workingDirectory: directory_current.path,
-              onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stdout.add(data);
-              },
-              onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-                stderr.add(data);
-              },
-            );
-          } catch (e) {}
-          await packagex_shell.shell(
-            executable: "dpkg-deb",
-            arguments: [
+          String message = "Set Permission: chmod -R 755 ${directory_linux_package.path}";
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting ${message}");
+          Process process = await Process.start(
+            "chmod",
+            ["-R", "775", directory_linux_package.path],
+            runInShell: true,
+          );
+          process.stderr.listen((event) {
+            stderr.add(event);
+          });
+          process.stdout.listen((event) {
+            stdout.add(event);
+          });
+          int exit_code = await (process.exitCode);
+          if (exit_code != 0) {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+            return;
+          } else {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
+          }
+        }
+        if (is_app || is_cli) {
+          String message = "Dpkg Build: ${file_app.path}";
+          yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting ${message}");
+          Process process = await Process.start(
+            "dpkg-deb",
+            [
               "--build",
               "--root-owner-group",
-              path_android_package,
+              directory_linux_package.path,
               file_app.path,
             ],
-            workingDirectory: directory_current.path,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
+            workingDirectory: directoryBase.path,
           );
+          process.stderr.listen((event) {
+            stderr.add(event);
+          });
+          process.stdout.listen((event) {
+            stdout.add(event);
+          });
+          int exit_code = await (process.exitCode);
+          if (exit_code != 0) {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+            return;
+          } else {
+            yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
+          }
           try {
             if (file_cli.existsSync()) {
               await file_cli.delete(recursive: true);
             }
           } catch (e) {}
         }
+        await directory_app_deb.delete(recursive: true);
+
+        continue;
       }
-    } else if (packagexPlatform == PackagexPlatformType.ios) {
-      if (!Platform.isMacOS) {
-        return {
-          "@type": "error",
-          "message": "platform_not_supported",
-          "description": "Package ios hanya bisa di perangkat macos saja !",
-        };
-      }
+//       else if (packagexPlatformType == PackagexPlatformType.windows) {
+//         if (!Platform.isWindows) {
+//           yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Package windows hanya bisa di perangkat windows saja !");
+//           continue;
+//         }
+//         // output ??= path.join(directory_build_packagex.path, );
+//         if (!packagexPubspec.dev_dependencies.rawData.containsKey("msix")) {
+//           await packagex_shell.shell(
+//             executable: "flutter",
+//             arguments: ["pub", "add", "--dev", "msix"],
+//             workingDirectory: directoryBase.path,
+//             runInShell: true,
+//             onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stdout.add(data);
+//             },
+//             onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stderr.add(data);
+//             },
+//           );
+//         }
 
-      if (is_app) {
-        await packagex_shell.shell(
-          executable: "flutter",
-          arguments: [
-            "build",
-            "ios",
-            "--release",
-            "--no-codesign",
-            "--target=${script_app.path}",
-            ...flutter_commands,
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
+//         if (is_cli) {
+//           await packagex_shell.shell(
+//             executable: "dart",
+//             arguments: [
+//               "compile",
+//               "exe",
+//               script_cli.path,
+//               "-o",
+//               path.join(directory_build_packagex.path, "${packagexPubspec.packagex.dart_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-windows"}.exe"),
+//             ],
+//             workingDirectory: directoryBase.path,
+//             onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stdout.add(data);
+//             },
+//             onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stderr.add(data);
+//             },
+//           );
+//         }
 
-        await packagex_shell.shell(
-          executable: "sh",
-          arguments: [
-            "-c",
-            """
-cd build/ios/iphoneospackagexCli(args)
-mkdir Payload
-cd Payload
-ln -s ../Runner.app
-cd ..
-zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}${(pubspec.packagex.is_without_platform_name == true) ? "" : "-ios"}.ipa")} Payload
-"""
-          ],
-          workingDirectory: directory_current.path,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
-      }
-    } else if (packagexPlatform == PackagexPlatformType.web) {
-      if (is_app) {
-        await packagex_shell.shell(
-          executable: "flutter",
-          arguments: [
-            "build",
-            "web",
-            "--release",
-            "--target=${script_app.path}",
-            "--web-renderer",
-            "html",
-          ],
-          workingDirectory: directory_current.path,
-          runInShell: true,
-          onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stdout.add(data);
-          },
-          onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-            stderr.add(data);
-          },
-        );
+//         if (is_app) {
+//           List<String> args_msix = [];
+//           List<String> msix_args = [
+//             "--display-name",
+//             "--publisher-display-name",
+//             "--identity-name",
+//             "--version",
+//             "--logo-path",
+//             "--trim-logo",
+//             "--capabilities",
+//             "--languages",
+//             "--file-extension",
+//             "--protocol-activation",
+//             "--app-uri-handler-hosts",
+//             "--execution-alias",
+//             "--enable-at-startup",
+//             "--store",
+//             "--certificate-path",
+//             "--certificate-password",
+//             "--publisher",
+//             "--signtool-options",
+//             "--sign-msix",
+//             "--install-certificate",
+//           ];
+//           packagexPubspec.msix_config.rawData.forEach((key, value) {
+//             if (value is String && value.isNotEmpty) {
+//               String key_args_msix = "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
+//               if (!msix_args.contains(key_args_msix)) {
+//                 return;
+//               }
+//               if (key_args_msix == "--version") {
+//                 List<String> versions = value.toString().split(".");
+//                 if (versions.length != 4) {
+//                   value = "0.0.0.0";
+//                 }
+//               }
+//               args_msix.add(key_args_msix);
+//               args_msix.add(value);
+//             }
+//           });
 
-        Directory directory_build_web_canvaskit = Directory(p.join(directory_current.path, "build", "web", "canvaskit", "."));
+//           await packagex_shell.shell(
+//             executable: "flutter",
+//             arguments: [
+//               "pub",
+//               "run",
+//               "msix:create",
+//               "--windows-build-args",
+//               "--target=${script_app.path} ${flutter_commands.join(" ")}",
+//               "-o",
+//               directory_build_packagex.path,
+//               "-n",
+//               "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-app-windows"}",
+//               ...args_msix,
+//             ],
+//             workingDirectory: directoryBase.path,
+//             runInShell: true,
+//             onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stdout.add(data);
+//             },
+//             onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stderr.add(data);
+//             },
+//           );
+//         }
+//       } else if (packagexPlatformType == PackagexPlatformType.macos) {
+//         if (!Platform.isMacOS) {
+//           yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Package macos hanya bisa di perangkat macos saja !");
+//           // return {"@type": "error", "message": "platform_not_supported", "description": "Package macos hanya bisa di perangkat macos saja !"};
+//           continue;
+//         }
+//         if (is_cli) {
+//           await packagex_shell.shell(
+//             executable: "dart",
+//             arguments: [
+//               "compile",
+//               "exe",
+//               script_cli.path,
+//               "-o",
+//               path.join(directory_build_packagex.path, "${packagexPubspec.packagex.dart_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-macos"}"),
+//             ],
+//             workingDirectory: directoryBase.path,
+//             onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stdout.add(data);
+//             },
+//             onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stderr.add(data);
+//             },
+//           );
+//         }
 
-        try {
-          await directory_build_web_canvaskit.delete(recursive: true);
-        } catch (e) {}
+//         if (is_app) {
+//           await packagex_shell.shell(
+//             executable: "flutter",
+//             arguments: [
+//               "build",
+//               "macos",
+//               "--release",
+//               "--target=${script_app.path}",
+//               ...flutter_commands,
+//             ],
+//             workingDirectory: directoryBase.path,
+//             onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stdout.add(data);
+//             },
+//             onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stderr.add(data);
+//             },
+//           );
+//         }
+//       } else if (packagexPlatformType == PackagexPlatformType.android) {
+//         if (is_app) {
+//           await packagex_shell.shell(
+//             executable: "flutter",
+//             arguments: [
+//               "build",
+//               "apk",
+//               "--release",
+//               "--split-per-abi",
+//               "--target=${script_app.path}",
+//               ...flutter_commands,
+//             ],
+//             workingDirectory: directoryBase.path,
+//             onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stdout.add(data);
+//             },
+//             onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stderr.add(data);
+//             },
+//           );
 
-        if (Platform.isWindows) {
-          // zip
-          await packagex_shell.shell(
-            executable: "tar",
-            arguments: ["-cf", p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}${(pubspec.packagex.is_without_platform_name == true) ? "" : "-web"}.zip"), "*"],
-            workingDirectory: p.join(directory_current.path, "build", "web"),
-            runInShell: true,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
-          );
-        }
+//           Directory directory_apk = Directory(path.join(directoryBase.path, "build", "app", "outputs", "flutter-apk"));
+//           List<FileSystemEntity> dirs = directory_apk.listSync();
+//           for (var i = 0; i < dirs.length; i++) {
+//             FileSystemEntity dir = dirs[i];
+//             try {
+//               if (dir is Directory) {
+//               } else if (dir is File) {
+//                 if (path.extension(dir.path) != ".apk") {
+//                   continue;
+//                 }
+//                 if (path.basename(dir.path) == "app-release.apk") {
+//                   continue;
+//                 }
+//                 await dir.absolute.copy(path.join(directory_build_packagex.path, path.basename(dir.path).replaceAll(RegExp("^(app)", caseSensitive: false), "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}")));
+//                 await dir.absolute.delete(
+//                   recursive: true,
+//                 );
+//               }
+//             } catch (e) {}
+//           }
+//         }
 
-        if (Platform.isMacOS || Platform.isLinux) {
-          await packagex_shell.shell(
-            executable: "zip",
-            arguments: [
-              "-r",
-              p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name ?? pubspec.name}${(pubspec.packagex.is_without_platform_name == true) ? "" : "-web"}.zip"),
-              ".",
-            ],
-            workingDirectory: p.join(directory_current.path, "build", "web", "."),
-            runInShell: true,
-            onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stdout.add(data);
-            },
-            onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-              stderr.add(data);
-            },
-          );
-        }
-      }
+//         if (is_cli) {
+//           if (!Platform.isAndroid) {
+//             // return {
+//             //   "@type": "error",
+//             //   "message": "platform_not_supported",
+//             //   "description": "Package Android hanya bisa di perangkat android saja !",
+//             // };
+//             continue;
+//           }
+
+//           String path_android_package = path.join(
+//             directoryBase.path,
+//             "android",
+//             "packagex",
+//           );
+
+//           String directory_app_deb.path = path.join(
+//             path_android_package,
+//             "usr",
+//             "share",
+//             packagexPubspec.name!.replaceAll(RegExp(r"([_])"), "-"),
+//           );
+
+//           try {
+//             await packagex_shell.shell(
+//               executable: "chmod",
+//               arguments: ["775", path.join(path_android_package, "DEBIAN", "postinst")],
+//               runInShell: true,
+//               onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stdout.add(data);
+//               },
+//               onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stderr.add(data);
+//               },
+//             );
+//           } catch (e) {}
+//           try {
+//             await packagex_shell.shell(
+//               executable: "chmod",
+//               arguments: ["775", path.join(path_android_package, "DEBIAN", "postrm")],
+//               runInShell: true,
+//               onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stdout.add(data);
+//               },
+//               onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stderr.add(data);
+//               },
+//             );
+//           } catch (e) {}
+
+//           if (is_app) {
+//             try {
+//               if (Directory(directory_app_deb.path).existsSync()) {
+//                 await Directory(directory_app_deb.path).delete(recursive: true);
+//                 await Directory(directory_app_deb.path).create(recursive: true);
+//               } else {
+//                 await Directory(directory_app_deb.path).create(recursive: true);
+//               }
+//             } catch (e) {}
+//           }
+//           File file_cli = File(path.join(
+//             path_android_package,
+//             "usr",
+//             "bin",
+//             "${packagexPubspec.packagex.dart_name ?? packagexPubspec.name!.replaceAll(RegExp(r"([_])"), "-")}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-android"}",
+//           ));
+//           File file_app = File(path.join(directory_build_packagex.path, "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-android"}.deb"));
+
+//           if (is_cli) {
+//             await packagex_shell.shell(
+//               executable: "dart",
+//               arguments: [
+//                 "compile",
+//                 "exe",
+//                 script_cli.path,
+//                 "-o",
+//                 file_cli.path,
+//               ],
+//               workingDirectory: directoryBase.path,
+//               onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stdout.add(data);
+//               },
+//               onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stderr.add(data);
+//               },
+//             );
+
+//             try {
+//               await packagex_shell.shell(
+//                 executable: "chmod",
+//                 arguments: ["775", file_cli.path],
+//                 workingDirectory: directoryBase.path,
+//                 onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                   stdout.add(data);
+//                 },
+//                 onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                   stderr.add(data);
+//                 },
+//               );
+//             } catch (e) {}
+//             try {
+//               await packagex_shell.shell(
+//                 executable: "chmod",
+//                 arguments: ["775", file_cli.path],
+//                 runInShell: true,
+//                 workingDirectory: directoryBase.path,
+//                 onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                   stdout.add(data);
+//                 },
+//                 onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                   stderr.add(data);
+//                 },
+//               );
+//             } catch (e) {}
+//           }
+
+//           if (is_app) {
+//             // await packagex_shell.shell(
+//             //   executable: "flutter",
+//             //   arguments: [
+//             //     "build",
+//             //     "linux",
+//             //     "--release",
+//             //     "--target=${script_app.path}",
+//             //     ...flutter_commands,
+//             //   ],
+//             //   workingDirectory: directory_current.path,
+//             //   onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//             //     stdout.add(data);
+//             //   },
+//             //   onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//             //     stderr.add(data);
+//             //   },
+//             // );
+//             // String path_app = path.join(directory_current.path, "build", "android", "x64", "release", "bundle", ".");
+//             // await packagex_shell.shell(
+//             //   executable: "cp",
+//             //   arguments: [
+//             //     "-rf",
+//             //     path_app,
+//             //     directory_app_deb.path,
+//             //   ],
+//             //   workingDirectory: directory_current.path,
+//             //   onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//             //     stdout.add(data);
+//             //   },
+//             //   onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//             //     stderr.add(data);
+//             //   },
+//             // );
+//           }
+
+//           if (is_app || is_cli) {
+//             try {
+//               await packagex_shell.shell(
+//                 executable: "chmod",
+//                 arguments: ["-R", "775", path_android_package],
+//                 runInShell: true,
+//                 workingDirectory: directoryBase.path,
+//                 onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                   stdout.add(data);
+//                 },
+//                 onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                   stderr.add(data);
+//                 },
+//               );
+//             } catch (e) {}
+//             try {
+//               await packagex_shell.shell(
+//                 executable: "chmod",
+//                 arguments: ["-R", "775", path_android_package],
+//                 workingDirectory: directoryBase.path,
+//                 onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                   stdout.add(data);
+//                 },
+//                 onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                   stderr.add(data);
+//                 },
+//               );
+//             } catch (e) {}
+//             await packagex_shell.shell(
+//               executable: "dpkg-deb",
+//               arguments: [
+//                 "--build",
+//                 "--root-owner-group",
+//                 path_android_package,
+//                 file_app.path,
+//               ],
+//               workingDirectory: directoryBase.path,
+//               onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stdout.add(data);
+//               },
+//               onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stderr.add(data);
+//               },
+//             );
+//             try {
+//               if (file_cli.existsSync()) {
+//                 await file_cli.delete(recursive: true);
+//               }
+//             } catch (e) {}
+//           }
+//         }
+//       } else if (packagexPlatformType == PackagexPlatformType.ios) {
+//         if (!Platform.isMacOS) {
+//           // return {
+//           //   "@type": "error",
+//           //   "message": "platform_not_supported",
+//           //   "description": "Package ios hanya bisa di perangkat macos saja !",
+//           // };
+//           continue;
+//         }
+
+//         if (is_app) {
+//           await packagex_shell.shell(
+//             executable: "flutter",
+//             arguments: [
+//               "build",
+//               "ios",
+//               "--release",
+//               "--no-codesign",
+//               "--target=${script_app.path}",
+//               ...flutter_commands,
+//             ],
+//             workingDirectory: directoryBase.path,
+//             onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stdout.add(data);
+//             },
+//             onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stderr.add(data);
+//             },
+//           );
+
+//           await packagex_shell.shell(
+//             executable: "sh",
+//             arguments: [
+//               "-c",
+//               """
+// cd build/ios/iphoneospackagexCli(args)
+// mkdir Payload
+// cd Payload
+// ln -s ../Runner.app
+// cd ..
+// zip -r  ${path.join(directory_build_packagex.path, "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-ios"}.ipa")} Payload
+// """
+//             ],
+//             workingDirectory: directoryBase.path,
+//             onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stdout.add(data);
+//             },
+//             onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stderr.add(data);
+//             },
+//           );
+//         }
+//       } else if (packagexPlatformType == PackagexPlatformType.web) {
+//         if (is_app) {
+//           await packagex_shell.shell(
+//             executable: "flutter",
+//             arguments: [
+//               "build",
+//               "web",
+//               "--release",
+//               "--target=${script_app.path}",
+//               "--web-renderer",
+//               "html",
+//             ],
+//             workingDirectory: directoryBase.path,
+//             runInShell: true,
+//             onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stdout.add(data);
+//             },
+//             onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//               stderr.add(data);
+//             },
+//           );
+
+//           Directory directory_build_web_canvaskit = Directory(path.join(directoryBase.path, "build", "web", "canvaskit", "."));
+
+//           try {
+//             await directory_build_web_canvaskit.delete(recursive: true);
+//           } catch (e) {}
+
+//           if (Platform.isWindows) {
+//             // zip
+//             await packagex_shell.shell(
+//               executable: "tar",
+//               arguments: ["-cf", path.join(directory_build_packagex.path, "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-web"}.zip"), "*"],
+//               workingDirectory: path.join(directoryBase.path, "build", "web"),
+//               runInShell: true,
+//               onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stdout.add(data);
+//               },
+//               onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stderr.add(data);
+//               },
+//             );
+//           }
+
+//           if (Platform.isMacOS || Platform.isLinux) {
+//             await packagex_shell.shell(
+//               executable: "zip",
+//               arguments: [
+//                 "-r",
+//                 path.join(directory_build_packagex.path, "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-web"}.zip"),
+//                 ".",
+//               ],
+//               workingDirectory: path.join(directoryBase.path, "build", "web", "."),
+//               runInShell: true,
+//               onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stdout.add(data);
+//               },
+//               onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
+//                 stderr.add(data);
+//               },
+//             );
+//           }
+//         }
+//       }
     }
-    await file_packagex_release.writeAsString(json_data_package_detail.toStringifyPretty(2));
-    return {"@type": ""};
+    yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Finished Build: ${packagexPlatformTypes.map((e) => e.name.toUpperCaseFirstData()).join(", ")}");
   }
 
   Future<void> installPackageFromUrl({
@@ -1279,16 +1269,16 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
       options: options,
       encoding: encoding,
     );
-    Directory directory = Directory(p.join(Directory.current.path, "package_temp"));
+    Directory directory = Directory(path.join(Directory.current.path, "package_temp"));
     if (!directory.existsSync()) {
       await directory.create(recursive: true);
     }
-    File file = File(p.join(directory.path, p.basename(url)));
+    File file = File(path.join(directory.path, path.basename(url)));
     if (file.existsSync()) {
       await file.delete();
     }
     await file.writeAsBytes(response.bodyBytes);
-    await installPackageFromFile(file: file, onData: onData, onDone: onDone);
+    await installPackageFromFile(file: file, onData: onData, onDone: onDone).listen((event) {}).asFuture();
   }
 
   Future<void> installPackage({
@@ -1317,15 +1307,15 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
   }) async {
     path_current ??= Directory.current.path;
     Directory directory_current = Directory(path_current);
-    Directory directory_build = Directory(p.join(directory_current.path, "build"));
-    Directory directory_packagex = Directory(p.join(directory_build.path, "packagex"));
+    Directory directory_build = Directory(path.join(directory_current.path, "build"));
+    Directory directory_projectx = Directory(path.join(directory_build.path, "packagex"));
 
-    String basename = p.basename(path_current);
+    String basename = path.basename(path_current);
 
-    File file_pubspec = File(p.join(directory_current.path, "pubspec.yaml"));
+    File file_pubspec = File(path.join(directory_current.path, "pubspec.yaml"));
     Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
 
-    packagex_scheme.Pubspec pubspec = packagex_scheme.Pubspec(yaml_code.clone());
+    PackagexPubspec pubspec = PackagexPubspec(yaml_code.clone());
     if (pubspec["name"] == null) {
       pubspec["name"] = basename;
     }
@@ -1340,7 +1330,7 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
     RepositorySlug repositorySlug = RepositorySlug(github_username, pubspec.packagex.name ?? "");
 
     List<FileSystemEntity> files = await Future(() async {
-      return directory_packagex.listSync().where((e) => [".deb", ".apk", ".msix", ".json"].contains(p.extension(e.path))).where((element) {
+      return directory_projectx.listSync().where((e) => [".deb", ".apk", ".msix", ".json"].contains(path.extension(e.path))).where((element) {
         if (RegExp(pubspec.name ?? "", caseSensitive: false).hashData(element.path)) {
           return true;
         }
@@ -1413,12 +1403,12 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
     for (var i = 0; i < files.length; i++) {
       FileSystemEntity fileSystemEntity = files[i];
       if (fileSystemEntity is File) {
-        ReleaseAsset? releaseAsset = releaseAssets.firstWhereOrNull((element) => element.name == p.basename(fileSystemEntity.path));
+        ReleaseAsset? releaseAsset = releaseAssets.firstWhereOrNull((element) => element.name == path.basename(fileSystemEntity.path));
         if (releaseAsset != null) {
           onUpdate("Delete Asset: ${releaseAsset.name}");
           await gitHub.repositories.deleteReleaseAsset(repositorySlug, releaseAsset);
         }
-        onUpdate("Upload Asset: ${p.basename(fileSystemEntity.path)}");
+        onUpdate("Upload Asset: ${path.basename(fileSystemEntity.path)}");
         await gitHub.repositories.uploadReleaseAssets(
           Release(
             name: basename,
@@ -1429,45 +1419,45 @@ zip -r  ${p.join(directory_build_packagex.path, "${pubspec.packagex.flutter_name
           ),
           {
             CreateReleaseAsset(
-              name: p.basename(fileSystemEntity.path),
+              name: path.basename(fileSystemEntity.path),
               contentType: lookupMimeType(fileSystemEntity.path) ?? "",
               assetData: fileSystemEntity.readAsBytesSync(),
             ),
           },
         );
 
-        onUpdate("Succes Upload Asset: ${p.basename(fileSystemEntity.path)}");
+        onUpdate("Succes Upload Asset: ${path.basename(fileSystemEntity.path)}");
       }
     }
     onUpdate("Finished");
   }
 
-  Future<void> installPackageFromFile({
+  Stream<PackagexApiStatus> installPackageFromFile({
     required File file,
     required FutureOr<void> Function(String data) onData,
     required FutureOr<void> Function() onDone,
     bool isPrint = true,
-  }) async {
-    await packagex_shell.shell(
-      executable: "dpkg",
-      arguments: [
+  }) async* {
+    Process process = await Process.start(
+      "dpkg",
+      [
         "--force-all",
         "-i",
         file.path,
       ],
-      onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) async {
-        if (isPrint) {
-          stdout.add(data);
-        }
-        await onData(utf8.decode(data, allowMalformed: true));
-      },
-      onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) async {
-        if (isPrint) {
-          stderr.add(data);
-        }
-        await onData(utf8.decode(data, allowMalformed: true));
-      },
     );
-    await onDone();
+    process.stderr.listen((event) {
+      stderr.add(event);
+    });
+    process.stdout.listen((event) {
+      stdout.add(event);
+    });
+    int exit_code = await (process.exitCode);
+    if (exit_code != 0) {
+      yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed Create Project:");
+      return;
+    } else {
+      yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes Create Project:");
+    }
   }
 }

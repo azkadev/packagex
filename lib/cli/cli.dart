@@ -8,13 +8,10 @@ import 'package:mason_logger/mason_logger.dart';
 import 'package:packagex/packagex.dart';
 
 import 'package:general_lib/general_lib.dart';
-import 'package:packagex/scheme/pubspec.dart';
+import 'package:packagex/scheme/packagex_pubspec.dart';
 import 'package:path/path.dart' as p;
 import "package:yaml/yaml.dart" as yaml;
-import "package:packagex/scheme/scheme.dart" as packagex_scheme;
 import "package:path/path.dart" as path;
-
-import "package:packagex/shell/shell.dart" as packagex_shell;
 
 Logger logger = Logger();
 
@@ -103,12 +100,6 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     print("v0.0.9-dev");
     exit(0);
   }
-  if (command == "clean") {
-    print("Start Clean");
-    await packagex.clean();
-    print("Complete Clean");
-    return;
-  }
   if (command == "create") {
     String? name = await Future(() async {
       try {
@@ -129,12 +120,11 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
         }
       }
     });
-    String path_project = p.join(Directory.current.path, name);
 
-    await packagex.create(
-      name: p.basename(path_project),
-      // isForce: args.arguments.contains("--force"),
-    );
+    await packagex.create(newName: name ?? ".", directoryPackage: Directory.current, isApplication: false).listen((event) {
+      printed(event);
+    }).asFuture();
+    exit(0);
   }
   if (command == "read") {
     Directory directory_current = Directory.current;
@@ -149,63 +139,11 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     try {
       type_platform = args.arguments[1];
     } catch (e) {}
-    PackagexPlatformType packagex_platform = PackagexPlatformType.current;
-    List<PackagexPlatformType> packagexPlatforms = PackagexPlatformType.values;
-    for (var i = 0; i < packagexPlatforms.length; i++) {
-      PackagexPlatformType packagexPlatform = packagexPlatforms[i];
-      if (packagexPlatform.name != type_platform) {
-        continue;
-      }
-      packagex_platform = packagexPlatform;
-    }
-    print("build for: ${packagex_platform.name}");
-    String? out;
-    List<String> outputs = [
-      "-output",
-      "-o",
-    ];
-    for (var i = 0; i < outputs.length; i++) {
-      var loop_data = outputs[i];
-      if (args[loop_data] != null) {
-        out = args[loop_data] ?? "";
-      }
-    }
-    String path_project = p.join(Directory.current.path);
-    packagex_scheme.Packagex packagexConfig = packagex_scheme.Packagex({});
-
-    // Map jsonData = {};
-    for (var i = 0; i < args.arguments.length; i++) {
-      String argument = args.arguments[i];
-      if (!RegExp(r"^--", caseSensitive: false).hashData(argument)) {
-        continue;
-      }
-      if (args[argument] != null && args[argument]!.isNotEmpty) {
-        packagexConfig[argument.replaceAll(RegExp(r"^--"), "")] = args[argument];
-      }
-    }
-
-    if (PackagexPlatformType.all == packagex_platform) {
-      for (var i = 0; i < packagexPlatforms.length; i++) {
-        PackagexPlatformType packagexPlatform = packagexPlatforms[i];
-        if (packagexPlatform == PackagexPlatformType.current) {
-          continue;
-        }
-        await packagex.build(
-          path_current: path_project,
-          path_output: out,
-          packagexPlatform: packagexPlatform,
-          packagexConfig: packagexConfig,
-        );
-      }
-    } else {
-      await packagex.build(
-        path_current: path_project,
-        path_output: out,
-        packagexPlatform: packagex_platform,
-        packagexConfig: packagexConfig,
-      );
-    }
-    return;
+    List<PackagexPlatformType> packagexPlatforms = [PackagexPlatformType.linux];
+    await packagex.build(directoryBase: Directory.current, packagexPlatformTypes: packagexPlatforms).listen((event) {
+      printed(event);
+    }).asFuture();
+    exit(0);
   }
   if (command == "install") {
     String package_name = args.arguments[1];
@@ -277,24 +215,24 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
         exit(0);
       }
       Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
-      Pubspec pubspec = Pubspec(yaml_code);
+      PackagexPubspec pubspec = PackagexPubspec(yaml_code);
       String pubspec_name = pubspec.name ?? "";
       String pubspec_version = pubspec.version ?? "";
       String new_name = "${pubspec_name}-${pubspec_version}";
       Directory directory_origin_pkg = Directory(path_package_install_pub);
-      await packagex_shell.shell(
-        executable: "dart",
-        arguments: ["pub", "global", "activate", "--source", "path", directory_origin_pkg.path, "--overwrite"],
-        onStdout: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stdout.add(data);
-        },
-        onStderr: (data, executable, arguments, workingDirectory, environment, includeParentEnvironment, runInShell, mode) {
-          stderr.add(data);
-        },
+      Process shell = await Process.start(
+        "dart",
+        ["pub", "global", "activate", "--source", "path", directory_origin_pkg.path, "--overwrite"],
       );
 
-      print("complete");
-      exit(0);
+      shell.stderr.listen((event) {
+        stderr.add(event);
+      });
+      shell.stdout.listen((event) {
+        stdout.add(event);
+      });
+      int exitCode = await shell.exitCode;
+      exit(exitCode);
     }
 
     if (args.after(command) == "install") {
@@ -309,7 +247,7 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
         exit(0);
       }
       Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
-      Pubspec pubspec = Pubspec(yaml_code);
+      PackagexPubspec pubspec = PackagexPubspec(yaml_code);
       String pubspec_name = pubspec.name ?? "";
       String pubspec_version = pubspec.version ?? "";
       String new_name = "${pubspec_name}-${pubspec_version}";
@@ -390,3 +328,42 @@ Available Arguments:
 
 Run "packagex help" to see global options.
 """;
+
+Map<String, Progress> progress_data = {};
+void printed(PackagexApiStatus event) {
+  if (event.packagexApiStatusType == PackagexApiStatusType.progress_start) {
+    progress_data[event.status_id] = logger.progress(event.value);
+    return;
+  }
+  if (event.packagexApiStatusType == PackagexApiStatusType.progress) {
+    Progress? progress = progress_data[event.status_id];
+    if (progress == null) {
+      progress = logger.progress(event.value);
+      progress_data[event.status_id] = progress;
+    }
+    progress.update(event.value);
+    return;
+  }
+  if (event.packagexApiStatusType == PackagexApiStatusType.progress_complete) {
+    Progress? progress = progress_data[event.status_id];
+    if (progress == null) {
+      progress = logger.progress(event.value);
+      progress_data[event.status_id] = progress;
+    }
+    progress.update(event.value);
+    progress.complete(event.value);
+
+    // progress.cancel();
+    return;
+  }
+  if (event.packagexApiStatusType == PackagexApiStatusType.succes) {
+    logger.success(event.value);
+    return;
+  }
+  if (event.packagexApiStatusType == PackagexApiStatusType.failed) {
+    logger.err(event.value);
+    return;
+  }
+
+  logger.info(event.value);
+}

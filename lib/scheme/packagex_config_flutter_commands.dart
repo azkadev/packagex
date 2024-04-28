@@ -2,21 +2,24 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
+class PackagexConfigFlutterCommands extends JsonScheme {
+  PackagexConfigFlutterCommands(super.rawData);
 
- 
-class FlutterCommands extends JsonScheme {
-
-  
-  FlutterCommands(super.rawData);
-   
   static Map get defaultData {
-    return {"@type":"flutter_commands","obfuscate":true,"split-debug-info":"0.0.5","build-name":"0.0.5","build-number":40,"split-per-abi":true,"no-tree-shake-icons":true};
+    return {
+      "@type": "packagexConfigFlutterCommands",
+      "obfuscate": true,
+      "split-debug-info": "0.0.5",
+      "build-name": "0.0.5",
+      "build-number": 40,
+      "split-per-abi": true,
+      "no-tree-shake-icons": true
+    };
   }
 
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -25,16 +28,13 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
-  
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
-
-  
   bool? get obfuscate {
     try {
-      if (rawData["obfuscate"] is bool == false){
+      if (rawData["obfuscate"] is bool == false) {
         return null;
       }
       return rawData["obfuscate"] as bool;
@@ -43,16 +43,13 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
-  
   set obfuscate(bool? value) {
     rawData["obfuscate"] = value;
   }
 
-
-  
   String? get split_debug_info {
     try {
-      if (rawData["split-debug-info"] is String == false){
+      if (rawData["split-debug-info"] is String == false) {
         return null;
       }
       return rawData["split-debug-info"] as String;
@@ -61,16 +58,13 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
-  
   set split_debug_info(String? value) {
     rawData["split-debug-info"] = value;
   }
 
-
-  
   String? get build_name {
     try {
-      if (rawData["build-name"] is String == false){
+      if (rawData["build-name"] is String == false) {
         return null;
       }
       return rawData["build-name"] as String;
@@ -79,16 +73,13 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
-  
   set build_name(String? value) {
     rawData["build-name"] = value;
   }
 
-
-  
   num? get build_number {
     try {
-      if (rawData["build-number"] is num == false){
+      if (rawData["build-number"] is num == false) {
         return null;
       }
       return rawData["build-number"] as num;
@@ -97,16 +88,13 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
-  
   set build_number(num? value) {
     rawData["build-number"] = value;
   }
 
-
-  
   bool? get split_per_abi {
     try {
-      if (rawData["split-per-abi"] is bool == false){
+      if (rawData["split-per-abi"] is bool == false) {
         return null;
       }
       return rawData["split-per-abi"] as bool;
@@ -115,16 +103,13 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
-  
   set split_per_abi(bool? value) {
     rawData["split-per-abi"] = value;
   }
 
-
-  
   bool? get no_tree_shake_icons {
     try {
-      if (rawData["no-tree-shake-icons"] is bool == false){
+      if (rawData["no-tree-shake-icons"] is bool == false) {
         return null;
       }
       return rawData["no-tree-shake-icons"] as bool;
@@ -133,26 +118,21 @@ class FlutterCommands extends JsonScheme {
     }
   }
 
-  
   set no_tree_shake_icons(bool? value) {
     rawData["no-tree-shake-icons"] = value;
   }
 
-
-  
-  static FlutterCommands create({
-
-    String special_type = "flutter_commands",
+  static PackagexConfigFlutterCommands create({
+    String special_type = "packagexConfigFlutterCommands",
     bool? obfuscate,
     String? split_debug_info,
     String? build_name,
     num? build_number,
     bool? split_per_abi,
     bool? no_tree_shake_icons,
-})  {
-    // FlutterCommands flutterCommands = FlutterCommands({
-Map flutterCommands_data_create_json = {
-  
+  }) {
+    // PackagexConfigFlutterCommands packagexConfigFlutterCommands = PackagexConfigFlutterCommands({
+    Map packagexConfigFlutterCommands_data_create_json = {
       "@type": special_type,
       "obfuscate": obfuscate,
       "split-debug-info": split_debug_info,
@@ -160,17 +140,14 @@ Map flutterCommands_data_create_json = {
       "build-number": build_number,
       "split-per-abi": split_per_abi,
       "no-tree-shake-icons": no_tree_shake_icons,
+    };
 
+    packagexConfigFlutterCommands_data_create_json
+        .removeWhere((key, value) => value == null);
+    PackagexConfigFlutterCommands packagexConfigFlutterCommands_data_create =
+        PackagexConfigFlutterCommands(
+            packagexConfigFlutterCommands_data_create_json);
 
-};
-
-
-          flutterCommands_data_create_json.removeWhere((key, value) => value == null);
-FlutterCommands flutterCommands_data_create = FlutterCommands(flutterCommands_data_create_json);
-
-return flutterCommands_data_create;
-
-
-
-      }
+    return packagexConfigFlutterCommands_data_create;
+  }
 }

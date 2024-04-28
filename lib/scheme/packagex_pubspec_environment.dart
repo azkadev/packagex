@@ -2,11 +2,11 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-class DependenciesExtra extends JsonScheme {
-  DependenciesExtra(super.rawData);
+class PackagexPubspecEnvironment extends JsonScheme {
+  PackagexPubspecEnvironment(super.rawData);
 
   static Map get defaultData {
-    return {"@type": "dependencies_extra", "sdk": "flutter"};
+    return {"@type": "packagexPubspecEnvironment", "sdk": ">=2.18.5 <3.0.0"};
   }
 
   String? get special_type {
@@ -39,19 +39,21 @@ class DependenciesExtra extends JsonScheme {
     rawData["sdk"] = value;
   }
 
-  static DependenciesExtra create({
-    String special_type = "dependencies_extra",
+  static PackagexPubspecEnvironment create({
+    String special_type = "packagexPubspecEnvironment",
     String? sdk,
   }) {
-    // DependenciesExtra dependenciesExtra = DependenciesExtra({
-    Map dependenciesExtra_data_create_json = {
+    // PackagexPubspecEnvironment packagexPubspecEnvironment = PackagexPubspecEnvironment({
+    Map packagexPubspecEnvironment_data_create_json = {
       "@type": special_type,
       "sdk": sdk,
     };
 
-    dependenciesExtra_data_create_json.removeWhere((key, value) => value == null);
-    DependenciesExtra dependenciesExtra_data_create = DependenciesExtra(dependenciesExtra_data_create_json);
+    packagexPubspecEnvironment_data_create_json
+        .removeWhere((key, value) => value == null);
+    PackagexPubspecEnvironment packagexPubspecEnvironment_data_create =
+        PackagexPubspecEnvironment(packagexPubspecEnvironment_data_create_json);
 
-    return dependenciesExtra_data_create;
+    return packagexPubspecEnvironment_data_create;
   }
 }

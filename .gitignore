@@ -3,3 +3,6 @@
 .dart_tool/
 
 temp_*
+example/
+example_app/
+example_program/

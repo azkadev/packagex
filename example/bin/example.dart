@@ -1,7 +1,5 @@
-import 'dart:io';
+import 'package:example/example.dart' as example;
 
-import 'package:example/packagex/packagex.dart';
-
-void main(List<String> args) {
-  print(PackagexProjectExample.isSame(data: File("/home/galaxeus/Documents/galaxeus/app/packagex/example/build/packagex/example.json").readAsStringSync()));
+void main(List<String> arguments) {
+  print('Hello world: ${example.calculate()}!');
 }

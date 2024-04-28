@@ -2,21 +2,24 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
+class PackagexPubspecPlatforms extends JsonScheme {
+  PackagexPubspecPlatforms(super.rawData);
 
- 
-class Platforms extends JsonScheme {
-
-  
-  Platforms(super.rawData);
-   
   static Map get defaultData {
-    return {"@type":"platforms","android":null,"ios":null,"linux":null,"macos":null,"web":null,"windows":null};
+    return {
+      "@type": "packagexPubspecPlatforms",
+      "android": null,
+      "ios": null,
+      "linux": null,
+      "macos": null,
+      "web": null,
+      "windows": null
+    };
   }
 
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -25,16 +28,13 @@ class Platforms extends JsonScheme {
     }
   }
 
-  
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
-
-  
   Object? get android {
     try {
-      if (rawData["android"] is Object == false){
+      if (rawData["android"] is Object == false) {
         return null;
       }
       return rawData["android"] as Object;
@@ -43,16 +43,13 @@ class Platforms extends JsonScheme {
     }
   }
 
-  
   set android(Object? value) {
     rawData["android"] = value;
   }
 
-
-  
   Object? get ios {
     try {
-      if (rawData["ios"] is Object == false){
+      if (rawData["ios"] is Object == false) {
         return null;
       }
       return rawData["ios"] as Object;
@@ -61,16 +58,13 @@ class Platforms extends JsonScheme {
     }
   }
 
-  
   set ios(Object? value) {
     rawData["ios"] = value;
   }
 
-
-  
   Object? get linux {
     try {
-      if (rawData["linux"] is Object == false){
+      if (rawData["linux"] is Object == false) {
         return null;
       }
       return rawData["linux"] as Object;
@@ -79,16 +73,13 @@ class Platforms extends JsonScheme {
     }
   }
 
-  
   set linux(Object? value) {
     rawData["linux"] = value;
   }
 
-
-  
   Object? get macos {
     try {
-      if (rawData["macos"] is Object == false){
+      if (rawData["macos"] is Object == false) {
         return null;
       }
       return rawData["macos"] as Object;
@@ -97,16 +88,13 @@ class Platforms extends JsonScheme {
     }
   }
 
-  
   set macos(Object? value) {
     rawData["macos"] = value;
   }
 
-
-  
   Object? get web {
     try {
-      if (rawData["web"] is Object == false){
+      if (rawData["web"] is Object == false) {
         return null;
       }
       return rawData["web"] as Object;
@@ -115,16 +103,13 @@ class Platforms extends JsonScheme {
     }
   }
 
-  
   set web(Object? value) {
     rawData["web"] = value;
   }
 
-
-  
   Object? get windows {
     try {
-      if (rawData["windows"] is Object == false){
+      if (rawData["windows"] is Object == false) {
         return null;
       }
       return rawData["windows"] as Object;
@@ -133,26 +118,21 @@ class Platforms extends JsonScheme {
     }
   }
 
-  
   set windows(Object? value) {
     rawData["windows"] = value;
   }
 
-
-  
-  static Platforms create({
-
-    String special_type = "platforms",
+  static PackagexPubspecPlatforms create({
+    String special_type = "packagexPubspecPlatforms",
     Object? android,
     Object? ios,
     Object? linux,
     Object? macos,
     Object? web,
     Object? windows,
-})  {
-    // Platforms platforms = Platforms({
-Map platforms_data_create_json = {
-  
+  }) {
+    // PackagexPubspecPlatforms packagexPubspecPlatforms = PackagexPubspecPlatforms({
+    Map packagexPubspecPlatforms_data_create_json = {
       "@type": special_type,
       "android": android,
       "ios": ios,
@@ -160,17 +140,13 @@ Map platforms_data_create_json = {
       "macos": macos,
       "web": web,
       "windows": windows,
+    };
 
+    packagexPubspecPlatforms_data_create_json
+        .removeWhere((key, value) => value == null);
+    PackagexPubspecPlatforms packagexPubspecPlatforms_data_create =
+        PackagexPubspecPlatforms(packagexPubspecPlatforms_data_create_json);
 
-};
-
-
-          platforms_data_create_json.removeWhere((key, value) => value == null);
-Platforms platforms_data_create = Platforms(platforms_data_create_json);
-
-return platforms_data_create;
-
-
-
-      }
+    return packagexPubspecPlatforms_data_create;
+  }
 }

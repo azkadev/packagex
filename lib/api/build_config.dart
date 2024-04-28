@@ -2,21 +2,23 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-
- 
 class BuildConfig extends JsonScheme {
-
-  
   BuildConfig(super.rawData);
-   
+
   static Map get defaultData {
-    return {"@type":"buildConfig","name":"Pack","dart_target":"","flutter_target":"","dart_name":"","flutter_name":""};
+    return {
+      "@type": "buildConfig",
+      "name": "Pack",
+      "dart_target": "",
+      "flutter_target": "",
+      "dart_name": "",
+      "flutter_name": ""
+    };
   }
 
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -25,16 +27,13 @@ class BuildConfig extends JsonScheme {
     }
   }
 
-  
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
-
-  
   String? get name {
     try {
-      if (rawData["name"] is String == false){
+      if (rawData["name"] is String == false) {
         return null;
       }
       return rawData["name"] as String;
@@ -43,16 +42,13 @@ class BuildConfig extends JsonScheme {
     }
   }
 
-  
   set name(String? value) {
     rawData["name"] = value;
   }
 
-
-  
   String? get dart_target {
     try {
-      if (rawData["dart_target"] is String == false){
+      if (rawData["dart_target"] is String == false) {
         return null;
       }
       return rawData["dart_target"] as String;
@@ -61,16 +57,13 @@ class BuildConfig extends JsonScheme {
     }
   }
 
-  
   set dart_target(String? value) {
     rawData["dart_target"] = value;
   }
 
-
-  
   String? get flutter_target {
     try {
-      if (rawData["flutter_target"] is String == false){
+      if (rawData["flutter_target"] is String == false) {
         return null;
       }
       return rawData["flutter_target"] as String;
@@ -79,16 +72,13 @@ class BuildConfig extends JsonScheme {
     }
   }
 
-  
   set flutter_target(String? value) {
     rawData["flutter_target"] = value;
   }
 
-
-  
   String? get dart_name {
     try {
-      if (rawData["dart_name"] is String == false){
+      if (rawData["dart_name"] is String == false) {
         return null;
       }
       return rawData["dart_name"] as String;
@@ -97,16 +87,13 @@ class BuildConfig extends JsonScheme {
     }
   }
 
-  
   set dart_name(String? value) {
     rawData["dart_name"] = value;
   }
 
-
-  
   String? get flutter_name {
     try {
-      if (rawData["flutter_name"] is String == false){
+      if (rawData["flutter_name"] is String == false) {
         return null;
       }
       return rawData["flutter_name"] as String;
@@ -115,42 +102,32 @@ class BuildConfig extends JsonScheme {
     }
   }
 
-  
   set flutter_name(String? value) {
     rawData["flutter_name"] = value;
   }
 
-
-  
   static BuildConfig create({
-
     String special_type = "buildConfig",
     String? name,
     String? dart_target,
     String? flutter_target,
     String? dart_name,
     String? flutter_name,
-})  {
+  }) {
     // BuildConfig buildConfig = BuildConfig({
-Map buildConfig_data_create_json = {
-  
+    Map buildConfig_data_create_json = {
       "@type": special_type,
       "name": name,
       "dart_target": dart_target,
       "flutter_target": flutter_target,
       "dart_name": dart_name,
       "flutter_name": flutter_name,
+    };
 
+    buildConfig_data_create_json.removeWhere((key, value) => value == null);
+    BuildConfig buildConfig_data_create =
+        BuildConfig(buildConfig_data_create_json);
 
-};
-
-
-          buildConfig_data_create_json.removeWhere((key, value) => value == null);
-BuildConfig buildConfig_data_create = BuildConfig(buildConfig_data_create_json);
-
-return buildConfig_data_create;
-
-
-
-      }
+    return buildConfig_data_create;
+  }
 }

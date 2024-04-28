@@ -4,7 +4,7 @@ import "package:universal_io/io.dart";
 Future<void> main() async {
   List<Map> datas = [
     {
-      "@type": "pubspec",
+      "@type": "packagexPubspec",
       "name": "example",
       "description": "A sample command-line application.",
       "version": "0.0.0",
@@ -12,7 +12,7 @@ Future<void> main() async {
       "homepage": "https://youtube.com/@azkadev",
       "repository": "https://github.com/azkadev/packagex.git",
       "platforms": {
-        "@type": "platforms",
+        "@type": "packagexPubspecPlatforms",
         "android": null,
         "ios": null,
         "linux": null,
@@ -21,29 +21,29 @@ Future<void> main() async {
         "windows": null,
       },
       "environment": {
-        "@type": "environment",
+        "@type": "packagexPubspecEnvironment",
         "sdk": ">=2.18.5 <3.0.0",
       },
       "dependencies": {
-        "@type": "dependencies",
+        "@type": "packagexPubspecDependencies",
         "flutter": {
-          "@type": "dependencies_extra",
+          "@type": "packagexPubspecDependenciesExtra",
           "sdk": "flutter",
         },
         "cupertino_icons": "^1.0.2"
       },
       "dev_dependencies": {
-        "@type": "dev_dependencies",
+        "@type": "packagexPubspecDevDependencies",
         "lints": "^2.0.0",
         "test": "^1.16.0",
         "packagex": {
-          "@type": "dev_dependencies_extra",
+          "@type": "packagexPubspecDevDependenciesExtra",
           "path": "../",
         },
         "msix": "^1.0.6"
       },
       "packagex": {
-        "@type": "packagex",
+        "@type": "packagexConfig",
         "name": "Pack",
         "dart_target": "",
         "flutter_target": "",
@@ -51,8 +51,8 @@ Future<void> main() async {
         "flutter_name": "",
         "is_without_platform_name": true,
         "flutter_commands": {
-          "@type": "flutter_commands",
-          "obfuscate": true, 
+          "@type": "packagexConfigFlutterCommands",
+          "obfuscate": true,
           "split-debug-info": "0.0.5",
           "build-name": "0.0.5",
           "build-number": 40,
@@ -64,17 +64,20 @@ Future<void> main() async {
         "github_is_org": true,
       },
       "msix_config": {
-        "@type": "msix_config",
+        "@type": "packagexMsixConfig",
         "display_name": "example",
         "publisher_display_name": "Azkadev Packagex",
         "identity_name": "org.azkadev.example",
         "msix_version": "0.0.0.0",
         "logo_path": "example/bin/example.dart",
         "capabilities": "internetClient, location, microphone, webcam",
+        "install_certificate": false,
       },
     }
   ];
-
+  Directory(
+    "lib/scheme",
+  ).deleteSync(recursive: true);
   await jsonToScripts(
     datas,
     directory: Directory(
