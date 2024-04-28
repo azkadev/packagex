@@ -1,12 +1,20 @@
 # Packagex
 
 Packagex is library or program for help you bundling program to any package 
-Example: example.deb, example-web.zip, example.ipa, example.msix
+Example: example.deb, example-web.zip, example.ipa, example.msix, example.dmg
 
 ## Features
 
 1. [x] Bundling Cross Platform Application & Cli
 2. [x] Publish To Github Release
+
+### Example Usage
+
+dart pub add packagex
+
+dart run packagex create .
+
+dart run packagex build linux,web,android
 
 
 <!-- START GLOBAL CORPORATION -->
