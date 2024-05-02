@@ -13,7 +13,11 @@ extension PackagexConfigExtensionOnListString on List<String> {
     packagexConfig.flutter_name = (args.after("--flutter_name") ?? "").trim();
     if (args.contains("--is_without_platform_name")) {
       packagexConfig.is_without_platform_name = true;
-    } 
+    }
+    if (packagexConfig["flutter_commands"] is Map == false){
+      packagexConfig["flutter_commands"] = {};
+    }
+    
     return packagexConfig;
   }
 }

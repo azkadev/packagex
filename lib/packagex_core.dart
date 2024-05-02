@@ -119,6 +119,12 @@ class Packagex {
     yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Started Check Pubspec Configuration: ${path.basename(file_pubspec.path)}");
 
     PackagexPubspec packagexPubspec_default = PackagexPubspec.create(
+      dependencies: PackagexPubspecDependencies({
+        "packagex": '^0.0.53',
+      }),
+      dev_dependencies: PackagexPubspecDevDependencies({
+        "msix": '^3.16.7',
+      }),
       packagex: PackagexConfig.create(
         name: project_name,
         dart_name: project_name,
@@ -295,7 +301,7 @@ ${default_debian_postrms_packagex_linux.join("\n")}
       await file_debian_postrm_packagex_linux.writeAsString(origin_datas.join("\n"));
     }
 
-    List<String> folder_bins = [ 
+    List<String> folder_bins = [
       path.join(directory_packagex_linux.path, "usr", "bin"),
       path.join(directory_packagex_linux.path, "usr", "local", "bin"),
     ];
@@ -308,7 +314,8 @@ ${default_debian_postrms_packagex_linux.join("\n")}
         await file_bin_packagex_linux_gitignore.parent.create(recursive: true);
       }
       await file_bin_packagex_linux_gitignore.writeAsString("""* 
-!.gitignore""".trim());
+!.gitignore"""
+          .trim());
     }
 
     File file_gitignore_packagex_linux = File(path.join(directory_packagex_linux.path, ".gitignore"));
@@ -394,6 +401,7 @@ StartupNotify=true
     required Directory directoryBase,
     required List<PackagexPlatformType> packagexPlatformTypes,
     required Directory? directoryBuild,
+    required bool isApplication,
     required PackagexConfig? packagexConfig,
   }) async* {
     packagexConfig ??= PackagexConfig({});
@@ -403,7 +411,7 @@ StartupNotify=true
     var strm = create(
       newName: path.basename(directoryBase.path),
       directoryPackage: directoryBase.parent,
-      isApplication: false,
+      isApplication: isApplication,
       packagexConfig: packagexConfig,
     );
     await for (var event in strm) {

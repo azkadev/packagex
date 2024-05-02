@@ -140,31 +140,48 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     exit(0);
   }
   if (command == "create") {
-    String? name = await Future(() async {
-      try {
-        return args.arguments[1];
-      } catch (e) {
-        while (true) {
-          if (PackagexEnvironment.is_not_interactive) {
-            print(menu_help);
-            exit(0);
-          }
-          await Future.delayed(Duration(microseconds: 1));
+    String name_project = await Future(() async {
+      String name_proexxe = (args.after(command) ?? "").trim();
+      if (name_proexxe.isNotEmpty) {
+        return name_proexxe;
+      }
+      while (true) {
+        if (PackagexEnvironment.is_not_interactive) {
+          exit(0);
+        }
+        await Future.delayed(Duration(microseconds: 1));
 
-          String result = logger.prompt("Name Project:").trim();
+        String result = logger.prompt("Name Project:").trim();
 
-          if (result.isNotEmpty) {
-            return result;
-          }
+        if (result.isNotEmpty) {
+          return result;
         }
       }
+    });
+    bool is_application = await Future(() async {
+      if (args.contains("--is_application")) {
+        return true;
+      }
+      if (PackagexEnvironment.is_not_interactive) {
+        print(help_create);
+        exit(0);
+      }
+      bool is_result = logger.chooseOne(
+        "Apakah Applikasi?: ",
+        choices: [true, false],
+        defaultValue: false,
+        display: (choice) {
+          return (choice) ? "Yes" : "No";
+        },
+      );
+      return is_result;
     });
 
     await packagex
         .create(
-      newName: name ?? ".",
+      newName: name_project,
       directoryPackage: Directory.current,
-      isApplication: false,
+      isApplication: is_application,
       packagexConfig: arguments_origins.packagex_utils_extension_toPackagexConfig(),
     )
         .listen((event) {
@@ -182,10 +199,14 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
   }
   if (command == "build") {
     String type_platform = (args.after(command) ?? "");
+
     var strm = packagex.build(
       directoryBase: Directory.current,
       packagexPlatformTypes: type_platform.toPackagexPlatformTypes(),
       packagexConfig: arguments_origins.packagex_utils_extension_toPackagexConfig(),
+      isApplication: () {
+        return false;
+      }(),
       directoryBuild: () {
         String output_path = (args.after("-o") ?? args.after("--output") ?? "").trim();
         if (output_path.isNotEmpty) {
