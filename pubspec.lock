@@ -149,10 +149,10 @@ packages:
     dependency: "direct main"
     description:
       name: general_lib
-      sha256: d82b6cc3b154fadca42b74139b5321f40820956e812071b4c8ac57a28951fc84
+      sha256: "0a7f8153446681257ba5cd4b03fbe8eb3495270f70ec04f00bc600f0eacdef4c"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.37"
+    version: "0.0.38"
   get_it:
     dependency: transitive
     description:
@@ -429,10 +429,10 @@ packages:
     dependency: "direct main"
     description:
       name: system_info_fetch
-      sha256: "264a33576e612888f640d625631fef9f2daf8cc41078a1138adbd75510771d22"
+      sha256: "20b634d566d3c97399b85a4e8df3043cea895ec392aeeaf22c333f62869cabe1"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.14"
+    version: "0.0.15"
   term_glyph:
     dependency: transitive
     description:
