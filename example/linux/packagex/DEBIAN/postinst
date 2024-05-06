@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
 ln -s /usr/share/example/example /usr/bin/example
 chmod +x /usr/bin/example
+
+ln -s /usr/share/example/example /usr/bin/example-app
+chmod +x /usr/bin/example-app
 exit 0

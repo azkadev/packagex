@@ -429,10 +429,10 @@ packages:
     dependency: "direct main"
     description:
       name: system_info_fetch
-      sha256: "20b634d566d3c97399b85a4e8df3043cea895ec392aeeaf22c333f62869cabe1"
+      sha256: "20ccf57d86b0b18859a488030fad8299e3ad4dd8b1ce845e2e686196a4bf81ce"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.15"
+    version: "0.0.16"
   term_glyph:
     dependency: transitive
     description:

@@ -12,14 +12,12 @@ enum PackagexApiStatusType {
 }
 
 /// Packagex Api Status 
-class PackagexApiStatus {
-  String status_id;
+class PackagexApiStatus { 
   String value;
   
   PackagexApiStatusType packagexApiStatusType;
   /// Packagex Api Status
-  PackagexApiStatus({
-    this.status_id = "",
+  PackagexApiStatus({ 
     required this.packagexApiStatusType,
     required this.value,
   });

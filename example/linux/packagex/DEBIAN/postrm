@@ -1,2 +1,4 @@
 #!/usr/bin/env sh
 rm -rf /usr/bin/example
+
+rm -rf /usr/local/share/example

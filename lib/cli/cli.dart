@@ -38,8 +38,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:mason_logger/mason_logger.dart';
-import 'package:packagex/extension/string.dart';
+import 'package:mason_logger/mason_logger.dart'; 
 import 'package:packagex/packagex.dart';
 
 import 'package:general_lib/general_lib.dart';
@@ -400,33 +399,36 @@ Available Arguments:
 
 Run "packagex help" to see global options.
 """;
+ 
 
-Map<String, Progress> progress_data = {};
+
+List<Progress> progresss = [];
+// Progress progress = logger.progress("message");
 void printed(PackagexApiStatus event) {
-  if (event.packagexApiStatusType == PackagexApiStatusType.progress_start) {
-    progress_data[event.status_id] = logger.progress(event.value);
-    return;
-  }
-  if (event.packagexApiStatusType == PackagexApiStatusType.progress) {
-    Progress? progress = progress_data[event.status_id];
-    if (progress == null) {
-      progress = logger.progress(event.value);
-      progress_data[event.status_id] = progress;
+  if ([PackagexApiStatusType.progress_start, PackagexApiStatusType.progress_complete, PackagexApiStatusType.progress].contains(event.packagexApiStatusType)) {
+    if (event.packagexApiStatusType == PackagexApiStatusType.progress_start) {
+      progresss.add(logger.progress(event.value));
+      // progress.cancel();
+      // progress = logger.progress(event.value);
+      return;
     }
-    progress.update(event.value);
-    return;
-  }
-  if (event.packagexApiStatusType == PackagexApiStatusType.progress_complete) {
-    Progress? progress = progress_data[event.status_id];
-    if (progress == null) {
-      progress = logger.progress(event.value);
-      progress_data[event.status_id] = progress;
+    Progress progress = () {
+      if (progresss.isEmpty) {
+        Progress progress = logger.progress(event.value);
+        progresss.add(progress);
+        return progress;
+      } else {
+        return progresss.last;
+      }
+    }();
+    if (event.packagexApiStatusType == PackagexApiStatusType.progress) {
+      progress.update(event.value);
+      return;
     }
-    progress.update(event.value);
-    progress.complete(event.value);
-
-    // progress.cancel();
-    return;
+    if (event.packagexApiStatusType == PackagexApiStatusType.progress_complete) {
+      progress.complete(event.value);
+      return;
+    }
   }
   if (event.packagexApiStatusType == PackagexApiStatusType.succes) {
     logger.success(event.value);

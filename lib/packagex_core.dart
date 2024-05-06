@@ -120,7 +120,7 @@ class Packagex {
 
     PackagexPubspec packagexPubspec_default = PackagexPubspec.create(
       dependencies: PackagexPubspecDependencies({
-        "packagex": '^0.0.53',
+        "packagex": '^0.0.54',
       }),
       dev_dependencies: PackagexPubspecDevDependencies({
         "msix": '^3.16.7',

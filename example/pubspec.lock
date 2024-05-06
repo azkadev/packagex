@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.4.1"
+  archive:
+    dependency: transitive
+    description:
+      name: archive
+      sha256: "0763b45fa9294197a2885c8567927e2830ade852e5c896fd4ab7e0e348d0f373"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.0"
   args:
     dependency: transitive
     description:
@@ -49,6 +57,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  cli_util:
+    dependency: transitive
+    description:
+      name: cli_util
+      sha256: c05b7406fdabc7a49a3929d4af76bcaccbbffcbcdcf185b082e1ae07da323d19
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.1"
   clock:
     dependency: transitive
     description:
@@ -65,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  console:
+    dependency: transitive
+    description:
+      name: console
+      sha256: e04e7824384c5b39389acdd6dc7d33f3efe6b232f6f16d7626f194f6a01ad69a
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   convert:
     dependency: transitive
     description:
@@ -129,6 +153,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.38"
+  get_it:
+    dependency: transitive
+    description:
+      name: get_it
+      sha256: d85128a5dae4ea777324730dc65edd9c9f43155c109d5cc0a69cab74139fbac1
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.7.0"
   github:
     dependency: transitive
     description:
@@ -169,6 +201,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  image:
+    dependency: transitive
+    description:
+      name: image
+      sha256: "4c68bfd5ae83e700b5204c1e74451e7bf3cf750e6843c6e158289cf56bda018e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.7"
   io:
     dependency: transitive
     description:
@@ -241,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  msix:
+    dependency: "direct dev"
+    description:
+      name: msix
+      sha256: "519b183d15dc9f9c594f247e2d2339d855cf0eaacc30e19b128e14f3ecc62047"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.16.7"
   node_preamble:
     dependency: transitive
     description:
@@ -263,7 +311,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.53"
+    version: "0.0.54"
   path:
     dependency: transitive
     description:
@@ -272,6 +320,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      sha256: c15605cd28af66339f8eb6fbe0e541bfe2d1b72d5825efc6598f3e0a31b9ad27
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.2"
   pointycastle:
     dependency: transitive
     description:
@@ -380,10 +436,10 @@ packages:
     dependency: transitive
     description:
       name: system_info_fetch
-      sha256: "20b634d566d3c97399b85a4e8df3043cea895ec392aeeaf22c333f62869cabe1"
+      sha256: "20ccf57d86b0b18859a488030fad8299e3ad4dd8b1ce845e2e686196a4bf81ce"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.15"
+    version: "0.0.16"
   term_glyph:
     dependency: transitive
     description:
@@ -432,6 +488,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.2"
+  vector_math:
+    dependency: transitive
+    description:
+      name: vector_math
+      sha256: "80b3257d1492ce4d091729e3a67a60407d227c27241d6927be0130c98e741803"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.4"
   vm_service:
     dependency: transitive
     description:
@@ -480,6 +544,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.5.0"
+  xml:
+    dependency: transitive
+    description:
+      name: xml
+      sha256: b015a8ad1c488f66851d762d3090a21c600e479dc75e68328c52774040cf9226
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.5.0"
   yaml:
     dependency: transitive
     description:
