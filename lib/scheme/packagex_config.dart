@@ -4,20 +4,36 @@ import "package:general_lib/general_lib.dart";
 
 import "packagex_config_flutter_commands.dart";
 
- 
 class PackagexConfig extends JsonScheme {
-
-  
   PackagexConfig(super.rawData);
-   
+
   static Map get defaultData {
-    return {"@type":"packagexConfig","name":"Pack","dart_target":"","flutter_target":"","dart_name":"","flutter_name":"","is_without_platform_name":true,"flutter_commands":{"@type":"packagexConfigFlutterCommands","obfuscate":true,"split-debug-info":"0.0.5","build-name":"0.0.5","build-number":40,"split-per-abi":true,"no-tree-shake-icons":true},"project_id":"","github_username":"","github_is_org":true};
+    return {
+      "@type": "packagexConfig",
+      "name": "Pack",
+      "dart_target": "",
+      "flutter_target": "",
+      "dart_name": "",
+      "flutter_name": "",
+      "is_without_platform_name": true,
+      "flutter_commands": {
+        "@type": "packagexConfigFlutterCommands",
+        "obfuscate": true,
+        "split-debug-info": "0.0.5",
+        "build-name": "0.0.5",
+        "build-number": 40,
+        "split-per-abi": true,
+        "no-tree-shake-icons": true
+      },
+      "project_id": "",
+      "github_username": "",
+      "github_is_org": true
+    };
   }
 
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -26,16 +42,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
-
-  
   String? get name {
     try {
-      if (rawData["name"] is String == false){
+      if (rawData["name"] is String == false) {
         return null;
       }
       return rawData["name"] as String;
@@ -44,16 +57,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
   set name(String? value) {
     rawData["name"] = value;
   }
 
-
-  
   String? get dart_target {
     try {
-      if (rawData["dart_target"] is String == false){
+      if (rawData["dart_target"] is String == false) {
         return null;
       }
       return rawData["dart_target"] as String;
@@ -62,16 +72,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
   set dart_target(String? value) {
     rawData["dart_target"] = value;
   }
 
-
-  
   String? get flutter_target {
     try {
-      if (rawData["flutter_target"] is String == false){
+      if (rawData["flutter_target"] is String == false) {
         return null;
       }
       return rawData["flutter_target"] as String;
@@ -80,16 +87,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
   set flutter_target(String? value) {
     rawData["flutter_target"] = value;
   }
 
-
-  
   String? get dart_name {
     try {
-      if (rawData["dart_name"] is String == false){
+      if (rawData["dart_name"] is String == false) {
         return null;
       }
       return rawData["dart_name"] as String;
@@ -98,16 +102,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
   set dart_name(String? value) {
     rawData["dart_name"] = value;
   }
 
-
-  
   String? get flutter_name {
     try {
-      if (rawData["flutter_name"] is String == false){
+      if (rawData["flutter_name"] is String == false) {
         return null;
       }
       return rawData["flutter_name"] as String;
@@ -116,16 +117,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
   set flutter_name(String? value) {
     rawData["flutter_name"] = value;
   }
 
-
-  
   bool? get is_without_platform_name {
     try {
-      if (rawData["is_without_platform_name"] is bool == false){
+      if (rawData["is_without_platform_name"] is bool == false) {
         return null;
       }
       return rawData["is_without_platform_name"] as bool;
@@ -134,36 +132,28 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
   set is_without_platform_name(bool? value) {
     rawData["is_without_platform_name"] = value;
   }
 
-
-  
   PackagexConfigFlutterCommands get flutter_commands {
     try {
-      if (rawData["flutter_commands"] is Map == false){
-        return PackagexConfigFlutterCommands({}); 
+      if (rawData["flutter_commands"] is Map == false) {
+        return PackagexConfigFlutterCommands({});
       }
       return PackagexConfigFlutterCommands(rawData["flutter_commands"] as Map);
-    } catch (e) {  
-      return PackagexConfigFlutterCommands({}); 
+    } catch (e) {
+      return PackagexConfigFlutterCommands({});
     }
   }
 
-
-  
   set flutter_commands(PackagexConfigFlutterCommands value) {
     rawData["flutter_commands"] = value.toJson();
   }
 
-
-
-  
   String? get project_id {
     try {
-      if (rawData["project_id"] is String == false){
+      if (rawData["project_id"] is String == false) {
         return null;
       }
       return rawData["project_id"] as String;
@@ -172,16 +162,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
   set project_id(String? value) {
     rawData["project_id"] = value;
   }
 
-
-  
   String? get github_username {
     try {
-      if (rawData["github_username"] is String == false){
+      if (rawData["github_username"] is String == false) {
         return null;
       }
       return rawData["github_username"] as String;
@@ -190,16 +177,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
   set github_username(String? value) {
     rawData["github_username"] = value;
   }
 
-
-  
   bool? get github_is_org {
     try {
-      if (rawData["github_is_org"] is bool == false){
+      if (rawData["github_is_org"] is bool == false) {
         return null;
       }
       return rawData["github_is_org"] as bool;
@@ -208,15 +192,11 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
   set github_is_org(bool? value) {
     rawData["github_is_org"] = value;
   }
 
-
-  
   static PackagexConfig create({
-
     String special_type = "packagexConfig",
     String? name,
     String? dart_target,
@@ -224,14 +204,13 @@ class PackagexConfig extends JsonScheme {
     String? dart_name,
     String? flutter_name,
     bool? is_without_platform_name,
-      PackagexConfigFlutterCommands? flutter_commands,
+    PackagexConfigFlutterCommands? flutter_commands,
     String? project_id,
     String? github_username,
     bool? github_is_org,
-})  {
+  }) {
     // PackagexConfig packagexConfig = PackagexConfig({
-Map packagexConfig_data_create_json = {
-  
+    Map packagexConfig_data_create_json = {
       "@type": special_type,
       "name": name,
       "dart_target": dart_target,
@@ -239,21 +218,17 @@ Map packagexConfig_data_create_json = {
       "dart_name": dart_name,
       "flutter_name": flutter_name,
       "is_without_platform_name": is_without_platform_name,
-      "flutter_commands": (flutter_commands != null)?flutter_commands.toJson(): null,
+      "flutter_commands":
+          (flutter_commands != null) ? flutter_commands.toJson() : null,
       "project_id": project_id,
       "github_username": github_username,
       "github_is_org": github_is_org,
+    };
 
+    packagexConfig_data_create_json.removeWhere((key, value) => value == null);
+    PackagexConfig packagexConfig_data_create =
+        PackagexConfig(packagexConfig_data_create_json);
 
-};
-
-
-          packagexConfig_data_create_json.removeWhere((key, value) => value == null);
-PackagexConfig packagexConfig_data_create = PackagexConfig(packagexConfig_data_create_json);
-
-return packagexConfig_data_create;
-
-
-
-      }
+    return packagexConfig_data_create;
+  }
 }

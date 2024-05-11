@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
- 
-/// Packagex Api Status Type 
+
+/// Packagex Api Status Type
 enum PackagexApiStatusType {
   succes,
   failed,
@@ -11,13 +11,14 @@ enum PackagexApiStatusType {
   progress_complete,
 }
 
-/// Packagex Api Status 
-class PackagexApiStatus { 
+/// Packagex Api Status
+class PackagexApiStatus {
   String value;
-  
+
   PackagexApiStatusType packagexApiStatusType;
+
   /// Packagex Api Status
-  PackagexApiStatus({ 
+  PackagexApiStatus({
     required this.packagexApiStatusType,
     required this.value,
   });
