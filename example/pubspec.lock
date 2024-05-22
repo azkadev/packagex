@@ -311,7 +311,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.55"
+    version: "0.0.56"
   path:
     dependency: transitive
     description:
@@ -436,10 +436,10 @@ packages:
     dependency: transitive
     description:
       name: system_info_fetch
-      sha256: "20ccf57d86b0b18859a488030fad8299e3ad4dd8b1ce845e2e686196a4bf81ce"
+      sha256: ab063d3e02d4f016d3388e19861dbe4e31e3747f3fb6505d4da563723fe4a26f
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.16"
+    version: "0.0.18"
   term_glyph:
     dependency: transitive
     description:
