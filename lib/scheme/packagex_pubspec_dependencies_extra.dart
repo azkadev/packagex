@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unused_import
+// ignore_for_file: non_constant_identifier_names,
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
@@ -49,12 +49,8 @@ class PackagexPubspecDependenciesExtra extends JsonScheme {
       "sdk": sdk,
     };
 
-    packagexPubspecDependenciesExtra_data_create_json
-        .removeWhere((key, value) => value == null);
-    PackagexPubspecDependenciesExtra
-        packagexPubspecDependenciesExtra_data_create =
-        PackagexPubspecDependenciesExtra(
-            packagexPubspecDependenciesExtra_data_create_json);
+    packagexPubspecDependenciesExtra_data_create_json.removeWhere((key, value) => value == null);
+    PackagexPubspecDependenciesExtra packagexPubspecDependenciesExtra_data_create = PackagexPubspecDependenciesExtra(packagexPubspecDependenciesExtra_data_create_json);
 
     return packagexPubspecDependenciesExtra_data_create;
   }

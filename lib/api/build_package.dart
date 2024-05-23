@@ -32,7 +32,7 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 
 
 <!-- END LICENSE --> */
-// ignore_for_file: non_constant_identifier_names, unused_import
+// ignore_for_file: non_constant_identifier_names,
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
@@ -47,14 +47,7 @@ class BuildPackage extends JsonScheme {
       "platform": "",
       "path_current": "",
       "path_output": "",
-      "build_config": {
-        "@type": "buildConfig",
-        "name": "Pack",
-        "dart_target": "",
-        "flutter_target": "",
-        "dart_name": "",
-        "flutter_name": ""
-      }
+      "build_config": {"@type": "buildConfig", "name": "Pack", "dart_target": "", "flutter_target": "", "dart_name": "", "flutter_name": ""}
     };
   }
 
@@ -150,8 +143,7 @@ class BuildPackage extends JsonScheme {
     };
 
     buildPackage_data_create_json.removeWhere((key, value) => value == null);
-    BuildPackage buildPackage_data_create =
-        BuildPackage(buildPackage_data_create_json);
+    BuildPackage buildPackage_data_create = BuildPackage(buildPackage_data_create_json);
 
     return buildPackage_data_create;
   }

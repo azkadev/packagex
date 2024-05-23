@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unused_import
+// ignore_for_file: non_constant_identifier_names,
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
@@ -16,15 +16,7 @@ class PackagexConfig extends JsonScheme {
       "dart_name": "",
       "flutter_name": "",
       "is_without_platform_name": true,
-      "flutter_commands": {
-        "@type": "packagexConfigFlutterCommands",
-        "obfuscate": true,
-        "split-debug-info": "0.0.5",
-        "build-name": "0.0.5",
-        "build-number": 40,
-        "split-per-abi": true,
-        "no-tree-shake-icons": true
-      },
+      "flutter_commands": {"@type": "packagexConfigFlutterCommands", "obfuscate": true, "split-debug-info": "0.0.5", "build-name": "0.0.5", "build-number": 40, "split-per-abi": true, "no-tree-shake-icons": true},
       "project_id": "",
       "github_username": "",
       "github_is_org": true
@@ -218,16 +210,14 @@ class PackagexConfig extends JsonScheme {
       "dart_name": dart_name,
       "flutter_name": flutter_name,
       "is_without_platform_name": is_without_platform_name,
-      "flutter_commands":
-          (flutter_commands != null) ? flutter_commands.toJson() : null,
+      "flutter_commands": (flutter_commands != null) ? flutter_commands.toJson() : null,
       "project_id": project_id,
       "github_username": github_username,
       "github_is_org": github_is_org,
     };
 
     packagexConfig_data_create_json.removeWhere((key, value) => value == null);
-    PackagexConfig packagexConfig_data_create =
-        PackagexConfig(packagexConfig_data_create_json);
+    PackagexConfig packagexConfig_data_create = PackagexConfig(packagexConfig_data_create_json);
 
     return packagexConfig_data_create;
   }

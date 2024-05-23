@@ -32,7 +32,7 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 
 
 <!-- END LICENSE --> */
-// ignore_for_file: non_constant_identifier_names, unused_import
+// ignore_for_file: non_constant_identifier_names,
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
@@ -84,8 +84,7 @@ class CreatePackage extends JsonScheme {
     };
 
     createPackage_data_create_json.removeWhere((key, value) => value == null);
-    CreatePackage createPackage_data_create =
-        CreatePackage(createPackage_data_create_json);
+    CreatePackage createPackage_data_create = CreatePackage(createPackage_data_create_json);
 
     return createPackage_data_create;
   }

@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unused_import
+// ignore_for_file: non_constant_identifier_names,
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
@@ -6,15 +6,7 @@ class PackagexPubspecPlatforms extends JsonScheme {
   PackagexPubspecPlatforms(super.rawData);
 
   static Map get defaultData {
-    return {
-      "@type": "packagexPubspecPlatforms",
-      "android": null,
-      "ios": null,
-      "linux": null,
-      "macos": null,
-      "web": null,
-      "windows": null
-    };
+    return {"@type": "packagexPubspecPlatforms", "android": null, "ios": null, "linux": null, "macos": null, "web": null, "windows": null};
   }
 
   String? get special_type {
@@ -142,10 +134,8 @@ class PackagexPubspecPlatforms extends JsonScheme {
       "windows": windows,
     };
 
-    packagexPubspecPlatforms_data_create_json
-        .removeWhere((key, value) => value == null);
-    PackagexPubspecPlatforms packagexPubspecPlatforms_data_create =
-        PackagexPubspecPlatforms(packagexPubspecPlatforms_data_create_json);
+    packagexPubspecPlatforms_data_create_json.removeWhere((key, value) => value == null);
+    PackagexPubspecPlatforms packagexPubspecPlatforms_data_create = PackagexPubspecPlatforms(packagexPubspecPlatforms_data_create_json);
 
     return packagexPubspecPlatforms_data_create;
   }

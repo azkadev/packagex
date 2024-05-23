@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unused_import
+// ignore_for_file: non_constant_identifier_names,
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
@@ -10,10 +10,7 @@ class PackagexPubspecDependencies extends JsonScheme {
   static Map get defaultData {
     return {
       "@type": "packagexPubspecDependencies",
-      "flutter": {
-        "@type": "packagexPubspecDependenciesExtra",
-        "sdk": "flutter"
-      },
+      "flutter": {"@type": "packagexPubspecDependenciesExtra", "sdk": "flutter"},
       "cupertino_icons": "^1.0.2"
     };
   }
@@ -75,11 +72,8 @@ class PackagexPubspecDependencies extends JsonScheme {
       "cupertino_icons": cupertino_icons,
     };
 
-    packagexPubspecDependencies_data_create_json
-        .removeWhere((key, value) => value == null);
-    PackagexPubspecDependencies packagexPubspecDependencies_data_create =
-        PackagexPubspecDependencies(
-            packagexPubspecDependencies_data_create_json);
+    packagexPubspecDependencies_data_create_json.removeWhere((key, value) => value == null);
+    PackagexPubspecDependencies packagexPubspecDependencies_data_create = PackagexPubspecDependencies(packagexPubspecDependencies_data_create_json);
 
     return packagexPubspecDependencies_data_create;
   }
