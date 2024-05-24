@@ -49,8 +49,12 @@ class PackagexPubspecDependenciesExtra extends JsonScheme {
       "sdk": sdk,
     };
 
-    packagexPubspecDependenciesExtra_data_create_json.removeWhere((key, value) => value == null);
-    PackagexPubspecDependenciesExtra packagexPubspecDependenciesExtra_data_create = PackagexPubspecDependenciesExtra(packagexPubspecDependenciesExtra_data_create_json);
+    packagexPubspecDependenciesExtra_data_create_json
+        .removeWhere((key, value) => value == null);
+    PackagexPubspecDependenciesExtra
+        packagexPubspecDependenciesExtra_data_create =
+        PackagexPubspecDependenciesExtra(
+            packagexPubspecDependenciesExtra_data_create_json);
 
     return packagexPubspecDependenciesExtra_data_create;
   }

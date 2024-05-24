@@ -6,7 +6,16 @@ class PackagexMsixConfig extends JsonScheme {
   PackagexMsixConfig(super.rawData);
 
   static Map get defaultData {
-    return {"@type": "packagexMsixConfig", "display_name": "example", "publisher_display_name": "Azkadev Packagex", "identity_name": "org.azkadev.example", "msix_version": "0.0.0.0", "logo_path": "example/bin/example.dart", "capabilities": "internetClient, location, microphone, webcam", "install_certificate": false};
+    return {
+      "@type": "packagexMsixConfig",
+      "display_name": "example",
+      "publisher_display_name": "Azkadev Packagex",
+      "identity_name": "org.azkadev.example",
+      "msix_version": "0.0.0.0",
+      "logo_path": "example/bin/example.dart",
+      "capabilities": "internetClient, location, microphone, webcam",
+      "install_certificate": false
+    };
   }
 
   String? get special_type {
@@ -151,8 +160,10 @@ class PackagexMsixConfig extends JsonScheme {
       "install_certificate": install_certificate,
     };
 
-    packagexMsixConfig_data_create_json.removeWhere((key, value) => value == null);
-    PackagexMsixConfig packagexMsixConfig_data_create = PackagexMsixConfig(packagexMsixConfig_data_create_json);
+    packagexMsixConfig_data_create_json
+        .removeWhere((key, value) => value == null);
+    PackagexMsixConfig packagexMsixConfig_data_create =
+        PackagexMsixConfig(packagexMsixConfig_data_create_json);
 
     return packagexMsixConfig_data_create;
   }

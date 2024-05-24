@@ -12,7 +12,10 @@ class PackagexPubspecDevDependencies extends JsonScheme {
       "@type": "packagexPubspecDevDependencies",
       "lints": "^2.0.0",
       "test": "^1.16.0",
-      "packagex": {"@type": "packagexPubspecDevDependenciesExtra", "path": "../"},
+      "packagex": {
+        "@type": "packagexPubspecDevDependenciesExtra",
+        "path": "../"
+      },
       "msix": "^1.0.6"
     };
   }
@@ -108,8 +111,11 @@ class PackagexPubspecDevDependencies extends JsonScheme {
       "msix": msix,
     };
 
-    packagexPubspecDevDependencies_data_create_json.removeWhere((key, value) => value == null);
-    PackagexPubspecDevDependencies packagexPubspecDevDependencies_data_create = PackagexPubspecDevDependencies(packagexPubspecDevDependencies_data_create_json);
+    packagexPubspecDevDependencies_data_create_json
+        .removeWhere((key, value) => value == null);
+    PackagexPubspecDevDependencies packagexPubspecDevDependencies_data_create =
+        PackagexPubspecDevDependencies(
+            packagexPubspecDevDependencies_data_create_json);
 
     return packagexPubspecDevDependencies_data_create;
   }

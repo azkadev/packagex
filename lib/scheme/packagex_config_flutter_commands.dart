@@ -6,7 +6,15 @@ class PackagexConfigFlutterCommands extends JsonScheme {
   PackagexConfigFlutterCommands(super.rawData);
 
   static Map get defaultData {
-    return {"@type": "packagexConfigFlutterCommands", "obfuscate": true, "split-debug-info": "0.0.5", "build-name": "0.0.5", "build-number": 40, "split-per-abi": true, "no-tree-shake-icons": true};
+    return {
+      "@type": "packagexConfigFlutterCommands",
+      "obfuscate": true,
+      "split-debug-info": "0.0.5",
+      "build-name": "0.0.5",
+      "build-number": 40,
+      "split-per-abi": true,
+      "no-tree-shake-icons": true
+    };
   }
 
   String? get special_type {
@@ -134,8 +142,11 @@ class PackagexConfigFlutterCommands extends JsonScheme {
       "no-tree-shake-icons": no_tree_shake_icons,
     };
 
-    packagexConfigFlutterCommands_data_create_json.removeWhere((key, value) => value == null);
-    PackagexConfigFlutterCommands packagexConfigFlutterCommands_data_create = PackagexConfigFlutterCommands(packagexConfigFlutterCommands_data_create_json);
+    packagexConfigFlutterCommands_data_create_json
+        .removeWhere((key, value) => value == null);
+    PackagexConfigFlutterCommands packagexConfigFlutterCommands_data_create =
+        PackagexConfigFlutterCommands(
+            packagexConfigFlutterCommands_data_create_json);
 
     return packagexConfigFlutterCommands_data_create;
   }

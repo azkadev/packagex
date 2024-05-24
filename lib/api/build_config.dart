@@ -40,7 +40,14 @@ class BuildConfig extends JsonScheme {
   BuildConfig(super.rawData);
 
   static Map get defaultData {
-    return {"@type": "buildConfig", "name": "Pack", "dart_target": "", "flutter_target": "", "dart_name": "", "flutter_name": ""};
+    return {
+      "@type": "buildConfig",
+      "name": "Pack",
+      "dart_target": "",
+      "flutter_target": "",
+      "dart_name": "",
+      "flutter_name": ""
+    };
   }
 
   String? get special_type {
@@ -152,7 +159,8 @@ class BuildConfig extends JsonScheme {
     };
 
     buildConfig_data_create_json.removeWhere((key, value) => value == null);
-    BuildConfig buildConfig_data_create = BuildConfig(buildConfig_data_create_json);
+    BuildConfig buildConfig_data_create =
+        BuildConfig(buildConfig_data_create_json);
 
     return buildConfig_data_create;
   }

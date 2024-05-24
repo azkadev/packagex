@@ -84,7 +84,8 @@ class CreatePackage extends JsonScheme {
     };
 
     createPackage_data_create_json.removeWhere((key, value) => value == null);
-    CreatePackage createPackage_data_create = CreatePackage(createPackage_data_create_json);
+    CreatePackage createPackage_data_create =
+        CreatePackage(createPackage_data_create_json);
 
     return createPackage_data_create;
   }

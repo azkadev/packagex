@@ -49,8 +49,10 @@ class PackagexPubspecEnvironment extends JsonScheme {
       "sdk": sdk,
     };
 
-    packagexPubspecEnvironment_data_create_json.removeWhere((key, value) => value == null);
-    PackagexPubspecEnvironment packagexPubspecEnvironment_data_create = PackagexPubspecEnvironment(packagexPubspecEnvironment_data_create_json);
+    packagexPubspecEnvironment_data_create_json
+        .removeWhere((key, value) => value == null);
+    PackagexPubspecEnvironment packagexPubspecEnvironment_data_create =
+        PackagexPubspecEnvironment(packagexPubspecEnvironment_data_create_json);
 
     return packagexPubspecEnvironment_data_create;
   }
