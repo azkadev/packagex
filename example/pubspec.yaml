@@ -33,3 +33,5 @@ msix_config:
   install_certificate: false
 dependency_overrides: 
   pointycastle: '3.8.0'
+funding: 
+  - 'https://github.com/sponsors/azkadev'
