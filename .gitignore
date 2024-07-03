@@ -6,3 +6,10 @@ temp_*
 example/
 example_app/
 example_program/
+*.exe
+*.deb
+*.sqlite-*
+*.sqlite
+docs/canvaskit
+*/canvaskit
+/build/
