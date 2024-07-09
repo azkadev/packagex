@@ -29,7 +29,7 @@ dependencies:
   universal_io: '^2.2.2'
   yaml: '^3.1.2'
   yaml_writer: '^2.0.0'
-  system_info_fetch: '^0.0.22'
+  system_info_fetch: '^0.0.21'
 packagex: 
   name: 'packagex'
   dart_target: 'packagex'
@@ -44,7 +44,6 @@ packagex:
 msix_config: 
   display_name: 'packagex'
   install_certificate: false
-# publish_to: 'none'
 dependency_overrides: 
   pointycastle: '3.8.0'
 funding: 
