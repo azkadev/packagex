@@ -90,19 +90,34 @@ void main(List<String> args) {
           FooterData.create(
             title: "About",
           ),
-          FooterData.create(title: "Buy My Services On Telegram 🥺", url: "https://t.me/azkadevbot?start=ref_web_documentation"),
-          FooterData.create(title: "Donate Me 🥺", url: "https://github.com/sponsor/azkadev"),
-          FooterData.create(title: "Donate Me On Telegram 🥺", url: "https://t.me/azkadevbot?start=donate_web_documentation"),
+          FooterData.create(
+              title: "Buy My Services On Telegram 🥺",
+              url: "https://t.me/azkadevbot?start=ref_web_documentation"),
+          FooterData.create(
+              title: "Donate Me 🥺", url: "https://github.com/sponsor/azkadev"),
+          FooterData.create(
+              title: "Donate Me On Telegram 🥺",
+              url: "https://t.me/azkadevbot?start=donate_web_documentation"),
         ],
       ),
       FootersData.create(
         title: "Other Library",
         footer: [
-          FooterData.create(title: "Discord Client", url: "https://t.me/azkadevbot?start=ref_web_documentation"),
-          FooterData.create(title: "DoodStream Client", url: "https://t.me/azkadevbot?start=ref_web_documentation"),
-          FooterData.create(title: "Github Client", url: "https://t.me/azkadevbot?start=ref_web_documentation"),
-          FooterData.create(title: "Google Client", url: "https://t.me/azkadevbot?start=ref_web_documentation"),
-          FooterData.create(title: "Whatsapp Client", url: "https://t.me/azkadevbot?start=ref_web_documentation"),
+          FooterData.create(
+              title: "Discord Client",
+              url: "https://t.me/azkadevbot?start=ref_web_documentation"),
+          FooterData.create(
+              title: "DoodStream Client",
+              url: "https://t.me/azkadevbot?start=ref_web_documentation"),
+          FooterData.create(
+              title: "Github Client",
+              url: "https://t.me/azkadevbot?start=ref_web_documentation"),
+          FooterData.create(
+              title: "Google Client",
+              url: "https://t.me/azkadevbot?start=ref_web_documentation"),
+          FooterData.create(
+              title: "Whatsapp Client",
+              url: "https://t.me/azkadevbot?start=ref_web_documentation"),
         ],
       ),
     ],
