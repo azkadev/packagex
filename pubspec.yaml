@@ -29,7 +29,7 @@ dependencies:
   universal_io: '^2.2.2'
   yaml: '^3.1.2'
   yaml_writer: '^2.0.0'
-  system_info_fetch: '^0.0.21'
+  system_info_fetch: '^0.0.22'
 packagex: 
   name: 'packagex'
   dart_target: 'packagex'
