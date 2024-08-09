@@ -20,7 +20,7 @@ executables:
   packagex: 'packagex'
 dependencies: 
   collection: '^1.18.0'
-  general_lib: '^0.0.43'
+  general_lib: '^0.0.44'
   github: '^9.24.0'
   http: '^1.2.1'
   mason_logger: '^0.2.15'
@@ -29,7 +29,7 @@ dependencies:
   universal_io: '^2.2.2'
   yaml: '^3.1.2'
   yaml_writer: '^2.0.0'
-  system_info_fetch: '^0.0.22'
+  system_info_fetch: '^0.0.23'
 packagex: 
   name: 'packagex'
   dart_target: 'packagex'
