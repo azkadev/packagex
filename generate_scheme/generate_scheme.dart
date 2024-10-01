@@ -84,6 +84,7 @@ Future<void> main() async {
         "dart_name": "",
         "flutter_name": "",
         "is_without_platform_name": true,
+        "is_app_auto_clean_up_folder": false,
         "flutter_commands": {
           "@type": "packagexConfigFlutterCommands",
           "obfuscate": true,
