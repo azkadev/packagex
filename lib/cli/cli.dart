@@ -44,7 +44,7 @@ import 'package:packagex/packagex.dart';
 import 'package:general_lib/general_lib.dart';
 import 'package:packagex/scheme/packagex_pubspec.dart';
 import 'package:path/path.dart' as p;
-import 'package:system_info_fetch/system_info_fetch.dart';
+import 'package:system_information/dart/core.dart'; 
 import "package:yaml/yaml.dart" as yaml;
 import "package:path/path.dart" as path;
 
@@ -55,7 +55,7 @@ class PackagexEnvironment {
 
   static bool get is_not_interactive {
     if (RegExp(r"virtual", caseSensitive: false)
-        .hashData(SystemInfoFetch.get_model)) {
+        .hashData(SystemInformation().get_model)) {
       return true;
     }
     return ((Platform.environment["packagex_is_no_interactive"] ?? "").trim() ==

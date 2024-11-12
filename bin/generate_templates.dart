@@ -35,12 +35,13 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 import 'dart:io';
 import 'package:general_lib/script_generate/extensions.dart';
 import 'package:general_lib/script_generate/script_generate_core.dart';
+import 'package:general_lib/script_generate/script_generate_options.dart';
 import "package:path/path.dart" as path;
 
 void main(List<String> args) async {
   Directory directory = Directory(path.join(Directory.current.path, "example"));
   List<ScriptGenerator> scriptGenerators =
-      directory.listSync().toScriptGenerate();
+      directory.listSync().toScriptGenerate(scriptGeneratorOptions: ScriptGeneratorOptions(fileSystemEntityIgnore: "", isVerbose: false));
   scriptGenerators
       .generateToDirectory(
           directoryBase:

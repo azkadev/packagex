@@ -29,7 +29,8 @@ dependencies:
   universal_io: '^2.2.2'
   yaml: '^3.1.2'
   yaml_writer: '^2.0.0'
-  system_info_fetch: '^0.0.24'
+  system_information: 
+    path: '/home/galaxeus/Documents/galaxeus/app/system_information/library/system_information'
 packagex: 
   name: 'packagex'
   dart_target: 'packagex'
