@@ -40,8 +40,11 @@ import "package:path/path.dart" as path;
 
 void main(List<String> args) async {
   Directory directory = Directory(path.join(Directory.current.path, "example"));
-  List<ScriptGenerator> scriptGenerators =
-      directory.listSync().toScriptGenerate(scriptGeneratorOptions: ScriptGeneratorOptions(fileSystemEntityIgnore: "", isVerbose: false));
+  List<ScriptGenerator> scriptGenerators = directory
+      .listSync()
+      .toScriptGenerate(
+          scriptGeneratorOptions: ScriptGeneratorOptions(
+              fileSystemEntityIgnore: "", isVerbose: false));
   scriptGenerators
       .generateToDirectory(
           directoryBase:

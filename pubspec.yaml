@@ -1,52 +1,52 @@
 name: 'packagex'
 description: 'A library for package dart or flutter to specific platform.'
-version: '0.0.60'
+version: '0.0.61'
 homepage: 'https://youtube.com/@azkadev'
 repository: 'https://github.com/azkadev/packagex.git'
-platforms: 
+platforms:
   android: null
   ios: null
   linux: null
   macos: null
   web: null
   windows: null
-environment: 
+environment:
   sdk: '>=3.3.3 <4.0.0'
-dev_dependencies: 
+dev_dependencies:
   lints: '^4.0.0'
   msix: '^3.16.7'
   test: 'any'
-executables: 
+executables:
   packagex: 'packagex'
-dependencies: 
+dependencies:
   collection: '^1.18.0'
-  general_lib: '^0.0.46'
+  general_lib: '^0.0.47'
   github: '^9.24.0'
-  http: '^1.2.1'
+  http: '^1.2.2'
   mason_logger: '^0.3.1'
   mime: '^1.0.6'
   path: '^1.9.0'
   universal_io: '^2.2.2'
   yaml: '^3.1.2'
   yaml_writer: '^2.0.0'
-  system_information: '^0.0.0'
-packagex: 
+  system_information: '^0.0.1'
+packagex:
   name: 'packagex'
   dart_target: 'packagex'
   flutter_target: 'main'
   dart_name: 'packagex'
   flutter_name: 'packagex'
-  flutter_commands: 
+  flutter_commands:
     obfuscate: true
     split-debug-info: '0.0.5'
   project_id: 'azkadev.packagex'
   github_username: 'azkadev'
-msix_config: 
+msix_config:
   display_name: 'packagex'
   install_certificate: false
-dependency_overrides: 
+dependency_overrides:
   pointycastle: '3.8.0'
-funding: 
+funding:
   - 'https://github.com/sponsors/azkadev'
   - 'https://github.com/sponsors/generalfoss'
 issue_tracker: 'https://t.me/DEVELOPER_GLOBAL_PUBLIC'

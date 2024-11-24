@@ -2,23 +2,23 @@ name: 'example'
 description: 'A sample command-line application.'
 version: '0.0.0'
 publish_to: 'none'
-environment: 
+environment:
   sdk: '>=3.3.3 <4.0.0'
-dependencies: 
-  packagex: 
+dependencies:
+  packagex:
     path: '../'
-dev_dependencies: 
+dev_dependencies:
   lints: '^4.0.0'
   test: 'any'
   msix: '^3.16.7'
-packagex: 
+packagex:
   name: 'example'
   dart_target: 'example'
   flutter_target: 'main'
   dart_name: 'example'
   flutter_name: 'example'
   is_without_platform_name: true
-  flutter_commands: 
+  flutter_commands:
     obfuscate: true
     split-debug-info: '0.0.0'
     build-name: '0.0.0'
@@ -28,12 +28,12 @@ packagex:
   project_id: 'azkadev.packagex'
   github_username: 'azkadev'
   github_is_org: false
-msix_config: 
+msix_config:
   display_name: 'example'
   install_certificate: false
-dependency_overrides: 
+dependency_overrides:
   pointycastle: '3.8.0'
-funding: 
+funding:
   - 'https://github.com/sponsors/azkadev'
   - 'https://github.com/sponsors/generalfoss'
 homepage: 'https://youtube.com/@azkadev'

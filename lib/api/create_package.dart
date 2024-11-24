@@ -2,21 +2,17 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-
- 
 class CreatePackage extends JsonScheme {
-
-  
   CreatePackage(super.rawData);
-  
+
   /// return default data
-  /// 
+  ///
   static Map get defaultData {
-    return {"@type":"createPackage","path":""};
+    return {"@type": "createPackage", "path": ""};
   }
 
-  /// check data 
-  /// if raw data 
+  /// check data
+  /// if raw data
   /// - rawData["@type"] == createPackage
   /// if same return true
   bool json_scheme_utils_checkDataIsSameBySpecialType() {
@@ -30,20 +26,15 @@ class CreatePackage extends JsonScheme {
     return onResult(rawData["@type"], defaultData["@type"]);
   }
 
-  
-
   /// create [CreatePackage]
-  /// Empty  
+  /// Empty
   static CreatePackage empty() {
     return CreatePackage({});
   }
 
-  
-
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -52,16 +43,13 @@ class CreatePackage extends JsonScheme {
     }
   }
 
-  
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
-
-  
   String? get path {
     try {
-      if (rawData["path"] is String == false){
+      if (rawData["path"] is String == false) {
         return null;
       }
       return rawData["path"] as String;
@@ -70,30 +58,22 @@ class CreatePackage extends JsonScheme {
     }
   }
 
-  
   set path(String? value) {
     rawData["path"] = value;
   }
 
-
-  
   static CreatePackage create({
-              bool schemeUtilsIsSetDefaultData = false,
-
+    bool schemeUtilsIsSetDefaultData = false,
     String special_type = "createPackage",
     String? path,
-})  {
+  }) {
     // CreatePackage createPackage = CreatePackage({
-final Map createPackage_data_create_json = {
-  
+    final Map createPackage_data_create_json = {
       "@type": special_type,
       "path": path,
+    };
 
-
-};
-
-
-          createPackage_data_create_json.removeWhere((key, value) => value == null);
+    createPackage_data_create_json.removeWhere((key, value) => value == null);
 
     if (schemeUtilsIsSetDefaultData) {
       defaultData.forEach((key, value) {
@@ -102,8 +82,6 @@ final Map createPackage_data_create_json = {
         }
       });
     }
-return CreatePackage(createPackage_data_create_json);
-
-
-      }
+    return CreatePackage(createPackage_data_create_json);
+  }
 }
