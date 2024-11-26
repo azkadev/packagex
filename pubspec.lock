@@ -178,10 +178,10 @@ packages:
     dependency: "direct main"
     description:
       name: general_lib
-      sha256: "791a7565a4136032206645405dc614ef506ca4fb665d660eca87940907a647a8"
+      sha256: f869b4e267057b0b060c4b2a1a2c91ab8ca15baccee75e2368e0cba6ed68f708
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.47"
+    version: "0.0.48"
   get_it:
     dependency: transitive
     description:
@@ -487,18 +487,18 @@ packages:
     dependency: "direct main"
     description:
       name: system_information
-      sha256: c907948860f81f6cde459e462ac32f7ba1a59472e0974325a43bcbb60ebaac39
+      sha256: bd21d556a893728593830b6431e230e6b7295e11476b7c478941abc61e6b5d4d
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1"
+    version: "0.0.2"
   system_information_flutter:
     dependency: transitive
     description:
       name: system_information_flutter
-      sha256: f0266eca8af5ca5dee2498c5b18d9a1a6044251601c093d6f1a1d8e25306cf32
+      sha256: "9edd1ad8d6210d5e9b431a08b631ce08bd06507b025c546f5260014c9586754d"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1"
+    version: "0.0.2"
   term_glyph:
     dependency: transitive
     description:
