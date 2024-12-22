@@ -8,7 +8,7 @@ dependencies:
   packagex:
     path: '../'
 dev_dependencies:
-  lints: '^4.0.0'
+  lints: '^5.0.0'
   test: 'any'
   msix: '^3.16.7'
 packagex:
@@ -33,6 +33,7 @@ msix_config:
   install_certificate: false
 dependency_overrides:
   pointycastle: '3.8.0'
+  mime: '^2.0.0'
 funding:
   - 'https://github.com/sponsors/azkadev'
   - 'https://github.com/sponsors/generalfoss'
