@@ -240,13 +240,14 @@ Homepage: "-"
     }
     List<String> default_debian_postinsts_packagex_linux = [
       // chmod dahulu
-      "chmod +x /opt/${project_name.packagex_utils_extension_toLinuxProgram()}/${project_name}",
+      // "chmod +x /opt/${project_name.packagex_utils_extension_toLinuxProgram()}/${project_name}",
       // link dahulu agar bisa jalaanin via cli
       "ln --force -s /opt/${project_name.packagex_utils_extension_toLinuxProgram()}/${project_name} /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
 
       /// chmod agar bisa run
-      "chmod + /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app"
+      "chmod +x /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app"
     ];
+    // default_debian_postinsts_packagex_linux.clear();
     if (file_debian_postinst_packagex_linux.existsSync() == false) {
       await file_debian_postinst_packagex_linux.writeAsString("""
 #!/usr/bin/env sh
@@ -280,19 +281,20 @@ exit 0
       await file_debian_postrm_packagex_linux.parent.create(recursive: true);
     }
     List<String> default_debian_postrms_packagex_linux = [
-      "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
-      "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
-      "rm -rf /opt/${project_name.packagex_utils_extension_toLinuxProgram()}/",
-      // "rm -rf /usr/share/${project_name.packagex_utils_extension_toLinuxProgram()}",
+      // "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
+      // "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
+      // "rm -rf /opt/${project_name.packagex_utils_extension_toLinuxProgram()}/",
+      // "rm -rf /usr/share/applications/${project_name}.desktop",
     ];
+    // default_debian_postrms_packagex_linux.clear();
     if (file_debian_postrm_packagex_linux.existsSync() == false) {
       await file_debian_postrm_packagex_linux.writeAsString("""
 #!/usr/bin/env sh
 ${default_debian_postrms_packagex_linux.join("\n")}
 """);
     } else {
-      default_debian_postrms_packagex_linux.removeAt(0);
-      default_debian_postrms_packagex_linux.removeAt(0);
+      // default_debian_postrms_packagex_linux.removeAt(0);
+      // default_debian_postrms_packagex_linux.removeAt(0);
       String origin_data = await file_debian_postrm_packagex_linux.readAsString();
       List<String> origin_datas = origin_data.split("\n").map((e) => e.trim()).toList();
       bool is_found_update = false;
@@ -363,7 +365,7 @@ Name=${project_name.split("_").map((e) => e.toUpperCaseFirstData()).join(" ")}
 GenericName=${project_name.split("_").map((e) => e.toUpperCaseFirstData()).join(" ")}
 Version=${packagexPubspec.version}
 Exec=/opt/${project_name.packagex_utils_extension_toLinuxProgram()}/${project_name}
-Icon=/opt/${project_name.packagex_utils_extension_toLinuxProgram()}/flutter_assets/assets/icon.png
+Icon=/opt/${project_name.packagex_utils_extension_toLinuxProgram()}/data/flutter_assets/assets/icon.png
 Terminal=false
 Type=Application
 Categories=Music;Media;
