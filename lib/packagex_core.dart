@@ -210,13 +210,13 @@ Homepage: "-"
     //
     List<List<String>> packagex_linux_folders = [
       ["DEBIAN"],
+      ["opt", project_name.packagex_utils_extension_toLinuxProgram()],
       ["usr", "bin"],
       ["usr", "lib"],
       ["usr", "local"],
       ["usr", "local", "bin"],
       ["usr", "local", "lib"],
       ["usr", "share", "applications"],
-      ["usr", "share", project_name.packagex_utils_extension_toLinuxProgram()],
     ];
     Directory directory_packagex_linux = Directory(path.join(directory_project.path, "linux", "packagex"));
     for (var i = 0; i < packagex_linux_folders.length; i++) {
@@ -239,9 +239,13 @@ Homepage: "-"
       await file_debian_postinst_packagex_linux.parent.create(recursive: true);
     }
     List<String> default_debian_postinsts_packagex_linux = [
-      // "mkdir -p /usr/share/${project_name.packagex_utils_extension_toLinuxProgram()}",
-      "ln -s /usr/share/${project_name.packagex_utils_extension_toLinuxProgram()}/${project_name} /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
-      "chmod +x /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
+      // chmod dahulu
+      "chmod +x /opt/${project_name.packagex_utils_extension_toLinuxProgram()}/${project_name}",
+      // link dahulu agar bisa jalaanin via cli
+      "ln --force -s /opt/${project_name.packagex_utils_extension_toLinuxProgram()}/${project_name} /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
+
+      /// chmod agar bisa run
+      "chmod + /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app"
     ];
     if (file_debian_postinst_packagex_linux.existsSync() == false) {
       await file_debian_postinst_packagex_linux.writeAsString("""
@@ -276,8 +280,9 @@ exit 0
       await file_debian_postrm_packagex_linux.parent.create(recursive: true);
     }
     List<String> default_debian_postrms_packagex_linux = [
-      "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
       "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}-app",
+      "rm -rf /usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
+      "rm -rf /opt/${project_name.packagex_utils_extension_toLinuxProgram()}/",
       // "rm -rf /usr/share/${project_name.packagex_utils_extension_toLinuxProgram()}",
     ];
     if (file_debian_postrm_packagex_linux.existsSync() == false) {
@@ -328,13 +333,13 @@ ${default_debian_postrms_packagex_linux.join("\n")}
     }
 
     List<String> default_gitignores_packagex_linux = [
+      "opt/${project_name.packagex_utils_extension_toLinuxProgram()}",
       "usr/bin/${project_name}",
       "usr/share/${project_name}",
       "usr/local/bin/${project_name}",
       "usr/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
       "usr/share/${project_name.packagex_utils_extension_toLinuxProgram()}",
       "usr/local/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
-      "usr/local/share/${project_name.packagex_utils_extension_toLinuxProgram()}",
     ];
     if (file_gitignore_packagex_linux.existsSync() == false) {
       await file_gitignore_packagex_linux.writeAsString(default_gitignores_packagex_linux.join("\n"));
@@ -354,11 +359,13 @@ ${default_debian_postrms_packagex_linux.join("\n")}
 
     String app_desktop_linux = """
 [Desktop Entry]
-Type=Application
-Version=${packagexPubspec.version}
 Name=${project_name.split("_").map((e) => e.toUpperCaseFirstData()).join(" ")}
-GenericName=General Application
-Exec=${project_name.packagex_utils_extension_toLinuxProgram()}-app -- %u
+GenericName=${project_name.split("_").map((e) => e.toUpperCaseFirstData()).join(" ")}
+Version=${packagexPubspec.version}
+Exec=/opt/${project_name.packagex_utils_extension_toLinuxProgram()}/${project_name}
+Icon=/opt/${project_name.packagex_utils_extension_toLinuxProgram()}/flutter_assets/assets/icon.png
+Terminal=false
+Type=Application
 Categories=Music;Media;
 Keywords=Hello;World;Test;Application;
 StartupNotify=true
@@ -574,9 +581,8 @@ return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
 
           Directory directory_packagex_app_user_share = Directory(path.join(
             directory_linux_package.path,
-            "usr",
-            "share",
-            (packagexPubspec.name ?? "").replaceAll(RegExp(r"([_])"), "-"),
+            "opt",
+            (packagexPubspec.name ?? "").packagex_utils_extension_toLinuxProgram(),
           ));
 
           if (is_app) {
@@ -620,7 +626,7 @@ return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
             directory_linux_package.path,
             "usr",
             "bin",
-            "${packagexPubspec.packagex.dart_name ?? packagexPubspec.name!.replaceAll(RegExp(r"([_])"), "-")}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-linux"}",
+            "${packagexPubspec.packagex.dart_name ?? packagexPubspec.name!.packagex_utils_extension_toLinuxProgram()}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-linux"}",
           ));
           File file_app = File(path.join(directory_build_packagex.path, "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-linux"}.deb"));
 

@@ -21,10 +21,10 @@ packages:
     dependency: transitive
     description:
       name: archive
-      sha256: cb6a278ef2dbb298455e1a713bda08524a175630ec643a242c399c932a0a1f7d
+      sha256: "6199c74e3db4fbfbd04f66d739e72fe11c8a8957d5f219f1f4482dbde6420b5a"
       url: "https://pub.dev"
     source: hosted
-    version: "3.6.1"
+    version: "4.0.2"
   args:
     dependency: transitive
     description:
@@ -178,10 +178,10 @@ packages:
     dependency: "direct main"
     description:
       name: general_lib
-      sha256: "2f3500176fb7382fec651df0d5418a4981c244dde02139371eec6189386339ff"
+      sha256: a5e273dbd9ec27dbbe824134319d7568fd8c669fc0502f36e84b48eadee51206
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.49"
+    version: "0.0.50"
   get_it:
     dependency: transitive
     description:
@@ -234,10 +234,10 @@ packages:
     dependency: transitive
     description:
       name: image
-      sha256: f31d52537dc417fdcde36088fdf11d191026fd5e4fae742491ebd40e5a8bea7d
+      sha256: "8346ad4b5173924b5ddddab782fc7d8a6300178c8b1dc427775405a01701c4a6"
       url: "https://pub.dev"
     source: hosted
-    version: "4.3.0"
+    version: "4.5.2"
   io:
     dependency: transitive
     description:
@@ -382,6 +382,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.1"
+  posix:
+    dependency: transitive
+    description:
+      name: posix
+      sha256: a0117dc2167805aa9125b82eee515cc891819bac2f538c83646d355b16f58b9a
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.1"
   pub_semver:
     dependency: transitive
     description:
@@ -463,10 +471,10 @@ packages:
     dependency: transitive
     description:
       name: stack_trace
-      sha256: "73713990125a6d93122541237550ee3352a2d84baad52d375a4cad2eb9b7ce0b"
+      sha256: "8b27215b45d22309b5cddda1aa2b19bdfec9df0e765f2de506401c071d38d1b1"
       url: "https://pub.dev"
     source: hosted
-    version: "1.11.1"
+    version: "1.12.1"
   stream_channel:
     dependency: transitive
     description:
@@ -487,18 +495,18 @@ packages:
     dependency: "direct main"
     description:
       name: system_information
-      sha256: "3837d8c76705f8110c268bd1e61061caea6e59ad47ce61b8e4b559d1a986781e"
+      sha256: ed1a9c2660c531d1e162d7902892556fb531ad80755fc67aebdd5c8aa27b4b82
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.3"
+    version: "0.0.4"
   system_information_flutter:
     dependency: transitive
     description:
       name: system_information_flutter
-      sha256: "782771efe5a5e89d0794906963e351c2965b86df1a7b7400449545ab71932c98"
+      sha256: "2ee69678b624f6d3ff587570940a6a6c69db960ce74befcb74b1384ca29f2c1f"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.3"
+    version: "0.0.4"
   term_glyph:
     dependency: transitive
     description:

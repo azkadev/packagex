@@ -15,7 +15,7 @@ class PackagexConfigFlutterCommands extends JsonScheme {
       "build-name": "0.0.5",
       "build-number": 40,
       "split-per-abi": true,
-      "no-tree-shake-icons": true
+      "no-tree-shake-icons": true,
     };
   }
 
@@ -166,18 +166,15 @@ class PackagexConfigFlutterCommands extends JsonScheme {
       "no-tree-shake-icons": no_tree_shake_icons,
     };
 
-    packagexConfigFlutterCommands_data_create_json
-        .removeWhere((key, value) => value == null);
+    packagexConfigFlutterCommands_data_create_json.removeWhere((key, value) => value == null);
 
     if (schemeUtilsIsSetDefaultData) {
       defaultData.forEach((key, value) {
-        if (packagexConfigFlutterCommands_data_create_json.containsKey(key) ==
-            false) {
+        if (packagexConfigFlutterCommands_data_create_json.containsKey(key) == false) {
           packagexConfigFlutterCommands_data_create_json[key] = value;
         }
       });
     }
-    return PackagexConfigFlutterCommands(
-        packagexConfigFlutterCommands_data_create_json);
+    return PackagexConfigFlutterCommands(packagexConfigFlutterCommands_data_create_json);
   }
 }
