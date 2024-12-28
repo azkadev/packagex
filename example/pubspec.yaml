@@ -3,7 +3,7 @@ description: 'A sample command-line application.'
 version: '0.0.0'
 publish_to: 'none'
 environment:
-  sdk: '>=3.3.3 <4.0.0'
+  sdk: '>=3.6.0 <4.0.0'
 dependencies:
   packagex:
     path: '../'
