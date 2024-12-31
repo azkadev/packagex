@@ -19,14 +19,14 @@ dev_dependencies:
 executables:
   packagex: 'packagex'
 dependencies:
-  collection: '^1.18.0'
+  collection: '^1.19.0'
   general_lib: '^0.0.51'
   github: '^9.24.0'
   http: '^1.2.2'
   mason_logger: '^0.3.1'
   mime: '^2.0.0'
   path: '^1.9.0'
-  universal_io: '^2.2.2'
+  io_universe: '^0.0.2'
   yaml: '^3.1.2'
   yaml_writer: '^2.0.0'
   system_information: '^0.0.5'
