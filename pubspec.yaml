@@ -1,6 +1,6 @@
 name: 'packagex'
 description: 'A library for package dart or flutter to specific platform.'
-version: '0.0.68'
+version: '0.0.70'
 homepage: 'https://youtube.com/@azkadev'
 repository: 'https://github.com/azkadev/packagex.git'
 platforms:
@@ -20,16 +20,16 @@ executables:
   packagex: 'packagex'
 dependencies:
   collection: '^1.19.0'
-  general_lib: '^0.0.53'
+  general_lib: '^0.0.56'
   github: '^9.24.0'
   http: '^1.2.2'
   mason_logger: '^0.3.1'
   mime: '^2.0.0'
   path: '^1.9.0'
-  io_universe: '^0.0.2'
+  io_universe: '^0.0.4'
   yaml: '^3.1.2'
   yaml_writer: '^2.0.0'
-  system_information: '^0.0.7'
+  system_information: '^0.0.9'
 packagex:
   name: 'packagex'
   dart_target: 'packagex'
