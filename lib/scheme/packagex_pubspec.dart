@@ -57,10 +57,6 @@ class PackagexPubspec extends JsonScheme {
       "packagex": {
         "@type": "packagexConfig",
         "name": "Pack",
-        "dart_target": "",
-        "flutter_target": "",
-        "dart_name": "",
-        "flutter_name": "",
         "is_without_platform_name": true,
         "is_app_auto_clean_up_folder": false,
         "flutter_commands": {
@@ -74,7 +70,17 @@ class PackagexPubspec extends JsonScheme {
         },
         "project_id": "",
         "github_username": "",
-        "github_is_org": true
+        "github_is_org": true,
+        "packages": [
+          {
+            "@type": "packagexConfigPackage",
+            "dart_target": "packagex",
+            "flutter_target": "main",
+            "dart_name": "packagex",
+            "flutter_name": "packagex",
+            "output_name": "packagex"
+          }
+        ]
       },
       "msix_config": {
         "@type": "packagexMsixConfig",

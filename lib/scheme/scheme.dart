@@ -1,5 +1,6 @@
 export "packagex_config.dart";
 export "packagex_config_flutter_commands.dart";
+export "packagex_config_package.dart";
 export "packagex_msix_config.dart";
 export "packagex_pubspec.dart";
 export "packagex_pubspec_dependencies.dart";

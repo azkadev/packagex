@@ -28,6 +28,12 @@ packagex:
   project_id: 'azkadev.packagex'
   github_username: 'azkadev'
   github_is_org: false
+  is_app_auto_clean_up_folder: true
+  packages:
+    - dart_target: 'example'
+      flutter_target: 'main'
+      dart_name: 'example'
+      flutter_name: 'example'
 msix_config:
   display_name: 'example'
   install_certificate: false

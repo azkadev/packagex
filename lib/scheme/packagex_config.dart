@@ -3,6 +3,7 @@ import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
 import "packagex_config_flutter_commands.dart";
+import "packagex_config_package.dart";
 
 class PackagexConfig extends JsonScheme {
   PackagexConfig(super.rawData);
@@ -13,10 +14,6 @@ class PackagexConfig extends JsonScheme {
     return {
       "@type": "packagexConfig",
       "name": "Pack",
-      "dart_target": "",
-      "flutter_target": "",
-      "dart_name": "",
-      "flutter_name": "",
       "is_without_platform_name": true,
       "is_app_auto_clean_up_folder": false,
       "flutter_commands": {
@@ -30,7 +27,17 @@ class PackagexConfig extends JsonScheme {
       },
       "project_id": "",
       "github_username": "",
-      "github_is_org": true
+      "github_is_org": true,
+      "packages": [
+        {
+          "@type": "packagexConfigPackage",
+          "dart_target": "packagex",
+          "flutter_target": "main",
+          "dart_name": "packagex",
+          "flutter_name": "packagex",
+          "output_name": "packagex"
+        }
+      ]
     };
   }
 
@@ -83,66 +90,6 @@ class PackagexConfig extends JsonScheme {
 
   set name(String? value) {
     rawData["name"] = value;
-  }
-
-  String? get dart_target {
-    try {
-      if (rawData["dart_target"] is String == false) {
-        return null;
-      }
-      return rawData["dart_target"] as String;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  set dart_target(String? value) {
-    rawData["dart_target"] = value;
-  }
-
-  String? get flutter_target {
-    try {
-      if (rawData["flutter_target"] is String == false) {
-        return null;
-      }
-      return rawData["flutter_target"] as String;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  set flutter_target(String? value) {
-    rawData["flutter_target"] = value;
-  }
-
-  String? get dart_name {
-    try {
-      if (rawData["dart_name"] is String == false) {
-        return null;
-      }
-      return rawData["dart_name"] as String;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  set dart_name(String? value) {
-    rawData["dart_name"] = value;
-  }
-
-  String? get flutter_name {
-    try {
-      if (rawData["flutter_name"] is String == false) {
-        return null;
-      }
-      return rawData["flutter_name"] as String;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  set flutter_name(String? value) {
-    rawData["flutter_name"] = value;
   }
 
   bool? get is_without_platform_name {
@@ -235,29 +182,40 @@ class PackagexConfig extends JsonScheme {
     rawData["github_is_org"] = value;
   }
 
+  List<PackagexConfigPackage> get packages {
+    try {
+      if (rawData["packages"] is List == false) {
+        return [];
+      }
+      return (rawData["packages"] as List)
+          .map((e) => PackagexConfigPackage(e as Map))
+          .toList()
+          .cast<PackagexConfigPackage>();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  set packages(List<PackagexConfigPackage> values) {
+    rawData["packages"] = values.map((value) => value.toJson()).toList();
+  }
+
   static PackagexConfig create({
     bool schemeUtilsIsSetDefaultData = false,
     String special_type = "packagexConfig",
     String? name,
-    String? dart_target,
-    String? flutter_target,
-    String? dart_name,
-    String? flutter_name,
     bool? is_without_platform_name,
     bool? is_app_auto_clean_up_folder,
     PackagexConfigFlutterCommands? flutter_commands,
     String? project_id,
     String? github_username,
     bool? github_is_org,
+    List<PackagexConfigPackage>? packages,
   }) {
     // PackagexConfig packagexConfig = PackagexConfig({
     final Map packagexConfig_data_create_json = {
       "@type": special_type,
       "name": name,
-      "dart_target": dart_target,
-      "flutter_target": flutter_target,
-      "dart_name": dart_name,
-      "flutter_name": flutter_name,
       "is_without_platform_name": is_without_platform_name,
       "is_app_auto_clean_up_folder": is_app_auto_clean_up_folder,
       "flutter_commands":
@@ -265,6 +223,7 @@ class PackagexConfig extends JsonScheme {
       "project_id": project_id,
       "github_username": github_username,
       "github_is_org": github_is_org,
+      "packages": (packages != null) ? packages.toJson() : null,
     };
 
     packagexConfig_data_create_json.removeWhere((key, value) => value == null);

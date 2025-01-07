@@ -106,7 +106,7 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
   }
   bool args_is_help = args.contains(["-h", "--help"]);
 
-  String command = args[0] ?? "";
+  String command = (args["--command"] ?? args["-command"] ?? "").trim();
 
   if (command == "help") {
     try {
@@ -190,9 +190,8 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     exit(0);
   }
   if (command == "build") {
-    String type_platform = (args.after(command) ?? "");
-
-    var strm = packagex.build(
+    final String type_platform = args.after(["-platform", "--platform"]) ?? "";
+    await for (final streamBuild in packagex.build(
       directoryBase: Directory.current,
       packagexPlatformTypes: type_platform.toPackagexPlatformTypes(),
       packagexConfig:
@@ -201,17 +200,17 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
         return false;
       }(),
       directoryBuild: () {
-        String output_path =
-            (args.after("-o") ?? args.after("--output") ?? "").trim();
+        final String output_path =
+            (args.after(["--output-directory", "-output-directory"]) ?? "")
+                .trim();
         if (output_path.isNotEmpty) {
           return Directory(Directory(output_path).uri.toFilePath());
         }
         return null;
       }(),
-    );
-    await strm.listen((event) {
-      printed(event);
-    }).asFuture();
+    )) {
+      printed(streamBuild);
+    }
     exit(0);
   }
   if (command == "install") {

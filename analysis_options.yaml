@@ -22,7 +22,7 @@ include: package:lints/recommended.yaml
 analyzer:
   exclude:
     - packagex_documentation/
-    - generate_scheme/
+    - dev/
 
 # For more information about the core and recommended set of lints, see
 # https://dart.dev/go/core-lints

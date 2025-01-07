@@ -138,17 +138,13 @@ class Packagex {
 
     PackagexPubspec packagexPubspec_default = PackagexPubspec.create(
       dependencies: PackagexPubspecDependencies({
-        "packagex": '^0.0.54',
+        "packagex": '^0.0.70',
       }),
       dev_dependencies: PackagexPubspecDevDependencies({
-        "msix": '^3.16.7',
+        "msix": '^3.16.8',
       }),
       packagex: PackagexConfig.create(
         name: project_name,
-        dart_name: project_name,
-        flutter_target: "main",
-        dart_target: project_name,
-        flutter_name: project_name,
         is_without_platform_name: true,
         is_app_auto_clean_up_folder: true,
         flutter_commands: (isDontAddFlutterCommands)
@@ -161,6 +157,15 @@ class Packagex {
                 split_per_abi: true,
                 no_tree_shake_icons: true,
               ),
+        packages: [
+          PackagexConfigPackage.create(
+            dart_name: project_name,
+            dart_target: project_name,
+            flutter_name: project_name,
+            flutter_target: "main",
+            output_name: project_name,
+          ),
+        ],
         project_id: "azkadev.packagex",
         github_is_org: false,
         github_username: "azkadev",
@@ -492,43 +497,43 @@ StartupNotify=true
         value:
             "Starting Build: ${packagexPlatformTypes.map((e) => e.name.toUpperCaseFirstData()).join(", ")}");
 
-    File file_pubspec = File(path.join(directoryBase.path, "pubspec.yaml"));
-    var strm = create(
+    final File file_pubspec =
+        File(path.join(directoryBase.path, "pubspec.yaml"));
+
+    await for (final streamCreate in create(
       newName: path.basename(directoryBase.path),
       directoryPackage: directoryBase.parent,
       isApplication: isApplication,
       packagexConfig: packagexConfig,
       isDontAddFlutterCommands: true,
-    );
-    await for (var event in strm) {
-      yield event;
+    )) {
+      yield streamCreate;
     }
-    Map yaml_code =
+    final Map yaml_code =
         (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
 
-    PackagexPubspec packagexPubspec = PackagexPubspec(yaml_code.clone());
+    final PackagexPubspec packagexPubspec = PackagexPubspec(yaml_code.clone());
 
     packagexPubspec.packagex.rawData.general_lib_utils_updateMapWithReplace(
         data: packagexConfig.rawData, ignoreKeys: ["@type"]);
     packagexPubspec.rawData
         .general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
 
-    Directory directory_build_packagex = directoryBuild ??
+    final Directory directory_build_packagex = directoryBuild ??
         Directory(path.join(directoryBase.path, "build", "packagex"));
     yield PackagexApiStatus(
         packagexApiStatusType: PackagexApiStatusType.info,
         value: "Directory Build: ${directory_build_packagex.uri.toFilePath()}");
 
-    File file_script_pkgx =
+    final File file_script_pkgx =
         File(path.join(directoryBase.path, "lib", "packagex", "packagex.dart"));
-    if (!file_script_pkgx.parent.existsSync()) {
+    if (file_script_pkgx.parent.existsSync() == false) {
       await file_script_pkgx.parent.create(
         recursive: true,
       );
     }
-    Map json_data_package_detail = {
-      "name": "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}"
-          .trim(),
+    final Map json_data_package_detail = {
+      "name": "${packagexPubspec.name}".trim(),
       ...packagexPubspec.rawData,
       ...packagexPubspec.packagex.flutter_commands.rawData,
     };
@@ -541,11 +546,11 @@ StartupNotify=true
       "msix_config",
     ]);
 
-    String packagex_script_project = """
+    final String packagex_script_project = """
 // ignore_for_file: non_constant_identifier_names
 import 'dart:convert';
 
-class PackagexProject${(packagexPubspec.packagex.flutter_name ?? packagexPubspec.name ?? "").split("_").map((e) => e.toUpperCaseFirstData()).join("").toUpperCaseFirstData()} {
+class PackagexProject${(packagexPubspec.name ?? "").split("_").map((e) => e.toUpperCaseFirstData()).join("").toUpperCaseFirstData()} {
 
   static bool isSame({
     required String data
@@ -566,7 +571,7 @@ return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
         .trim();
     await file_script_pkgx.writeAsString(packagex_script_project);
 
-    bool is_auto_delete =
+    final bool is_auto_delete =
         Platform.environment["packagex_is_auto_delete"] == "true";
     if (is_auto_delete) {
       if (directory_build_packagex.existsSync()) {
@@ -579,12 +584,12 @@ return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
       }
     }
 
-    File file_packagex_release = File(path.join(directory_build_packagex.path,
-        "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}.json"));
+    final File file_packagex_release = File(path.join(
+        directory_build_packagex.path, "${packagexPubspec.name}.json"));
     await file_packagex_release
         .writeAsString(json_data_package_detail.toStringifyPretty(2));
     {
-      Process process = await Process.start(
+      final Process process = await Process.start(
         (isApplication) ? "flutter" : "dart",
         [
           "pub",
@@ -599,142 +604,452 @@ return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
       process.stdout.listen((event) {
         stdout.add(event);
       });
-      int exit_code = await (process.exitCode);
+      final int exit_code = await (process.exitCode);
     }
 
-    for (PackagexPlatformType packagex_platform_type
-        in packagexPlatformTypes.toSet()) {
-      PackagexPlatformType packagexPlatformType = packagex_platform_type;
+    final List<PackagexConfigPackage> packages =
+        packagexPubspec.packagex.packages;
+    for (final PackagexConfigPackage packagexConfigPackage in packages) {
+      final String dart_target =
+          packagexConfigPackage.dart_target ?? packagexPubspec.name ?? "";
+      final String dart_name = packagexConfigPackage.dart_name ??
+          packagexPubspec.name!.packagex_utils_extension_toLinuxProgram();
+      final String flutter_target =
+          packagexConfigPackage.flutter_target ?? "main";
+      final String flutter_name =
+          packagexConfigPackage.flutter_name ?? packagexPubspec.name ?? "";
+      final String output_name =
+          packagexConfigPackage.output_name ?? packagexPubspec.name ?? "";
 
-      File script_cli = File(path.join(directoryBase.path, "bin",
-          "${packagexPubspec.packagex.dart_target ?? packagexPubspec.name}.dart"));
-      File script_app = File(path.join(directoryBase.path, "lib",
-          "${packagexPubspec.packagex.flutter_target ?? "main"}.dart"));
-      bool is_app = false;
-      bool is_cli = false;
-      if (script_app.existsSync()) {
-        is_app = true;
-      }
-      if (script_cli.existsSync()) {
-        is_cli = true;
-      }
+      for (final PackagexPlatformType packagexPlatformType
+          in packagexPlatformTypes.toSet()) {
+        final File script_cli =
+            File(path.join(directoryBase.path, "bin", "${dart_target}.dart"));
+        final File script_app = File(
+            path.join(directoryBase.path, "lib", "${flutter_target}.dart"));
+        final bool is_app = script_app.existsSync();
+        final bool is_cli = script_cli.existsSync();
 
-      List<String> flutter_commands = [];
+        final List<String> flutter_commands = [];
 
-      packagexPubspec.packagex.flutter_commands.rawData.forEach((key, value) {
-        String key_args_flutter =
-            "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
-        if (key_args_flutter == "--obfuscate") {
-          if (value == true) {
-            flutter_commands.add(key_args_flutter);
-          }
-        }
-        if (key_args_flutter == "--split-per-abi") {
-          if (value == true) {
-            if (packagexPlatformType == PackagexPlatformType.android) {
+        packagexPubspec.packagex.flutter_commands.rawData.forEach((key, value) {
+          String key_args_flutter =
+              "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
+          if (key_args_flutter == "--obfuscate") {
+            if (value == true) {
               flutter_commands.add(key_args_flutter);
             }
           }
-        }
-        if (key_args_flutter == "--no-tree-shake-icons") {
-          if (value == true) {
-            flutter_commands.add(key_args_flutter);
-          }
-        }
-
-        if (key_args_flutter == "--split-debug-info") {
-          flutter_commands.add("${key_args_flutter}=${value}");
-        }
-        if (key_args_flutter == "--build-name") {
-          flutter_commands.add("${key_args_flutter}=${value}");
-        }
-        if (key_args_flutter == "--build-number") {
-          flutter_commands.add("${key_args_flutter}");
-          flutter_commands.add("${value}");
-        }
-      });
-
-      yield PackagexApiStatus(
-          packagexApiStatusType: PackagexApiStatusType.info,
-          value: "Starting Build: ${packagexPlatformType.name}");
-      if (packagexPlatformType == PackagexPlatformType.android ||
-          packagexPlatformType == PackagexPlatformType.linux) {
-        if (packagexPlatformType == PackagexPlatformType.linux) {
-          if (!Platform.isLinux) {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.failed,
-                value: "Package linux hanya bisa di perangkat linux saja !");
-            continue;
-          }
-
-          Directory directory_linux_package = Directory(path.join(
-            directoryBase.path,
-            "linux",
-            "packagex",
-          ));
-
-          Directory directory_packagex_app_user_share = Directory(path.join(
-            directory_linux_package.path,
-            "opt",
-            (packagexPubspec.name ?? "")
-                .packagex_utils_extension_toLinuxProgram(),
-          ));
-
-          if (is_app) {
-            if (packagexPubspec.packagex.is_app_auto_clean_up_folder == true) {
-              if (directory_packagex_app_user_share.existsSync()) {
-                await directory_packagex_app_user_share.delete(recursive: true);
-              }
-              await directory_packagex_app_user_share.create(recursive: true);
-            } else {
-              if (directory_packagex_app_user_share.existsSync() == false) {
-                await directory_packagex_app_user_share.create(recursive: true);
+          if (key_args_flutter == "--split-per-abi") {
+            if (value == true) {
+              if (packagexPlatformType == PackagexPlatformType.android) {
+                flutter_commands.add(key_args_flutter);
               }
             }
           }
-          String message =
-              "Set Permission: ${path.join(directory_linux_package.path, "DEBIAN")}";
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.info,
-              value: "Starting ${message}");
-          Process process = await Process.start(
-            "chmod",
-            [
-              "-R",
-              "775",
-              path.join(directory_linux_package.path, "DEBIAN"),
-            ],
-            runInShell: true,
-          );
-          process.stderr.listen((event) {
-            stderr.add(event);
-          });
-          process.stdout.listen((event) {
-            stdout.add(event);
-          });
-          int exit_code = await (process.exitCode);
-          if (exit_code != 0) {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.failed,
-                value: "Failed ${message}");
-            return;
-          } else {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.succes,
-                value: "Succes ${message}");
+          if (key_args_flutter == "--no-tree-shake-icons") {
+            if (value == true) {
+              flutter_commands.add(key_args_flutter);
+            }
           }
 
-          File file_cli = File(path.join(
-            directory_linux_package.path,
-            "usr",
-            "bin",
-            "${packagexPubspec.packagex.dart_name ?? packagexPubspec.name!.packagex_utils_extension_toLinuxProgram()}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-linux"}",
-          ));
-          File file_app = File(path.join(directory_build_packagex.path,
-              "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-linux"}.deb"));
+          if (key_args_flutter == "--split-debug-info") {
+            flutter_commands.add("${key_args_flutter}=${value}");
+          }
+          if (key_args_flutter == "--build-name") {
+            flutter_commands.add("${key_args_flutter}=${value}");
+          }
+          if (key_args_flutter == "--build-number") {
+            flutter_commands.add("${key_args_flutter}");
+            flutter_commands.add("${value}");
+          }
+        });
 
+        yield PackagexApiStatus(
+            packagexApiStatusType: PackagexApiStatusType.info,
+            value: "Starting Build: ${packagexPlatformType.name}");
+        if (packagexPlatformType == PackagexPlatformType.android ||
+            packagexPlatformType == PackagexPlatformType.linux) {
+          if (packagexPlatformType == PackagexPlatformType.linux) {
+            if (!Platform.isLinux) {
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.failed,
+                  value: "Package linux hanya bisa di perangkat linux saja !");
+              continue;
+            }
+
+            final Directory directory_linux_package = Directory(path.join(
+              directoryBase.path,
+              "linux",
+              "packagex",
+            ));
+
+            final Directory directory_linux_packagex_app_opt =
+                Directory(path.join(
+              directory_linux_package.path,
+              "opt",
+              (packagexPubspec.name ?? "")
+                  .packagex_utils_extension_toLinuxProgram(),
+            ));
+
+            if (is_app) {
+              if (packagexPubspec.packagex.is_app_auto_clean_up_folder ==
+                  true) {
+                if (directory_linux_packagex_app_opt.existsSync()) {
+                  await directory_linux_packagex_app_opt.delete(
+                      recursive: true);
+                }
+                await directory_linux_packagex_app_opt.create(recursive: true);
+              } else {
+                if (directory_linux_packagex_app_opt.existsSync() == false) {
+                  await directory_linux_packagex_app_opt.create(
+                      recursive: true);
+                }
+              }
+            }
+            final String message =
+                "Set Permission: ${path.join(directory_linux_package.path, "DEBIAN")}";
+            yield PackagexApiStatus(
+                packagexApiStatusType: PackagexApiStatusType.info,
+                value: "Starting ${message}");
+            final Process process = await Process.start(
+              "chmod",
+              [
+                "-R",
+                "775",
+                path.join(directory_linux_package.path, "DEBIAN"),
+              ],
+              runInShell: true,
+            );
+            process.stderr.listen((event) {
+              stderr.add(event);
+            });
+            process.stdout.listen((event) {
+              stdout.add(event);
+            });
+            final int exit_code = await (process.exitCode);
+            if (exit_code != 0) {
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.failed,
+                  value: "Failed ${message}");
+              return;
+            } else {
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.succes,
+                  value: "Succes ${message}");
+            }
+
+            final File file_cli = File(path.join(
+              directory_linux_package.path,
+              "usr",
+              "bin",
+              "${dart_name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-linux"}",
+            ));
+            final File file_output_app = File(path.join(
+                directory_build_packagex.path,
+                "${output_name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-linux"}.deb"));
+
+            if (is_cli) {
+              final String message = """
+Compile Script Dart: 
+
+From: ${script_cli.path}
+To: ${file_cli.path}
+"""
+                  .trim();
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.info,
+                  value: "Starting ${message}");
+              final Process process = await Process.start(
+                "dart",
+                [
+                  "compile",
+                  "exe",
+                  script_cli.path,
+                  "-o",
+                  file_cli.path,
+                ],
+                workingDirectory: directoryBase.path,
+              );
+              process.stderr.listen((event) {
+                stderr.add(event);
+              });
+              process.stdout.listen((event) {
+                stdout.add(event);
+              });
+              final int exit_code = await (process.exitCode);
+              if (exit_code != 0) {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.failed,
+                    value: "Failed ${message}");
+                return;
+              } else {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.succes,
+                    value: "Succes ${message}");
+              }
+            }
+            if (is_cli) {
+              final String message = "Set Permission: ${file_cli.path}";
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.info,
+                  value: "Starting ${message}");
+              final Process process = await Process.start(
+                "chmod",
+                [
+                  "775",
+                  file_cli.path,
+                ],
+                runInShell: true,
+              );
+              process.stderr.listen((event) {
+                stderr.add(event);
+              });
+              process.stdout.listen((event) {
+                stdout.add(event);
+              });
+              final int exit_code = await (process.exitCode);
+              if (exit_code != 0) {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.failed,
+                    value: "Failed ${message}");
+                return;
+              } else {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.succes,
+                    value: "Succes ${message}");
+              }
+            }
+
+            if (is_app) {
+              final String message = " Flutter Build:";
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.info,
+                  value: "Starting ${message}");
+              final Process process = await Process.start(
+                "flutter",
+                [
+                  "build",
+                  "linux",
+                  "--release",
+                  "--target=${script_app.path}",
+                  ...flutter_commands,
+                ],
+                workingDirectory: directoryBase.path,
+              );
+              process.stderr.listen((event) {
+                stderr.add(event);
+              });
+              process.stdout.listen((event) {
+                stdout.add(event);
+              });
+              final int exit_code = await (process.exitCode);
+              if (exit_code != 0) {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.failed,
+                    value: "Failed ${message}");
+                return;
+              } else {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.succes,
+                    value: "Succes ${message}");
+              }
+            }
+            if (is_app) {
+              final String path_app = path.join(directoryBase.path, "build",
+                  "linux", "x64", "release", "bundle", ".");
+
+              final String message =
+                  "Copy App Files: From ${path_app} To ${directory_linux_packagex_app_opt.path} ";
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.info,
+                  value: "Starting ${message}");
+              final Process process = await Process.start(
+                "cp",
+                [
+                  "-rf",
+                  path_app,
+                  directory_linux_packagex_app_opt.path,
+                ],
+                workingDirectory: directoryBase.path,
+              );
+              process.stderr.listen((event) {
+                stderr.add(event);
+              });
+              process.stdout.listen((event) {
+                stdout.add(event);
+              });
+              final int exit_code = await (process.exitCode);
+              if (exit_code != 0) {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.failed,
+                    value: "Failed ${message}");
+                return;
+              } else {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.succes,
+                    value: "Succes ${message}");
+              }
+            }
+
+            if (is_app || is_cli) {
+              final String message =
+                  "Set Permission: chmod -R 755 ${directory_linux_package.path}";
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.info,
+                  value: "Starting ${message}");
+              Process process = await Process.start(
+                "chmod",
+                ["-R", "775", directory_linux_package.path],
+                runInShell: true,
+              );
+              process.stderr.listen((event) {
+                stderr.add(event);
+              });
+              process.stdout.listen((event) {
+                stdout.add(event);
+              });
+              final int exit_code = await (process.exitCode);
+              if (exit_code != 0) {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.failed,
+                    value: "Failed ${message}");
+                return;
+              } else {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.succes,
+                    value: "Succes ${message}");
+              }
+            }
+            if (is_app || is_cli) {
+              final String message = "Dpkg Build: ${file_output_app.path}";
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.info,
+                  value: "Starting ${message}");
+              final Process process = await Process.start(
+                "dpkg-deb",
+                [
+                  "--build",
+                  "--root-owner-group",
+                  directory_linux_package.path,
+                  file_output_app.path,
+                ],
+                workingDirectory: directoryBase.path,
+              );
+              process.stderr.listen((event) {
+                stderr.add(event);
+              });
+              process.stdout.listen((event) {
+                stdout.add(event);
+              });
+              final int exit_code = await (process.exitCode);
+              if (exit_code != 0) {
+                yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.failed,
+                  value: "Failed ${message}",
+                );
+                return;
+              } else {
+                yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.succes,
+                  value: "Succes ${message}",
+                );
+              }
+              try {
+                if (file_cli.existsSync()) {
+                  await file_cli.delete(recursive: true);
+                }
+              } catch (e) {}
+            }
+
+            if (packagexPubspec.packagex.is_app_auto_clean_up_folder == true) {
+              await directory_linux_packagex_app_opt.delete(recursive: true);
+            }
+
+            continue;
+          }
+
+          if (packagexPlatformType == PackagexPlatformType.android) {
+            if (is_app) {
+              final String message = " Flutter Build:";
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.info,
+                  value: "Starting ${message}");
+              final Process process = await Process.start(
+                "flutter",
+                [
+                  "build",
+                  "apk",
+                  "--release",
+                  "--split-per-abi",
+                  "--target=${script_app.path}",
+                  ...flutter_commands,
+                ],
+                workingDirectory: directoryBase.path,
+              );
+              process.stderr.listen((event) {
+                stderr.add(event);
+              });
+              process.stdout.listen((event) {
+                stdout.add(event);
+              });
+              final int exit_code = await (process.exitCode);
+              if (exit_code != 0) {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.failed,
+                    value: "Failed ${message}");
+                return;
+              } else {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.succes,
+                    value: "Succes ${message}");
+              }
+              final Directory directory_apk = Directory(path.join(
+                  directoryBase.path,
+                  "build",
+                  "app",
+                  "outputs",
+                  "flutter-apk"));
+              final List<FileSystemEntity> dirs = directory_apk.listSync();
+              for (var i = 0; i < dirs.length; i++) {
+                final FileSystemEntity dir = dirs[i];
+                try {
+                  if (dir is Directory) {
+                  } else if (dir is File) {
+                    if (path.extension(dir.path) != ".apk") {
+                      continue;
+                    }
+                    if (path.basename(dir.path) == "app-release.apk") {
+                      continue;
+                    }
+                    await dir.absolute.copy(path.join(
+                        directory_build_packagex.path,
+                        path.basename(dir.path).replaceAll(
+                            RegExp("^(app)", caseSensitive: false),
+                            "${output_name}")));
+                    await dir.absolute.delete(
+                      recursive: true,
+                    );
+                  }
+                } catch (e) {}
+              }
+            }
+          }
+        }
+        if (packagexPlatformType == PackagexPlatformType.windows) {
+          if (!Platform.isWindows) {
+            yield PackagexApiStatus(
+                packagexApiStatusType: PackagexApiStatusType.failed,
+                value:
+                    "Package windows hanya bisa di perangkat windows saja !");
+            continue;
+          }
+          final File file_cli = File(
+            path.join(directory_build_packagex.path,
+                "${dart_name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-windows"}.exe"),
+          );
           if (is_cli) {
-            String message = """
+            final String message = """
 Compile Script Dart: 
 
 From: ${script_cli.path}
@@ -744,7 +1059,7 @@ To: ${file_cli.path}
             yield PackagexApiStatus(
                 packagexApiStatusType: PackagexApiStatusType.info,
                 value: "Starting ${message}");
-            Process process = await Process.start(
+            final Process process = await Process.start(
               "dart",
               [
                 "compile",
@@ -761,6 +1076,86 @@ To: ${file_cli.path}
             process.stdout.listen((event) {
               stdout.add(event);
             });
+            final int exit_code = await (process.exitCode);
+            if (exit_code != 0) {
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.failed,
+                  value: "Failed ${message}");
+              return;
+            } else {
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.succes,
+                  value: "Succes ${message}");
+            }
+          }
+
+          if (is_app) {
+            final List<String> args_msix = [];
+            final List<String> msix_args = [
+              "--display-name",
+              "--publisher-display-name",
+              "--identity-name",
+              "--version",
+              "--logo-path",
+              "--trim-logo",
+              "--capabilities",
+              "--languages",
+              "--file-extension",
+              "--protocol-activation",
+              "--app-uri-handler-hosts",
+              "--execution-alias",
+              "--enable-at-startup",
+              "--store",
+              "--certificate-path",
+              "--certificate-password",
+              "--publisher",
+              "--signtool-options",
+              "--sign-msix",
+              "--install-certificate",
+            ];
+            packagexPubspec.msix_config.rawData.forEach((key, value) {
+              if (value is String && value.isNotEmpty) {
+                String key_args_msix =
+                    "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
+                if (!msix_args.contains(key_args_msix)) {
+                  return;
+                }
+                if (key_args_msix == "--version") {
+                  List<String> versions = value.toString().split(".");
+                  if (versions.length != 4) {
+                    value = "0.0.0.0";
+                  }
+                }
+                args_msix.add(key_args_msix);
+                args_msix.add(value);
+              }
+            });
+            final String message = " Flutter Build: ";
+            yield PackagexApiStatus(
+                packagexApiStatusType: PackagexApiStatusType.info,
+                value: "Starting ${message}");
+            Process process = await Process.start(
+              "flutter",
+              [
+                "pub",
+                "run",
+                "msix:create",
+                "--windows-build-args",
+                "--target=${script_app.path} ${flutter_commands.join(" ")}",
+                "-o",
+                directory_build_packagex.path,
+                "-n",
+                "${flutter_name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-app-windows"}",
+                ...args_msix,
+              ],
+              workingDirectory: directoryBase.path,
+            );
+            process.stderr.listen((event) {
+              stderr.add(event);
+            });
+            process.stdout.listen((event) {
+              stdout.add(event);
+            });
             int exit_code = await (process.exitCode);
             if (exit_code != 0) {
               yield PackagexApiStatus(
@@ -773,18 +1168,39 @@ To: ${file_cli.path}
                   value: "Succes ${message}");
             }
           }
+        }
+
+        if (packagexPlatformType == PackagexPlatformType.macos) {
+          if (Platform.isMacOS == false) {
+            yield PackagexApiStatus(
+                packagexApiStatusType: PackagexApiStatusType.failed,
+                value: "Package macos hanya bisa di perangkat macos saja !");
+            // return {"@type": "error", "message": "platform_not_supported", "description": "Package macos hanya bisa di perangkat macos saja !"};
+            continue;
+          }
+          final File file_cli = File(path.join(directory_build_packagex.path,
+              "${dart_name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-macos"}"));
           if (is_cli) {
-            String message = "Set Permission: ${file_cli.path}";
+            final String message = """
+Compile Script Dart: 
+
+From: ${script_cli.path}
+To: ${file_cli.path}
+"""
+                .trim();
             yield PackagexApiStatus(
                 packagexApiStatusType: PackagexApiStatusType.info,
                 value: "Starting ${message}");
-            Process process = await Process.start(
-              "chmod",
+            final Process process = await Process.start(
+              "dart",
               [
-                "775",
+                "compile",
+                "exe",
+                script_cli.path,
+                "-o",
                 file_cli.path,
               ],
-              runInShell: true,
+              workingDirectory: directoryBase.path,
             );
             process.stderr.listen((event) {
               stderr.add(event);
@@ -792,7 +1208,7 @@ To: ${file_cli.path}
             process.stdout.listen((event) {
               stdout.add(event);
             });
-            int exit_code = await (process.exitCode);
+            final int exit_code = await (process.exitCode);
             if (exit_code != 0) {
               yield PackagexApiStatus(
                   packagexApiStatusType: PackagexApiStatusType.failed,
@@ -806,6 +1222,50 @@ To: ${file_cli.path}
           }
 
           if (is_app) {
+            final String message = " Flutter Build: ";
+            yield PackagexApiStatus(
+                packagexApiStatusType: PackagexApiStatusType.info,
+                value: "Starting ${message}");
+            final Process process = await Process.start(
+              "flutter",
+              [
+                "build",
+                "macos",
+                "--release",
+                "--target=${script_app.path}",
+                ...flutter_commands,
+              ],
+              workingDirectory: directoryBase.path,
+            );
+            process.stderr.listen((event) {
+              stderr.add(event);
+            });
+            process.stdout.listen((event) {
+              stdout.add(event);
+            });
+            final int exit_code = await (process.exitCode);
+            if (exit_code != 0) {
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.failed,
+                  value: "Failed ${message}");
+              return;
+            } else {
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.succes,
+                  value: "Succes ${message}");
+            }
+          }
+        }
+
+        if (packagexPlatformType == PackagexPlatformType.ios) {
+          if (Platform.isMacOS == false) {
+            yield PackagexApiStatus(
+                packagexApiStatusType: PackagexApiStatusType.failed,
+                value: "Package ios hanya bisa di perangkat macos saja !");
+            continue;
+          }
+
+          if (is_app) {
             String message = " Flutter Build:";
             yield PackagexApiStatus(
                 packagexApiStatusType: PackagexApiStatusType.info,
@@ -814,8 +1274,9 @@ To: ${file_cli.path}
               "flutter",
               [
                 "build",
-                "linux",
+                "ios",
                 "--release",
+                "--no-codesign",
                 "--target=${script_app.path}",
                 ...flutter_commands,
               ],
@@ -840,542 +1301,24 @@ To: ${file_cli.path}
             }
           }
           if (is_app) {
-            String path_app = path.join(directoryBase.path, "build", "linux",
-                "x64", "release", "bundle", ".");
-
-            String message =
-                "Copy App Files: From ${path_app} To ${directory_packagex_app_user_share.path} ";
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.info,
-                value: "Starting ${message}");
-            Process process = await Process.start(
-              "cp",
-              [
-                "-rf",
-                path_app,
-                directory_packagex_app_user_share.path,
-              ],
-              workingDirectory: directoryBase.path,
-            );
-            process.stderr.listen((event) {
-              stderr.add(event);
-            });
-            process.stdout.listen((event) {
-              stdout.add(event);
-            });
-            int exit_code = await (process.exitCode);
-            if (exit_code != 0) {
-              yield PackagexApiStatus(
-                  packagexApiStatusType: PackagexApiStatusType.failed,
-                  value: "Failed ${message}");
-              return;
-            } else {
-              yield PackagexApiStatus(
-                  packagexApiStatusType: PackagexApiStatusType.succes,
-                  value: "Succes ${message}");
-            }
-          }
-
-          if (is_app || is_cli) {
-            String message =
-                "Set Permission: chmod -R 755 ${directory_linux_package.path}";
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.info,
-                value: "Starting ${message}");
-            Process process = await Process.start(
-              "chmod",
-              ["-R", "775", directory_linux_package.path],
-              runInShell: true,
-            );
-            process.stderr.listen((event) {
-              stderr.add(event);
-            });
-            process.stdout.listen((event) {
-              stdout.add(event);
-            });
-            int exit_code = await (process.exitCode);
-            if (exit_code != 0) {
-              yield PackagexApiStatus(
-                  packagexApiStatusType: PackagexApiStatusType.failed,
-                  value: "Failed ${message}");
-              return;
-            } else {
-              yield PackagexApiStatus(
-                  packagexApiStatusType: PackagexApiStatusType.succes,
-                  value: "Succes ${message}");
-            }
-          }
-          if (is_app || is_cli) {
-            String message = "Dpkg Build: ${file_app.path}";
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.info,
-                value: "Starting ${message}");
-            Process process = await Process.start(
-              "dpkg-deb",
-              [
-                "--build",
-                "--root-owner-group",
-                directory_linux_package.path,
-                file_app.path,
-              ],
-              workingDirectory: directoryBase.path,
-            );
-            process.stderr.listen((event) {
-              stderr.add(event);
-            });
-            process.stdout.listen((event) {
-              stdout.add(event);
-            });
-            int exit_code = await (process.exitCode);
-            if (exit_code != 0) {
-              yield PackagexApiStatus(
-                  packagexApiStatusType: PackagexApiStatusType.failed,
-                  value: "Failed ${message}");
-              return;
-            } else {
-              yield PackagexApiStatus(
-                  packagexApiStatusType: PackagexApiStatusType.succes,
-                  value: "Succes ${message}");
-            }
-            try {
-              if (file_cli.existsSync()) {
-                await file_cli.delete(recursive: true);
-              }
-            } catch (e) {}
-          }
-
-          if (packagexPubspec.packagex.is_app_auto_clean_up_folder == true) {
-            await directory_packagex_app_user_share.delete(recursive: true);
-          }
-
-          continue;
-        }
-
-        if (packagexPlatformType == PackagexPlatformType.android) {
-          if (is_app) {
             String message = " Flutter Build:";
             yield PackagexApiStatus(
                 packagexApiStatusType: PackagexApiStatusType.info,
                 value: "Starting ${message}");
             Process process = await Process.start(
-              "flutter",
+              "sh",
               [
-                "build",
-                "apk",
-                "--release",
-                "--split-per-abi",
-                "--target=${script_app.path}",
-                ...flutter_commands,
-              ],
-              workingDirectory: directoryBase.path,
-            );
-            process.stderr.listen((event) {
-              stderr.add(event);
-            });
-            process.stdout.listen((event) {
-              stdout.add(event);
-            });
-            int exit_code = await (process.exitCode);
-            if (exit_code != 0) {
-              yield PackagexApiStatus(
-                  packagexApiStatusType: PackagexApiStatusType.failed,
-                  value: "Failed ${message}");
-              return;
-            } else {
-              yield PackagexApiStatus(
-                  packagexApiStatusType: PackagexApiStatusType.succes,
-                  value: "Succes ${message}");
-            }
-            Directory directory_apk = Directory(path.join(
-                directoryBase.path, "build", "app", "outputs", "flutter-apk"));
-            List<FileSystemEntity> dirs = directory_apk.listSync();
-            for (var i = 0; i < dirs.length; i++) {
-              FileSystemEntity dir = dirs[i];
-              try {
-                if (dir is Directory) {
-                } else if (dir is File) {
-                  if (path.extension(dir.path) != ".apk") {
-                    continue;
-                  }
-                  if (path.basename(dir.path) == "app-release.apk") {
-                    continue;
-                  }
-                  await dir.absolute.copy(path.join(
-                      directory_build_packagex.path,
-                      path.basename(dir.path).replaceAll(
-                          RegExp("^(app)", caseSensitive: false),
-                          "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}")));
-                  await dir.absolute.delete(
-                    recursive: true,
-                  );
-                }
-              } catch (e) {}
-            }
-          }
-        }
-      }
-      if (packagexPlatformType == PackagexPlatformType.windows) {
-        if (!Platform.isWindows) {
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.failed,
-              value: "Package windows hanya bisa di perangkat windows saja !");
-          continue;
-        }
-        File file_cli = File(
-          path.join(directory_build_packagex.path,
-              "${packagexPubspec.packagex.dart_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-windows"}.exe"),
-        );
-        if (is_cli) {
-          String message = """
-Compile Script Dart: 
-
-From: ${script_cli.path}
-To: ${file_cli.path}
-"""
-              .trim();
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.info,
-              value: "Starting ${message}");
-          Process process = await Process.start(
-            "dart",
-            [
-              "compile",
-              "exe",
-              script_cli.path,
-              "-o",
-              file_cli.path,
-            ],
-            workingDirectory: directoryBase.path,
-          );
-          process.stderr.listen((event) {
-            stderr.add(event);
-          });
-          process.stdout.listen((event) {
-            stdout.add(event);
-          });
-          int exit_code = await (process.exitCode);
-          if (exit_code != 0) {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.failed,
-                value: "Failed ${message}");
-            return;
-          } else {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.succes,
-                value: "Succes ${message}");
-          }
-        }
-
-        if (is_app) {
-          List<String> args_msix = [];
-          List<String> msix_args = [
-            "--display-name",
-            "--publisher-display-name",
-            "--identity-name",
-            "--version",
-            "--logo-path",
-            "--trim-logo",
-            "--capabilities",
-            "--languages",
-            "--file-extension",
-            "--protocol-activation",
-            "--app-uri-handler-hosts",
-            "--execution-alias",
-            "--enable-at-startup",
-            "--store",
-            "--certificate-path",
-            "--certificate-password",
-            "--publisher",
-            "--signtool-options",
-            "--sign-msix",
-            "--install-certificate",
-          ];
-          packagexPubspec.msix_config.rawData.forEach((key, value) {
-            if (value is String && value.isNotEmpty) {
-              String key_args_msix =
-                  "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
-              if (!msix_args.contains(key_args_msix)) {
-                return;
-              }
-              if (key_args_msix == "--version") {
-                List<String> versions = value.toString().split(".");
-                if (versions.length != 4) {
-                  value = "0.0.0.0";
-                }
-              }
-              args_msix.add(key_args_msix);
-              args_msix.add(value);
-            }
-          });
-          String message = " Flutter Build: ";
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.info,
-              value: "Starting ${message}");
-          Process process = await Process.start(
-            "flutter",
-            [
-              "pub",
-              "run",
-              "msix:create",
-              "--windows-build-args",
-              "--target=${script_app.path} ${flutter_commands.join(" ")}",
-              "-o",
-              directory_build_packagex.path,
-              "-n",
-              "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-app-windows"}",
-              ...args_msix,
-            ],
-            workingDirectory: directoryBase.path,
-          );
-          process.stderr.listen((event) {
-            stderr.add(event);
-          });
-          process.stdout.listen((event) {
-            stdout.add(event);
-          });
-          int exit_code = await (process.exitCode);
-          if (exit_code != 0) {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.failed,
-                value: "Failed ${message}");
-            return;
-          } else {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.succes,
-                value: "Succes ${message}");
-          }
-        }
-      }
-
-      if (packagexPlatformType == PackagexPlatformType.macos) {
-        if (!Platform.isMacOS) {
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.failed,
-              value: "Package macos hanya bisa di perangkat macos saja !");
-          // return {"@type": "error", "message": "platform_not_supported", "description": "Package macos hanya bisa di perangkat macos saja !"};
-          continue;
-        }
-        File file_cli = File(path.join(directory_build_packagex.path,
-            "${packagexPubspec.packagex.dart_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-cli-macos"}"));
-        if (is_cli) {
-          String message = """
-Compile Script Dart: 
-
-From: ${script_cli.path}
-To: ${file_cli.path}
-"""
-              .trim();
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.info,
-              value: "Starting ${message}");
-          Process process = await Process.start(
-            "dart",
-            [
-              "compile",
-              "exe",
-              script_cli.path,
-              "-o",
-              file_cli.path,
-            ],
-            workingDirectory: directoryBase.path,
-          );
-          process.stderr.listen((event) {
-            stderr.add(event);
-          });
-          process.stdout.listen((event) {
-            stdout.add(event);
-          });
-          int exit_code = await (process.exitCode);
-          if (exit_code != 0) {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.failed,
-                value: "Failed ${message}");
-            return;
-          } else {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.succes,
-                value: "Succes ${message}");
-          }
-        }
-
-        if (is_app) {
-          String message = " Flutter Build: ";
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.info,
-              value: "Starting ${message}");
-          Process process = await Process.start(
-            "flutter",
-            [
-              "build",
-              "macos",
-              "--release",
-              "--target=${script_app.path}",
-              ...flutter_commands,
-            ],
-            workingDirectory: directoryBase.path,
-          );
-          process.stderr.listen((event) {
-            stderr.add(event);
-          });
-          process.stdout.listen((event) {
-            stdout.add(event);
-          });
-          int exit_code = await (process.exitCode);
-          if (exit_code != 0) {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.failed,
-                value: "Failed ${message}");
-            return;
-          } else {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.succes,
-                value: "Succes ${message}");
-          }
-        }
-      }
-
-      if (packagexPlatformType == PackagexPlatformType.ios) {
-        if (!Platform.isMacOS) {
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.failed,
-              value: "Package ios hanya bisa di perangkat macos saja !");
-          continue;
-        }
-
-        if (is_app) {
-          String message = " Flutter Build:";
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.info,
-              value: "Starting ${message}");
-          Process process = await Process.start(
-            "flutter",
-            [
-              "build",
-              "ios",
-              "--release",
-              "--no-codesign",
-              "--target=${script_app.path}",
-              ...flutter_commands,
-            ],
-            workingDirectory: directoryBase.path,
-          );
-          process.stderr.listen((event) {
-            stderr.add(event);
-          });
-          process.stdout.listen((event) {
-            stdout.add(event);
-          });
-          int exit_code = await (process.exitCode);
-          if (exit_code != 0) {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.failed,
-                value: "Failed ${message}");
-            return;
-          } else {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.succes,
-                value: "Succes ${message}");
-          }
-        }
-        if (is_app) {
-          String message = " Flutter Build:";
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.info,
-              value: "Starting ${message}");
-          Process process = await Process.start(
-            "sh",
-            [
-              "-c",
-              """
+                "-c",
+                """
 cd build/ios/iphoneospackagexCli(args)
 mkdir Payload
 cd Payload
 ln -s ../Runner.app
 cd ..
-zip -r  ${path.join(directory_build_packagex.path, "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-ios"}.ipa")} Payload
+zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPubspec.packagex.is_without_platform_name == true) ? "" : "-ios"}.ipa")} Payload
 """
-            ],
-            workingDirectory: directoryBase.path,
-          );
-          process.stderr.listen((event) {
-            stderr.add(event);
-          });
-          process.stdout.listen((event) {
-            stdout.add(event);
-          });
-          int exit_code = await (process.exitCode);
-          if (exit_code != 0) {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.failed,
-                value: "Failed ${message}");
-            return;
-          } else {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.succes,
-                value: "Succes ${message}");
-          }
-        }
-        continue;
-      }
-
-      if (packagexPlatformType == PackagexPlatformType.web) {
-        if (is_app) {
-          String message = " Flutter Build:";
-          yield PackagexApiStatus(
-              packagexApiStatusType: PackagexApiStatusType.info,
-              value: "Starting ${message}");
-          Process process = await Process.start(
-            "flutter",
-            [
-              "build",
-              "web",
-              "--release",
-              "--target=${script_app.path}",
-              "--web-renderer",
-              "html",
-            ],
-            workingDirectory: directoryBase.path,
-          );
-          process.stderr.listen((event) {
-            stderr.add(event);
-          });
-          process.stdout.listen((event) {
-            stdout.add(event);
-          });
-          int exit_code = await (process.exitCode);
-          if (exit_code != 0) {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.failed,
-                value: "Failed ${message}");
-            return;
-          } else {
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.succes,
-                value: "Succes ${message}");
-          }
-        }
-        if (is_app) {
-          Directory directory_build_web_canvaskit = Directory(
-              path.join(directoryBase.path, "build", "web", "canvaskit", "."));
-
-          try {
-            await directory_build_web_canvaskit.delete(recursive: true);
-          } catch (e) {}
-
-          if (Platform.isWindows) {
-            String message = " Compress:";
-            yield PackagexApiStatus(
-                packagexApiStatusType: PackagexApiStatusType.info,
-                value: "Starting ${message}");
-            Process process = await Process.start(
-              "tar",
-              [
-                "-cf",
-                path.join(directory_build_packagex.path,
-                    "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}-web.zip"),
-                "*",
               ],
-              workingDirectory: path.join(directoryBase.path, "build", "web"),
+              workingDirectory: directoryBase.path,
             );
             process.stderr.listen((event) {
               stderr.add(event);
@@ -1395,22 +1338,24 @@ zip -r  ${path.join(directory_build_packagex.path, "${packagexPubspec.packagex.f
                   value: "Succes ${message}");
             }
           }
+          continue;
+        }
 
-          if (Platform.isMacOS || Platform.isLinux) {
-            String message = " Compress:";
+        if (packagexPlatformType == PackagexPlatformType.web) {
+          if (is_app) {
+            String message = " Flutter Build:";
             yield PackagexApiStatus(
                 packagexApiStatusType: PackagexApiStatusType.info,
                 value: "Starting ${message}");
             Process process = await Process.start(
-              "zip",
+              "flutter",
               [
-                "-r",
-                path.join(directory_build_packagex.path,
-                    "${packagexPubspec.packagex.flutter_name ?? packagexPubspec.name}-web.zip"),
-                ".",
+                "build",
+                "web",
+                "--release",
+                "--target=${script_app.path}",
               ],
-              workingDirectory:
-                  path.join(directoryBase.path, "build", "web", "."),
+              workingDirectory: directoryBase.path,
             );
             process.stderr.listen((event) {
               stderr.add(event);
@@ -1430,8 +1375,78 @@ zip -r  ${path.join(directory_build_packagex.path, "${packagexPubspec.packagex.f
                   value: "Succes ${message}");
             }
           }
+          if (is_app) {
+            if (Platform.isWindows) {
+              String message = " Compress:";
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.info,
+                  value: "Starting ${message}");
+              Process process = await Process.start(
+                "tar",
+                [
+                  "-cf",
+                  path.join(
+                      directory_build_packagex.path, "${flutter_name}-web.zip"),
+                  "*",
+                ],
+                workingDirectory: path.join(directoryBase.path, "build", "web"),
+              );
+              process.stderr.listen((event) {
+                stderr.add(event);
+              });
+              process.stdout.listen((event) {
+                stdout.add(event);
+              });
+              int exit_code = await (process.exitCode);
+              if (exit_code != 0) {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.failed,
+                    value: "Failed ${message}");
+                return;
+              } else {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.succes,
+                    value: "Succes ${message}");
+              }
+            }
+
+            if (Platform.isMacOS || Platform.isLinux) {
+              String message = " Compress:";
+              yield PackagexApiStatus(
+                  packagexApiStatusType: PackagexApiStatusType.info,
+                  value: "Starting ${message}");
+              Process process = await Process.start(
+                "zip",
+                [
+                  "-r",
+                  path.join(
+                      directory_build_packagex.path, "${flutter_name}-web.zip"),
+                  ".",
+                ],
+                workingDirectory:
+                    path.join(directoryBase.path, "build", "web", "."),
+              );
+              process.stderr.listen((event) {
+                stderr.add(event);
+              });
+              process.stdout.listen((event) {
+                stdout.add(event);
+              });
+              int exit_code = await (process.exitCode);
+              if (exit_code != 0) {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.failed,
+                    value: "Failed ${message}");
+                return;
+              } else {
+                yield PackagexApiStatus(
+                    packagexApiStatusType: PackagexApiStatusType.succes,
+                    value: "Succes ${message}");
+              }
+            }
+          }
+          continue;
         }
-        continue;
       }
     }
     yield PackagexApiStatus(

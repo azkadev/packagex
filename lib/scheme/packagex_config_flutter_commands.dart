@@ -15,7 +15,7 @@ class PackagexConfigFlutterCommands extends JsonScheme {
       "build-name": "0.0.5",
       "build-number": 40,
       "split-per-abi": true,
-      "no-tree-shake-icons": true,
+      "no-tree-shake-icons": true
     };
   }
 
