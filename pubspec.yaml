@@ -43,6 +43,9 @@ packagex:
       github_tag: ''
       github_repository_name: ''
       supabase_folder_name: ''
+      telegram_chats:
+        - chat_id: ""
+          message_thread_id: ""
   packages:
     - dart_target: 'packagex'
       flutter_target: 'main'

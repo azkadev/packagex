@@ -89,7 +89,7 @@ Future<void> main() async {
           "build-number": 40,
           "split-per-abi": true,
           "no-tree-shake-icons": true,
-        }, 
+        },
         "uploads": [
           {
             "@type": "packagexConfigUpload",
@@ -99,9 +99,13 @@ Future<void> main() async {
             "github_is_org": false,
             "github_repository_name": "",
             "supabase_folder_name": "",
-            "telegram_chat_id": "",
-            
-            "telegram_thread_id": "",
+            "telegram_chats": [
+              {
+                "@type": "packagexConfigUploadTelegramChat",
+                "chat_id": "",
+                "message_thread_id": "",
+              },
+            ],
           },
         ],
         "packages": [

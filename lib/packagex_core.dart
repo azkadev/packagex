@@ -164,8 +164,12 @@ class Packagex {
           ),
           PackagexConfigUpload.create(
             platform_type: "telegram",
-            telegram_chat_id: "@slebew",
-            telegram_thread_id: "",
+            telegram_chats: [
+              PackagexConfigUploadTelegramChat.create(
+                chat_id: "@slebew",
+                message_thread_id: "",
+              ),
+            ],
           ),
         ],
       ),
@@ -1322,40 +1326,42 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     for (final PackagexConfigUpload packagexConfigUpload in pubspec.packagex.uploads) {
       final String upload_platform_type = (packagexConfigUpload.platform_type ?? "").trim().toLowerCase();
       if (upload_platform_type == "telegram") {
-        final dynamic telegram_chat_id = () {
-          final num telegram_chat_id_number = num.tryParse(packagexConfigUpload.telegram_chat_id ?? "") ?? 0;
-          if (telegram_chat_id_number != 0) {
-            return telegram_chat_id_number;
+        for (PackagexConfigUploadTelegramChat packagexConfigUploadTelegramChat in packagexConfigUpload.telegram_chats) {
+          final dynamic telegram_chat_id = () {
+            final num telegram_chat_id_number = num.tryParse(packagexConfigUploadTelegramChat.chat_id ?? "") ?? 0;
+            if (telegram_chat_id_number != 0) {
+              return telegram_chat_id_number;
+            }
+            return "@${(packagexConfigUploadTelegramChat.chat_id ?? "").replaceAll(RegExp("@"), "")}";
+          }();
+          final num telegram_thread_id = num.tryParse(packagexConfigUploadTelegramChat.message_thread_id ?? "0") ?? 0;
+          yield "Upload To Telegram Chat Id: ${telegram_chat_id}";
+          final TelegramClient telegramClient = TelegramClient();
+          telegramClient.ensureInitialized(
+            is_init_tdlib: false,
+          );
+          final TelegramClientData telegramClientData = TelegramClientData.telegramBotApi(token_bot: telegramTokenBot);
+          for (final fileUpload in files) {
+            if (fileUpload is File) {
+              final String fileName = path.basename(fileUpload.path);
+              yield "Upload Telegram ${fileName}";
+              await telegramClient.invoke(
+                parameters: {
+                  "@type": "sendDocument",
+                  "chat_id": telegram_chat_id,
+                  "message_thread_id": telegram_thread_id,
+                  "document": TgUtils.typeFile(
+                    content: fileUpload,
+                    directory_temp: directory_build_temp,
+                  ),
+                },
+                telegramClientData: telegramClientData,
+              );
+              yield "Succes Telegram ${fileName}";
+            }
           }
-          return "@${(packagexConfigUpload.telegram_chat_id ?? "").replaceAll(RegExp("@"), "")}";
-        }();
-        final num telegram_thread_id = num.tryParse(packagexConfigUpload.telegram_thread_id ?? "0") ?? 0;
-        yield "Upload To Telegram Chat Id: ${telegram_chat_id}";
-        final TelegramClient telegramClient = TelegramClient();
-        telegramClient.ensureInitialized(
-          is_init_tdlib: false,
-        );
-        final TelegramClientData telegramClientData = TelegramClientData.telegramBotApi(token_bot: telegramTokenBot);
-        for (final fileUpload in files) {
-          if (fileUpload is File) {
-            final String fileName = path.basename(fileUpload.path);
-            yield "Upload Telegram ${fileName}";
-            await telegramClient.invoke(
-              parameters: {
-                "@type": "sendDocument",
-                "chat_id": telegram_chat_id,
-                "message_thread_id": telegram_thread_id,
-                "document": TgUtils.typeFile(
-                  content: fileUpload,
-                  directory_temp: directory_build_temp,
-                ),
-              },
-              telegramClientData: telegramClientData,
-            );
-            yield "Succes Telegram ${fileName}";
-          }
+          yield "Upload To Telegram Chat Id: ${telegram_chat_id} Complete";
         }
-        yield "Upload To Telegram Chat Id: ${telegram_chat_id} Complete";
       }
       if (upload_platform_type == "supabase") {
         final supabase_client.SupabaseClient supabaseClient = supabase_client.SupabaseClient(

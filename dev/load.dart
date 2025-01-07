@@ -6,10 +6,9 @@ void main(List<String> args) {
   yaml_code.printPretty();
 }
 
-final String pubspec_yaml = """
-name: 'packagex'
+final String pubspec_yaml = """name: 'packagex'
 description: 'A library for package dart or flutter to specific platform.'
-version: '0.0.72'
+version: '0.0.73'
 homepage: 'https://youtube.com/@azkadev'
 repository: 'https://github.com/azkadev/packagex.git'
 platforms:
@@ -39,17 +38,22 @@ dependencies:
   yaml: '^3.1.3'
   yaml_writer: '^2.0.1'
   system_information: '^0.0.9'
+  supabase_client: '^0.0.31'
+  telegram_client: '^0.8.33'
 packagex:
   name: 'packagex'
   flutter_commands:
     obfuscate: true
-    split-debug-info: '0.0.5' 
+    split-debug-info: '0.0.5'
   uploads:
-    - platform_type: ""
-      github_username: ""
-      github_tag: ""
-      github_repository_name: ""
-      supabase_folder_name: ""
+    - platform_type: ''
+      github_username: ''
+      github_tag: ''
+      github_repository_name: ''
+      supabase_folder_name: ''
+      telegram_chats:
+        - chat_id: ""
+          message_thread_id: ""
   packages:
     - dart_target: 'packagex'
       flutter_target: 'main'

@@ -2,6 +2,7 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
+import "packagex_config_upload_telegram_chat.dart";
 
  
 class PackagexConfigUpload extends JsonScheme {
@@ -12,7 +13,7 @@ class PackagexConfigUpload extends JsonScheme {
   /// return default data
   /// 
   static Map get defaultData {
-    return {"@type":"packagexConfigUpload","platform_type":"","github_username":"","github_tag":"","github_is_org":false,"github_repository_name":"","supabase_folder_name":"","telegram_chat_id":"","telegram_thread_id":""};
+    return {"@type":"packagexConfigUpload","platform_type":"","github_username":"","github_tag":"","github_is_org":false,"github_repository_name":"","supabase_folder_name":"","telegram_chats":[{"@type":"packagexConfigUploadTelegramChat","chat_id":"","message_thread_id":""}]};
   }
 
   /// check data 
@@ -165,41 +166,24 @@ class PackagexConfigUpload extends JsonScheme {
     rawData["supabase_folder_name"] = value;
   }
 
-
   
-  String? get telegram_chat_id {
+  List<PackagexConfigUploadTelegramChat> get telegram_chats {
     try {
-      if (rawData["telegram_chat_id"] is String == false){
-        return null;
+      if (rawData["telegram_chats"] is List == false){
+        return [];
       }
-      return rawData["telegram_chat_id"] as String;
+      return (rawData["telegram_chats"] as List).map((e) => PackagexConfigUploadTelegramChat(e as Map)).toList().cast<PackagexConfigUploadTelegramChat>();
     } catch (e) {
-      return null;
+      return [];
     }
   }
 
-  
-  set telegram_chat_id(String? value) {
-    rawData["telegram_chat_id"] = value;
-  }
-
 
   
-  String? get telegram_thread_id {
-    try {
-      if (rawData["telegram_thread_id"] is String == false){
-        return null;
-      }
-      return rawData["telegram_thread_id"] as String;
-    } catch (e) {
-      return null;
-    }
+  set telegram_chats(List<PackagexConfigUploadTelegramChat> values) {
+    rawData["telegram_chats"] = values.map((value) => value.toJson()).toList();
   }
 
-  
-  set telegram_thread_id(String? value) {
-    rawData["telegram_thread_id"] = value;
-  }
 
 
   
@@ -213,8 +197,7 @@ class PackagexConfigUpload extends JsonScheme {
     bool? github_is_org,
     String? github_repository_name,
     String? supabase_folder_name,
-    String? telegram_chat_id,
-    String? telegram_thread_id,
+      List<PackagexConfigUploadTelegramChat>? telegram_chats,
 })  {
     // PackagexConfigUpload packagexConfigUpload = PackagexConfigUpload({
 final Map packagexConfigUpload_data_create_json = {
@@ -226,8 +209,7 @@ final Map packagexConfigUpload_data_create_json = {
       "github_is_org": github_is_org,
       "github_repository_name": github_repository_name,
       "supabase_folder_name": supabase_folder_name,
-      "telegram_chat_id": telegram_chat_id,
-      "telegram_thread_id": telegram_thread_id,
+      "telegram_chats": (telegram_chats != null)? telegram_chats.toJson(): null,
 
 
 };
