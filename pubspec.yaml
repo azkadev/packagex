@@ -36,6 +36,7 @@ packagex:
     obfuscate: true
     split-debug-info: '0.0.5'
   github_repository_name: 'azkadev.packagex'
+  github_tag: "release"
   github_username: 'azkadev'
   packages:
     - dart_target: 'packagex'

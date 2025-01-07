@@ -91,6 +91,7 @@ Future<void> main() async {
           "no-tree-shake-icons": true,
         },
         "github_repository_name": "",
+        "github_tag": "",
         "github_username": "",
         "github_is_org": true,
         "packages": [

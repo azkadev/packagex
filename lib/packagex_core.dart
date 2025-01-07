@@ -1269,7 +1269,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
   Future<void> publish({
     required String tokenGithub,
     required Directory directoryBase,
-    String publishType = "stable",
+    // String publishType = "stable",
     required FutureOr<dynamic> Function(String update) onUpdate,
   }) async {
     Directory directory_build = Directory(path.join(directoryBase.path, "build"));
@@ -1292,7 +1292,8 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     onUpdate("Check User");
     User user = await gitHub.users.getCurrentUser();
     onUpdate("Use Github: ${user.login}");
-    RepositorySlug repositorySlug = RepositorySlug(github_username, pubspec.packagex.github_repository_name ??  pubspec.packagex.name ?? "");
+    final String githubReleaseTag = pubspec.packagex.github_tag ?? "";
+    RepositorySlug repositorySlug = RepositorySlug(github_username, pubspec.packagex.github_repository_name ?? pubspec.packagex.name ?? "");
 
     List<FileSystemEntity> files = await Future(() async {
       return directory_projectx.listSync().where((e) => [".deb", ".apk", ".msix", ".json"].contains(path.extension(e.path))).where((element) {
@@ -1329,20 +1330,20 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
       }
     });
 
-    onUpdate("Fetch Release: ${repositorySlug.fullName} ${publishType}");
+    onUpdate("Fetch Release: ${repositorySlug.fullName} ${githubReleaseTag}");
 
     final Release release_repo = await Future(() async {
       try {
         return await gitHub.repositories.getReleaseByTagName(
           repositorySlug,
-          publishType,
+          githubReleaseTag,
         );
       } catch (e) {
         if (e is GitHubError) {
           if (RegExp(r"Release for tagName .* not found", caseSensitive: false).hasMatch(e.message ?? "")) {
-            onUpdate("Create Release: ${repositorySlug.fullName} ${publishType}");
+            onUpdate("Create Release: ${repositorySlug.fullName} ${githubReleaseTag}");
             try {
-              return await gitHub.repositories.createRelease(repositorySlug, CreateRelease(publishType), getIfExists: true);
+              return await gitHub.repositories.createRelease(repositorySlug, CreateRelease(githubReleaseTag), getIfExists: true);
             } catch (e) {
               if (e is GitHubError) {
                 if (RegExp(r"Repository is empty", caseSensitive: false).hasMatch(e.message ?? "")) {
