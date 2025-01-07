@@ -1355,6 +1355,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
                     directory_temp: directory_build_temp,
                   ),
                 },
+                is_form: true,
                 telegramClientData: telegramClientData,
               );
               yield "Succes Telegram ${fileName}";
