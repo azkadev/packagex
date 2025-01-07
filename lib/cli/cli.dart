@@ -63,6 +63,12 @@ class PackagexEnvironment {
   static String get github_token {
     return (Platform.environment["packagex_github_token"] ?? "").trim();
   }
+  static String get supabase_key {
+    return (Platform.environment["packagex_supabase_key"] ?? "").trim();
+  }
+  static String get supabase_url {
+    return (Platform.environment["packagex_supabase_url"] ?? "").trim();
+  }
 }
 
 FutureOr<void> packagexCli(List<String> arguments_origins) async {
@@ -249,15 +255,18 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
         }
       }
     });
-    Progress progress = logger.progress("Start Publish");
-    await packagex.publish(
+    final Progress progress = logger.progress("Start Publish"); 
+    await for (final streamPublish in packagex.publish(
       tokenGithub: tokenGithub,
+      supabaseKey: PackagexEnvironment.supabase_key,
+      supabaseUrl:  PackagexEnvironment.supabase_url,
       directoryBase: Directory.current,
-      onUpdate: (update) {
-        progress.update(update);
-      },
-    );
+    )) {
+      progress.update(streamPublish);
+    }
+
     progress.complete("Finished Publish");
+    exit(0);
   }
 
   if (command == "pub") {

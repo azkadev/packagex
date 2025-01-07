@@ -52,6 +52,7 @@ import "package:yaml/yaml.dart" as yaml;
 import "package:yaml_writer/yaml_writer.dart";
 
 import "package:collection/collection.dart";
+import "package:supabase_client/supabase_client.dart" as supabase_client;
 
 /// Api
 class Packagex {
@@ -1272,12 +1273,12 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     String result_url_package = "";
   }
 
-  Future<void> publish({
+  Stream<String> publish({
     required String tokenGithub,
+    required String supabaseKey,
+    required String supabaseUrl,
     required Directory directoryBase,
-    // String publishType = "stable",
-    required FutureOr<dynamic> Function(String update) onUpdate,
-  }) async {
+  }) async* {
     Directory directory_build = Directory(path.join(directoryBase.path, "build"));
     Directory directory_projectx = Directory(path.join(directory_build.path, "packagex"));
 
@@ -1294,28 +1295,69 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
       pubspec["packagex"] = {};
     }
 
+    final List<FileSystemEntity> files = await Future(() async {
+      return directory_projectx.listSync().where((e) => [".deb", ".apk", ".msix", ".json"].contains(path.extension(e.path))).where((element) {
+        if (RegExp(pubspec.name ?? "", caseSensitive: false).hashData(element.path)) {
+          return true;
+        }
+        return false;
+      }).toList();
+    });
+
     for (final PackagexConfigUpload packagexConfigUpload in pubspec.packagex.uploads) {
-      final String upload_platform_type = (packagexConfigUpload.platform_type ?? "").trim();
+      final String upload_platform_type = (packagexConfigUpload.platform_type ?? "").trim().toLowerCase();
+      if (upload_platform_type == "supabase") {
+        final supabase_client.SupabaseClient supabaseClient = supabase_client.SupabaseClient(
+          supabaseUrl,
+          supabaseKey,
+        );
+        final String supabase_folder_name = (packagexConfigUpload.supabase_folder_name ?? "").trim();
+        final supabase_client.SupabaseStorageClient storage = supabaseClient.storage;
+        yield "Get Supabase Folder: ${supabase_folder_name}";
+        try {
+          await storage.getBucket(supabase_folder_name);
+          yield "Exist Supabase Folder: ${supabase_folder_name}";
+        } catch (e) {
+          await storage.createBucket(supabase_folder_name, supabase_client.BucketOptions(public: true));
+          yield "Create Supabase Folder: ${supabase_folder_name}";
+        }
+        final supabase_client.StorageFileApi storageFileApi = storage.from(supabase_folder_name);
+        for (final fileUpload in files) {
+          if (fileUpload is File) {
+            final String fileName = path.basename(fileUpload.path);
+            yield "Get Supabase File: ${fileName}";
+            try {
+              await storageFileApi.remove([fileName]);
+              yield "Delete Supabase File: ${fileName}";
+            } catch (e) {}
+            yield "Upload Supabase File: ${fileName}";
+            await storageFileApi.upload(
+              fileName,
+              fileUpload,
+            );
+            yield "Succes Supabase File: ${fileName}";
+          }
+        }
+        try {
+          await supabaseClient.dispose();
+        } catch (e) {}
+        yield "Upload Supabase Complete: ${supabase_folder_name}";
+      }
       if (upload_platform_type == "github") {
         final String github_username = packagexConfigUpload.github_username ?? "";
-        GitHub gitHub = GitHub(auth: Authentication.withToken(tokenGithub));
-        onUpdate("Check User");
-        User user = await gitHub.users.getCurrentUser();
-        onUpdate("Use Github: ${user.login}");
+        final GitHub gitHub = GitHub(auth: Authentication.withToken(tokenGithub));
+        yield "Check User";
+        final User user = await gitHub.users.getCurrentUser();
+        yield "Use Github: ${user.login}";
         final String githubReleaseTag = packagexConfigUpload.github_tag ?? "";
-        RepositorySlug repositorySlug = RepositorySlug(github_username, packagexConfigUpload.github_repository_name ?? pubspec.packagex.name ?? "");
+        final RepositorySlug repositorySlug = RepositorySlug(
+          github_username,
+          packagexConfigUpload.github_repository_name ?? pubspec.packagex.name ?? "",
+        );
 
-        List<FileSystemEntity> files = await Future(() async {
-          return directory_projectx.listSync().where((e) => [".deb", ".apk", ".msix", ".json"].contains(path.extension(e.path))).where((element) {
-            if (RegExp(pubspec.name ?? "", caseSensitive: false).hashData(element.path)) {
-              return true;
-            }
-            return false;
-          }).toList();
-        });
-        onUpdate("Upload List: ${files.length}");
-        onUpdate("Fetch Repo: ${repositorySlug.fullName}");
-        Repository repository = await Future(() async {
+        yield "Upload List: ${files.length}";
+        yield "Fetch Repo: ${repositorySlug.fullName}";
+        final Repository repository = await Future(() async {
           try {
             return await gitHub.repositories.getRepository(
               repositorySlug,
@@ -1323,7 +1365,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
           } catch (e) {
             if (e is GitHubError) {
               if (RegExp(r"Repository not found", caseSensitive: false).hashData(e.message)) {
-                onUpdate("Create Repo: ${repositorySlug.fullName}");
+                // "Create Repo: ${repositorySlug.fullName}";
                 return await gitHub.repositories.createRepository(
                   CreateRepository(
                     pubspec.packagex.name,
@@ -1340,7 +1382,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
           }
         });
 
-        onUpdate("Fetch Release: ${repositorySlug.fullName} ${githubReleaseTag}");
+        yield "Fetch Release: ${repositorySlug.fullName} ${githubReleaseTag}";
 
         final Release release_repo = await Future(() async {
           try {
@@ -1351,13 +1393,13 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
           } catch (e) {
             if (e is GitHubError) {
               if (RegExp(r"Release for tagName .* not found", caseSensitive: false).hasMatch(e.message ?? "")) {
-                onUpdate("Create Release: ${repositorySlug.fullName} ${githubReleaseTag}");
+                // yield "Create Release: ${repositorySlug.fullName} ${githubReleaseTag}";
                 try {
                   return await gitHub.repositories.createRelease(repositorySlug, CreateRelease(githubReleaseTag), getIfExists: true);
                 } catch (e) {
                   if (e is GitHubError) {
                     if (RegExp(r"Repository is empty", caseSensitive: false).hasMatch(e.message ?? "")) {
-                      onUpdate("Create Repo: ${repositorySlug.fullName}");
+                      // yield "Create Repo: ${repositorySlug.fullName}";
                       await gitHub.repositories.deleteRepository(
                         repositorySlug,
                       );
@@ -1373,18 +1415,18 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
           }
         });
 
-        onUpdate("Fetch Assets");
-        List<ReleaseAsset> releaseAssets = await gitHub.repositories.listReleaseAssets(repositorySlug, release_repo).toList();
-        onUpdate("Succes Fetch Assets: ${releaseAssets.length}");
+        yield "Fetch Assets";
+        final List<ReleaseAsset> releaseAssets = await gitHub.repositories.listReleaseAssets(repositorySlug, release_repo).toList();
+        yield "Succes Fetch Assets: ${releaseAssets.length}";
         for (var i = 0; i < files.length; i++) {
-          FileSystemEntity fileSystemEntity = files[i];
+          final FileSystemEntity fileSystemEntity = files[i];
           if (fileSystemEntity is File) {
-            ReleaseAsset? releaseAsset = releaseAssets.firstWhereOrNull((element) => element.name == path.basename(fileSystemEntity.path));
+            final ReleaseAsset? releaseAsset = releaseAssets.firstWhereOrNull((element) => element.name == path.basename(fileSystemEntity.path));
             if (releaseAsset != null) {
-              onUpdate("Delete Asset: ${releaseAsset.name}");
+              yield "Delete Asset: ${releaseAsset.name}";
               await gitHub.repositories.deleteReleaseAsset(repositorySlug, releaseAsset);
             }
-            onUpdate("Upload Asset: ${path.basename(fileSystemEntity.path)}");
+            yield "Upload Asset: ${path.basename(fileSystemEntity.path)}";
             await gitHub.repositories.uploadReleaseAssets(
               Release(
                 name: basename,
@@ -1402,12 +1444,13 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
               },
             );
 
-            onUpdate("Succes Upload Asset: ${path.basename(fileSystemEntity.path)}");
+            yield "Succes Upload Asset: ${path.basename(fileSystemEntity.path)}";
           }
         }
       }
     }
-    onUpdate("Finished");
+    yield "Finished";
+    return;
   }
 
   Future<int> installPackageFromFile({
