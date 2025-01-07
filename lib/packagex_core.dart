@@ -148,9 +148,9 @@ class Packagex {
             output_name: project_name.packagex_utils_extension_toLinuxProgram(),
           ),
         ],
-        project_id: "azkadev.packagex",
+        github_repository_name: project_name,
+        github_username: "archivon-apps-stores",
         github_is_org: false,
-        github_username: "azkadev",
       ),
       msix_config: PackagexMsixConfig.create(
         display_name: project_name,
@@ -1292,7 +1292,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     onUpdate("Check User");
     User user = await gitHub.users.getCurrentUser();
     onUpdate("Use Github: ${user.login}");
-    RepositorySlug repositorySlug = RepositorySlug(github_username, pubspec.packagex.name ?? "");
+    RepositorySlug repositorySlug = RepositorySlug(github_username, pubspec.packagex.github_repository_name ??  pubspec.packagex.name ?? "");
 
     List<FileSystemEntity> files = await Future(() async {
       return directory_projectx.listSync().where((e) => [".deb", ".apk", ".msix", ".json"].contains(path.extension(e.path))).where((element) {
@@ -1331,7 +1331,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
 
     onUpdate("Fetch Release: ${repositorySlug.fullName} ${publishType}");
 
-    Release release_repo = await Future(() async {
+    final Release release_repo = await Future(() async {
       try {
         return await gitHub.repositories.getReleaseByTagName(
           repositorySlug,

@@ -2,17 +2,21 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-class PackagexPubspecEnvironment extends JsonScheme {
-  PackagexPubspecEnvironment(super.rawData);
 
+ 
+class PackagexPubspecEnvironment extends JsonScheme {
+
+  
+  PackagexPubspecEnvironment(super.rawData);
+  
   /// return default data
-  ///
+  /// 
   static Map get defaultData {
-    return {"@type": "packagexPubspecEnvironment", "sdk": ">=2.18.5 <3.0.0"};
+    return {"@type":"packagexPubspecEnvironment","sdk":">=2.18.5 <3.0.0"};
   }
 
-  /// check data
-  /// if raw data
+  /// check data 
+  /// if raw data 
   /// - rawData["@type"] == packagexPubspecEnvironment
   /// if same return true
   bool json_scheme_utils_checkDataIsSameBySpecialType() {
@@ -26,15 +30,20 @@ class PackagexPubspecEnvironment extends JsonScheme {
     return onResult(rawData["@type"], defaultData["@type"]);
   }
 
+  
+
   /// create [PackagexPubspecEnvironment]
-  /// Empty
+  /// Empty  
   static PackagexPubspecEnvironment empty() {
     return PackagexPubspecEnvironment({});
   }
 
+  
+
+  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false) {
+      if (rawData["@type"] is String == false){
         return null;
       }
       return rawData["@type"] as String;
@@ -43,13 +52,16 @@ class PackagexPubspecEnvironment extends JsonScheme {
     }
   }
 
+  
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
+
+  
   String? get sdk {
     try {
-      if (rawData["sdk"] is String == false) {
+      if (rawData["sdk"] is String == false){
         return null;
       }
       return rawData["sdk"] as String;
@@ -58,33 +70,40 @@ class PackagexPubspecEnvironment extends JsonScheme {
     }
   }
 
+  
   set sdk(String? value) {
     rawData["sdk"] = value;
   }
 
+
+  
   static PackagexPubspecEnvironment create({
-    bool schemeUtilsIsSetDefaultData = false,
+              bool schemeUtilsIsSetDefaultData = false,
+
     String special_type = "packagexPubspecEnvironment",
     String? sdk,
-  }) {
+})  {
     // PackagexPubspecEnvironment packagexPubspecEnvironment = PackagexPubspecEnvironment({
-    final Map packagexPubspecEnvironment_data_create_json = {
+final Map packagexPubspecEnvironment_data_create_json = {
+  
       "@type": special_type,
       "sdk": sdk,
-    };
 
-    packagexPubspecEnvironment_data_create_json
-        .removeWhere((key, value) => value == null);
+
+};
+
+
+          packagexPubspecEnvironment_data_create_json.removeWhere((key, value) => value == null);
 
     if (schemeUtilsIsSetDefaultData) {
       defaultData.forEach((key, value) {
-        if (packagexPubspecEnvironment_data_create_json.containsKey(key) ==
-            false) {
+        if (packagexPubspecEnvironment_data_create_json.containsKey(key) == false) {
           packagexPubspecEnvironment_data_create_json[key] = value;
         }
       });
     }
-    return PackagexPubspecEnvironment(
-        packagexPubspecEnvironment_data_create_json);
-  }
+return PackagexPubspecEnvironment(packagexPubspecEnvironment_data_create_json);
+
+
+      }
 }

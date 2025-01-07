@@ -90,7 +90,7 @@ Future<void> main() async {
           "split-per-abi": true,
           "no-tree-shake-icons": true,
         },
-        "project_id": "",
+        "github_repository_name": "",
         "github_username": "",
         "github_is_org": true,
         "packages": [

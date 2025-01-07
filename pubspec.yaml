@@ -35,7 +35,7 @@ packagex:
   flutter_commands:
     obfuscate: true
     split-debug-info: '0.0.5'
-  project_id: 'azkadev.packagex'
+  github_repository_name: 'azkadev.packagex'
   github_username: 'azkadev'
   packages:
     - dart_target: 'packagex'
