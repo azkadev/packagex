@@ -3,18 +3,18 @@ description: 'A new Flutter project.'
 publish_to: 'none'
 version: '1.0.0+1'
 environment:
-  sdk: '^3.6.0'
+  sdk: '>=3.6.0 <4.0.0'
 dependencies:
   flutter:
     sdk: 'flutter'
-  cupertino_icons: '^1.0.8' 
+  cupertino_icons: '^1.0.8'
 dev_dependencies:
   flutter_test:
     sdk: 'flutter'
   flutter_lints: '^5.0.0'
   msix: '^3.16.8'
   packagex:
-    path: ../
+    path: '../'
 flutter:
   uses-material-design: true
 packagex:
@@ -31,11 +31,9 @@ packagex:
   uploads:
     - platform_type: 'telegram'
       telegram_chats:
-        - chat_id: '@general_release_action_publisher'
+        - chat_id: '@azkadev_beta_action_publisher'
           message_thread_id: ''
         - chat_id: '-1002282230821'
-          message_thread_id: ''
-        - chat_id: '7116956141'
           message_thread_id: ''
   packages:
     - dart_target: 'example'
@@ -46,3 +44,7 @@ packagex:
 msix_config:
   display_name: 'example'
   install_certificate: false
+dependency_overrides:
+  pointycastle: '3.8.0'
+  mime: '^2.0.0'
+funding: []
