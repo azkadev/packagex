@@ -12,7 +12,7 @@ class PackagexConfigUpload extends JsonScheme {
   /// return default data
   /// 
   static Map get defaultData {
-    return {"@type":"packagexConfigUpload","platform_type":"","github_username":"","github_tag":"","github_is_org":false,"github_repository_name":"","supabase_folder_name":""};
+    return {"@type":"packagexConfigUpload","platform_type":"","github_username":"","github_tag":"","github_is_org":false,"github_repository_name":"","supabase_folder_name":"","telegram_chat_id":""};
   }
 
   /// check data 
@@ -167,6 +167,24 @@ class PackagexConfigUpload extends JsonScheme {
 
 
   
+  String? get telegram_chat_id {
+    try {
+      if (rawData["telegram_chat_id"] is String == false){
+        return null;
+      }
+      return rawData["telegram_chat_id"] as String;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  
+  set telegram_chat_id(String? value) {
+    rawData["telegram_chat_id"] = value;
+  }
+
+
+  
   static PackagexConfigUpload create({
               bool schemeUtilsIsSetDefaultData = false,
 
@@ -177,6 +195,7 @@ class PackagexConfigUpload extends JsonScheme {
     bool? github_is_org,
     String? github_repository_name,
     String? supabase_folder_name,
+    String? telegram_chat_id,
 })  {
     // PackagexConfigUpload packagexConfigUpload = PackagexConfigUpload({
 final Map packagexConfigUpload_data_create_json = {
@@ -188,6 +207,7 @@ final Map packagexConfigUpload_data_create_json = {
       "github_is_org": github_is_org,
       "github_repository_name": github_repository_name,
       "supabase_folder_name": supabase_folder_name,
+      "telegram_chat_id": telegram_chat_id,
 
 
 };

@@ -48,6 +48,7 @@ import "package:io_universe/io_universe.dart";
 import 'package:general_lib/general_lib.dart';
 // import 'package:path/path.dart' as p;
 import 'package:path/path.dart' as path;
+import "package:telegram_client/telegram_client.dart";
 import "package:yaml/yaml.dart" as yaml;
 import "package:yaml_writer/yaml_writer.dart";
 
@@ -156,6 +157,14 @@ class Packagex {
             github_username: "archivon-apps-stores",
             github_tag: "release",
             github_is_org: false,
+          ),
+          PackagexConfigUpload.create(
+            platform_type: "supabase",
+            supabase_folder_name: "release",
+          ),
+          PackagexConfigUpload.create(
+            platform_type: "telegram",
+            telegram_chat_id: "@slebew"
           ),
         ],
       ),
@@ -1277,9 +1286,14 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     required String tokenGithub,
     required String supabaseKey,
     required String supabaseUrl,
+    required String telegramTokenBot,
     required Directory directoryBase,
   }) async* {
     Directory directory_build = Directory(path.join(directoryBase.path, "build"));
+    Directory directory_build_temp = Directory(path.join(directory_build.path, "temp"));
+    if (directory_build_temp.existsSync() == false) {
+      directory_build_temp.createSync(recursive: true);
+    }
     Directory directory_projectx = Directory(path.join(directory_build.path, "packagex"));
 
     String basename = path.basename(directoryBase.path);
@@ -1306,6 +1320,40 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
 
     for (final PackagexConfigUpload packagexConfigUpload in pubspec.packagex.uploads) {
       final String upload_platform_type = (packagexConfigUpload.platform_type ?? "").trim().toLowerCase();
+      if (upload_platform_type == "telegram") {
+        final dynamic telegram_chat_id = () {
+          final num telegram_chat_id_number = num.tryParse(packagexConfigUpload.telegram_chat_id ?? "") ?? 0;
+          if (telegram_chat_id_number != 0) {
+            return telegram_chat_id_number;
+          }
+          return "@${(packagexConfigUpload.telegram_chat_id ?? "").replaceAll(RegExp("@"), "")}";
+        }();
+        yield "Upload To Telegram Chat Id: ${telegram_chat_id}";
+        final TelegramClient telegramClient = TelegramClient();
+        telegramClient.ensureInitialized(
+          is_init_tdlib: false,
+        );
+        final TelegramClientData telegramClientData = TelegramClientData.telegramBotApi(token_bot: telegramTokenBot);
+        for (final fileUpload in files) {
+          if (fileUpload is File) {
+            final String fileName = path.basename(fileUpload.path);
+            yield "Upload Telegram ${fileName}";
+            await telegramClient.invoke(
+              parameters: {
+                "@type": "sendDocument",
+                "chat_id": telegram_chat_id,
+                "document": TgUtils.typeFile(
+                  content: fileUpload,
+                  directory_temp: directory_build_temp,
+                ),
+              },
+              telegramClientData: telegramClientData,
+            );
+            yield "Succes Telegram ${fileName}";
+          }
+        }
+        yield "Upload To Telegram Chat Id: ${telegram_chat_id} Complete";
+      }
       if (upload_platform_type == "supabase") {
         final supabase_client.SupabaseClient supabaseClient = supabase_client.SupabaseClient(
           supabaseUrl,

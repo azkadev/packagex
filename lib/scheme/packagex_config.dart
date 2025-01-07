@@ -15,7 +15,7 @@ class PackagexConfig extends JsonScheme {
   /// return default data
   /// 
   static Map get defaultData {
-    return {"@type":"packagexConfig","name":"Pack","is_without_platform_name":true,"is_app_auto_clean_up_folder":false,"flutter_commands":{"@type":"packagexConfigFlutterCommands","obfuscate":true,"split-debug-info":"0.0.5","build-name":"0.0.5","build-number":40,"split-per-abi":true,"no-tree-shake-icons":true},"uploads":[{"@type":"packagexConfigUpload","platform_type":"","github_username":"","github_tag":"","github_is_org":false,"github_repository_name":"","supabase_folder_name":""}],"packages":[{"@type":"packagexConfigPackage","dart_target":"packagex","flutter_target":"main","dart_name":"packagex","flutter_name":"packagex","output_name":"packagex"}]};
+    return {"@type":"packagexConfig","name":"Pack","is_without_platform_name":true,"is_app_auto_clean_up_folder":false,"flutter_commands":{"@type":"packagexConfigFlutterCommands","obfuscate":true,"split-debug-info":"0.0.5","build-name":"0.0.5","build-number":40,"split-per-abi":true,"no-tree-shake-icons":true},"uploads":[{"@type":"packagexConfigUpload","platform_type":"","github_username":"","github_tag":"","github_is_org":false,"github_repository_name":"","supabase_folder_name":"","telegram_chat_id":""}],"packages":[{"@type":"packagexConfigPackage","dart_target":"packagex","flutter_target":"main","dart_name":"packagex","flutter_name":"packagex","output_name":"packagex"}]};
   }
 
   /// check data 

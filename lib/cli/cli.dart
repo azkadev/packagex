@@ -69,6 +69,9 @@ class PackagexEnvironment {
   static String get supabase_url {
     return (Platform.environment["packagex_supabase_url"] ?? "").trim();
   }
+  static String get telegram_token_bot {
+    return (Platform.environment["packagex_telegram_token_bot"] ?? "").trim();
+  }
 }
 
 FutureOr<void> packagexCli(List<String> arguments_origins) async {
@@ -260,6 +263,7 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
       tokenGithub: tokenGithub,
       supabaseKey: PackagexEnvironment.supabase_key,
       supabaseUrl:  PackagexEnvironment.supabase_url,
+      telegramTokenBot: PackagexEnvironment.telegram_token_bot,
       directoryBase: Directory.current,
     )) {
       progress.update(streamPublish);

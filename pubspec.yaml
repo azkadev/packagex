@@ -31,6 +31,7 @@ dependencies:
   yaml_writer: '^2.0.1'
   system_information: '^0.0.9'
   supabase_client: '^0.0.31'
+  telegram_client: '^0.8.33'
 packagex:
   name: 'packagex'
   flutter_commands:
