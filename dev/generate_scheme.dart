@@ -89,11 +89,18 @@ Future<void> main() async {
           "build-number": 40,
           "split-per-abi": true,
           "no-tree-shake-icons": true,
-        },
-        "github_repository_name": "",
-        "github_tag": "",
-        "github_username": "",
-        "github_is_org": true,
+        }, 
+        "uploads": [
+          {
+            "@type": "packagexConfigUpload",
+            "platform_type": "",
+            "github_username": "",
+            "github_tag": "",
+            "github_is_org": false,
+            "github_repository_name": "",
+            "supabase_folder_name": "",
+          },
+        ],
         "packages": [
           {
             "@type": "packagexConfigPackage",

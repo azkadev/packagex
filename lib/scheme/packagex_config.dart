@@ -3,6 +3,7 @@ import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
 import "packagex_config_flutter_commands.dart";
+import "packagex_config_upload.dart";
 import "packagex_config_package.dart";
 
  
@@ -14,7 +15,7 @@ class PackagexConfig extends JsonScheme {
   /// return default data
   /// 
   static Map get defaultData {
-    return {"@type":"packagexConfig","name":"Pack","is_without_platform_name":true,"is_app_auto_clean_up_folder":false,"flutter_commands":{"@type":"packagexConfigFlutterCommands","obfuscate":true,"split-debug-info":"0.0.5","build-name":"0.0.5","build-number":40,"split-per-abi":true,"no-tree-shake-icons":true},"github_repository_name":"","github_tag":"","github_username":"","github_is_org":true,"packages":[{"@type":"packagexConfigPackage","dart_target":"packagex","flutter_target":"main","dart_name":"packagex","flutter_name":"packagex","output_name":"packagex"}]};
+    return {"@type":"packagexConfig","name":"Pack","is_without_platform_name":true,"is_app_auto_clean_up_folder":false,"flutter_commands":{"@type":"packagexConfigFlutterCommands","obfuscate":true,"split-debug-info":"0.0.5","build-name":"0.0.5","build-number":40,"split-per-abi":true,"no-tree-shake-icons":true},"uploads":[{"@type":"packagexConfigUpload","platform_type":"","github_username":"","github_tag":"","github_is_org":false,"github_repository_name":"","supabase_folder_name":""}],"packages":[{"@type":"packagexConfigPackage","dart_target":"packagex","flutter_target":"main","dart_name":"packagex","flutter_name":"packagex","output_name":"packagex"}]};
   }
 
   /// check data 
@@ -133,77 +134,24 @@ class PackagexConfig extends JsonScheme {
   }
 
 
-
   
-  String? get github_repository_name {
+  List<PackagexConfigUpload> get uploads {
     try {
-      if (rawData["github_repository_name"] is String == false){
-        return null;
+      if (rawData["uploads"] is List == false){
+        return [];
       }
-      return rawData["github_repository_name"] as String;
+      return (rawData["uploads"] as List).map((e) => PackagexConfigUpload(e as Map)).toList().cast<PackagexConfigUpload>();
     } catch (e) {
-      return null;
+      return [];
     }
   }
 
-  
-  set github_repository_name(String? value) {
-    rawData["github_repository_name"] = value;
-  }
-
 
   
-  String? get github_tag {
-    try {
-      if (rawData["github_tag"] is String == false){
-        return null;
-      }
-      return rawData["github_tag"] as String;
-    } catch (e) {
-      return null;
-    }
+  set uploads(List<PackagexConfigUpload> values) {
+    rawData["uploads"] = values.map((value) => value.toJson()).toList();
   }
 
-  
-  set github_tag(String? value) {
-    rawData["github_tag"] = value;
-  }
-
-
-  
-  String? get github_username {
-    try {
-      if (rawData["github_username"] is String == false){
-        return null;
-      }
-      return rawData["github_username"] as String;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  
-  set github_username(String? value) {
-    rawData["github_username"] = value;
-  }
-
-
-  
-  bool? get github_is_org {
-    try {
-      if (rawData["github_is_org"] is bool == false){
-        return null;
-      }
-      return rawData["github_is_org"] as bool;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  
-  set github_is_org(bool? value) {
-    rawData["github_is_org"] = value;
-  }
 
   
   List<PackagexConfigPackage> get packages {
@@ -234,10 +182,7 @@ class PackagexConfig extends JsonScheme {
     bool? is_without_platform_name,
     bool? is_app_auto_clean_up_folder,
       PackagexConfigFlutterCommands? flutter_commands,
-    String? github_repository_name,
-    String? github_tag,
-    String? github_username,
-    bool? github_is_org,
+      List<PackagexConfigUpload>? uploads,
       List<PackagexConfigPackage>? packages,
 })  {
     // PackagexConfig packagexConfig = PackagexConfig({
@@ -248,10 +193,7 @@ final Map packagexConfig_data_create_json = {
       "is_without_platform_name": is_without_platform_name,
       "is_app_auto_clean_up_folder": is_app_auto_clean_up_folder,
       "flutter_commands": (flutter_commands != null)?flutter_commands.toJson(): null,
-      "github_repository_name": github_repository_name,
-      "github_tag": github_tag,
-      "github_username": github_username,
-      "github_is_org": github_is_org,
+      "uploads": (uploads != null)? uploads.toJson(): null,
       "packages": (packages != null)? packages.toJson(): null,
 
 

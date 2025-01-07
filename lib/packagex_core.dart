@@ -148,9 +148,15 @@ class Packagex {
             output_name: project_name.packagex_utils_extension_toLinuxProgram(),
           ),
         ],
-        github_repository_name: project_name,
-        github_username: "archivon-apps-stores",
-        github_is_org: false,
+        uploads: [
+          PackagexConfigUpload.create(
+            platform_type: "github",
+            github_repository_name: project_name,
+            github_username: "archivon-apps-stores",
+            github_tag: "release",
+            github_is_org: false,
+          ),
+        ],
       ),
       msix_config: PackagexMsixConfig.create(
         display_name: project_name,
@@ -1287,112 +1293,118 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     if (pubspec["packagex"] is Map == false) {
       pubspec["packagex"] = {};
     }
-    String github_username = pubspec.packagex.github_username ?? "";
-    GitHub gitHub = GitHub(auth: Authentication.withToken(tokenGithub));
-    onUpdate("Check User");
-    User user = await gitHub.users.getCurrentUser();
-    onUpdate("Use Github: ${user.login}");
-    final String githubReleaseTag = pubspec.packagex.github_tag ?? "";
-    RepositorySlug repositorySlug = RepositorySlug(github_username, pubspec.packagex.github_repository_name ?? pubspec.packagex.name ?? "");
 
-    List<FileSystemEntity> files = await Future(() async {
-      return directory_projectx.listSync().where((e) => [".deb", ".apk", ".msix", ".json"].contains(path.extension(e.path))).where((element) {
-        if (RegExp(pubspec.name ?? "", caseSensitive: false).hashData(element.path)) {
-          return true;
-        }
-        return false;
-      }).toList();
-    });
-    onUpdate("Upload List: ${files.length}");
-    onUpdate("Fetch Repo: ${repositorySlug.fullName}");
-    Repository repository = await Future(() async {
-      try {
-        return await gitHub.repositories.getRepository(
-          repositorySlug,
-        );
-      } catch (e) {
-        if (e is GitHubError) {
-          if (RegExp(r"Repository not found", caseSensitive: false).hashData(e.message)) {
-            onUpdate("Create Repo: ${repositorySlug.fullName}");
-            return await gitHub.repositories.createRepository(
-              CreateRepository(
-                pubspec.packagex.name,
-                hasIssues: false,
-                autoInit: true,
-                gitignoreTemplate: "Dart",
-                licenseTemplate: "MIT",
-              ),
-              org: (pubspec.packagex.github_is_org == true) ? github_username : null,
+    for (final PackagexConfigUpload packagexConfigUpload in pubspec.packagex.uploads) {
+      final String upload_platform_type = (packagexConfigUpload.platform_type ?? "").trim();
+      if (upload_platform_type == "github") {
+        final String github_username = packagexConfigUpload.github_username ?? "";
+        GitHub gitHub = GitHub(auth: Authentication.withToken(tokenGithub));
+        onUpdate("Check User");
+        User user = await gitHub.users.getCurrentUser();
+        onUpdate("Use Github: ${user.login}");
+        final String githubReleaseTag = packagexConfigUpload.github_tag ?? "";
+        RepositorySlug repositorySlug = RepositorySlug(github_username, packagexConfigUpload.github_repository_name ?? pubspec.packagex.name ?? "");
+
+        List<FileSystemEntity> files = await Future(() async {
+          return directory_projectx.listSync().where((e) => [".deb", ".apk", ".msix", ".json"].contains(path.extension(e.path))).where((element) {
+            if (RegExp(pubspec.name ?? "", caseSensitive: false).hashData(element.path)) {
+              return true;
+            }
+            return false;
+          }).toList();
+        });
+        onUpdate("Upload List: ${files.length}");
+        onUpdate("Fetch Repo: ${repositorySlug.fullName}");
+        Repository repository = await Future(() async {
+          try {
+            return await gitHub.repositories.getRepository(
+              repositorySlug,
             );
+          } catch (e) {
+            if (e is GitHubError) {
+              if (RegExp(r"Repository not found", caseSensitive: false).hashData(e.message)) {
+                onUpdate("Create Repo: ${repositorySlug.fullName}");
+                return await gitHub.repositories.createRepository(
+                  CreateRepository(
+                    pubspec.packagex.name,
+                    hasIssues: false,
+                    autoInit: true,
+                    gitignoreTemplate: "Dart",
+                    licenseTemplate: "MIT",
+                  ),
+                  org: (packagexConfigUpload.github_is_org == true) ? github_username : null,
+                );
+              }
+            }
+            rethrow;
           }
-        }
-        rethrow;
-      }
-    });
+        });
 
-    onUpdate("Fetch Release: ${repositorySlug.fullName} ${githubReleaseTag}");
+        onUpdate("Fetch Release: ${repositorySlug.fullName} ${githubReleaseTag}");
 
-    final Release release_repo = await Future(() async {
-      try {
-        return await gitHub.repositories.getReleaseByTagName(
-          repositorySlug,
-          githubReleaseTag,
-        );
-      } catch (e) {
-        if (e is GitHubError) {
-          if (RegExp(r"Release for tagName .* not found", caseSensitive: false).hasMatch(e.message ?? "")) {
-            onUpdate("Create Release: ${repositorySlug.fullName} ${githubReleaseTag}");
-            try {
-              return await gitHub.repositories.createRelease(repositorySlug, CreateRelease(githubReleaseTag), getIfExists: true);
-            } catch (e) {
-              if (e is GitHubError) {
-                if (RegExp(r"Repository is empty", caseSensitive: false).hasMatch(e.message ?? "")) {
-                  onUpdate("Create Repo: ${repositorySlug.fullName}");
-                  await gitHub.repositories.deleteRepository(
-                    repositorySlug,
-                  );
+        final Release release_repo = await Future(() async {
+          try {
+            return await gitHub.repositories.getReleaseByTagName(
+              repositorySlug,
+              githubReleaseTag,
+            );
+          } catch (e) {
+            if (e is GitHubError) {
+              if (RegExp(r"Release for tagName .* not found", caseSensitive: false).hasMatch(e.message ?? "")) {
+                onUpdate("Create Release: ${repositorySlug.fullName} ${githubReleaseTag}");
+                try {
+                  return await gitHub.repositories.createRelease(repositorySlug, CreateRelease(githubReleaseTag), getIfExists: true);
+                } catch (e) {
+                  if (e is GitHubError) {
+                    if (RegExp(r"Repository is empty", caseSensitive: false).hasMatch(e.message ?? "")) {
+                      onUpdate("Create Repo: ${repositorySlug.fullName}");
+                      await gitHub.repositories.deleteRepository(
+                        repositorySlug,
+                      );
+                      rethrow;
+                    }
+                  }
                   rethrow;
                 }
               }
-              rethrow;
             }
+
+            rethrow;
+          }
+        });
+
+        onUpdate("Fetch Assets");
+        List<ReleaseAsset> releaseAssets = await gitHub.repositories.listReleaseAssets(repositorySlug, release_repo).toList();
+        onUpdate("Succes Fetch Assets: ${releaseAssets.length}");
+        for (var i = 0; i < files.length; i++) {
+          FileSystemEntity fileSystemEntity = files[i];
+          if (fileSystemEntity is File) {
+            ReleaseAsset? releaseAsset = releaseAssets.firstWhereOrNull((element) => element.name == path.basename(fileSystemEntity.path));
+            if (releaseAsset != null) {
+              onUpdate("Delete Asset: ${releaseAsset.name}");
+              await gitHub.repositories.deleteReleaseAsset(repositorySlug, releaseAsset);
+            }
+            onUpdate("Upload Asset: ${path.basename(fileSystemEntity.path)}");
+            await gitHub.repositories.uploadReleaseAssets(
+              Release(
+                name: basename,
+                htmlUrl: release_repo.htmlUrl,
+                tarballUrl: release_repo.tarballUrl,
+                uploadUrl: release_repo.uploadUrl,
+                url: release_repo.url,
+              ),
+              {
+                CreateReleaseAsset(
+                  name: path.basename(fileSystemEntity.path),
+                  contentType: lookupMimeType(fileSystemEntity.path) ?? "",
+                  assetData: fileSystemEntity.readAsBytesSync(),
+                ),
+              },
+            );
+
+            onUpdate("Succes Upload Asset: ${path.basename(fileSystemEntity.path)}");
           }
         }
-
-        rethrow;
-      }
-    });
-
-    onUpdate("Fetch Assets");
-    List<ReleaseAsset> releaseAssets = await gitHub.repositories.listReleaseAssets(repositorySlug, release_repo).toList();
-    onUpdate("Succes Fetch Assets: ${releaseAssets.length}");
-    for (var i = 0; i < files.length; i++) {
-      FileSystemEntity fileSystemEntity = files[i];
-      if (fileSystemEntity is File) {
-        ReleaseAsset? releaseAsset = releaseAssets.firstWhereOrNull((element) => element.name == path.basename(fileSystemEntity.path));
-        if (releaseAsset != null) {
-          onUpdate("Delete Asset: ${releaseAsset.name}");
-          await gitHub.repositories.deleteReleaseAsset(repositorySlug, releaseAsset);
-        }
-        onUpdate("Upload Asset: ${path.basename(fileSystemEntity.path)}");
-        await gitHub.repositories.uploadReleaseAssets(
-          Release(
-            name: basename,
-            htmlUrl: release_repo.htmlUrl,
-            tarballUrl: release_repo.tarballUrl,
-            uploadUrl: release_repo.uploadUrl,
-            url: release_repo.url,
-          ),
-          {
-            CreateReleaseAsset(
-              name: path.basename(fileSystemEntity.path),
-              contentType: lookupMimeType(fileSystemEntity.path) ?? "",
-              assetData: fileSystemEntity.readAsBytesSync(),
-            ),
-          },
-        );
-
-        onUpdate("Succes Upload Asset: ${path.basename(fileSystemEntity.path)}");
       }
     }
     onUpdate("Finished");

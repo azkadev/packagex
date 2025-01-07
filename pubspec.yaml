@@ -34,10 +34,13 @@ packagex:
   name: 'packagex'
   flutter_commands:
     obfuscate: true
-    split-debug-info: '0.0.5'
-  github_repository_name: 'azkadev.packagex'
-  github_tag: "release"
-  github_username: 'azkadev'
+    split-debug-info: '0.0.5' 
+  uploads:
+    - platform_type: ""
+      github_username: ""
+      github_tag: ""
+      github_repository_name: ""
+      supabase_folder_name: ""
   packages:
     - dart_target: 'packagex'
       flutter_target: 'main'
