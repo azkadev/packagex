@@ -164,7 +164,8 @@ class Packagex {
           ),
           PackagexConfigUpload.create(
             platform_type: "telegram",
-            telegram_chat_id: "@slebew"
+            telegram_chat_id: "@slebew",
+            telegram_thread_id: "",
           ),
         ],
       ),
@@ -1328,6 +1329,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
           }
           return "@${(packagexConfigUpload.telegram_chat_id ?? "").replaceAll(RegExp("@"), "")}";
         }();
+        final num telegram_thread_id = num.tryParse(packagexConfigUpload.telegram_thread_id ?? "0") ?? 0;
         yield "Upload To Telegram Chat Id: ${telegram_chat_id}";
         final TelegramClient telegramClient = TelegramClient();
         telegramClient.ensureInitialized(
@@ -1342,6 +1344,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
               parameters: {
                 "@type": "sendDocument",
                 "chat_id": telegram_chat_id,
+                "message_thread_id": telegram_thread_id,
                 "document": TgUtils.typeFile(
                   content: fileUpload,
                   directory_temp: directory_build_temp,

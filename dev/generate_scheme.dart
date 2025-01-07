@@ -100,6 +100,8 @@ Future<void> main() async {
             "github_repository_name": "",
             "supabase_folder_name": "",
             "telegram_chat_id": "",
+            
+            "telegram_thread_id": "",
           },
         ],
         "packages": [
