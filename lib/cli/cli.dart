@@ -63,12 +63,15 @@ class PackagexEnvironment {
   static String get github_token {
     return (Platform.environment["packagex_github_token"] ?? "").trim();
   }
+
   static String get supabase_key {
     return (Platform.environment["packagex_supabase_key"] ?? "").trim();
   }
+
   static String get supabase_url {
     return (Platform.environment["packagex_supabase_url"] ?? "").trim();
   }
+
   static String get telegram_token_bot {
     return (Platform.environment["packagex_telegram_token_bot"] ?? "").trim();
   }
@@ -238,31 +241,12 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     }
   }
 
-  if (command == "publish") {
-    String tokenGithub = await Future(() async {
-      String parse_token_github = PackagexEnvironment.github_token;
-      if (RegExp(r"^(ghp_)", caseSensitive: false).hasMatch(parse_token_github)) {
-        return parse_token_github;
-      }
-      while (true) {
-        if (PackagexEnvironment.is_not_interactive) {
-          print(menu_help);
-          exit(0);
-        }
-        await Future.delayed(Duration(microseconds: 1));
-
-        String result = logger.prompt("token Github (ghp_):").trim();
-
-        if (RegExp(r"^(ghp_)", caseSensitive: false).hasMatch(result)) {
-          return result;
-        }
-      }
-    });
-    final Progress progress = logger.progress("Start Publish"); 
+  if (command == "publish") { 
+    final Progress progress = logger.progress("Start Publish");
     await for (final streamPublish in packagex.publish(
-      tokenGithub: tokenGithub,
+      tokenGithub: PackagexEnvironment.github_token,
       supabaseKey: PackagexEnvironment.supabase_key,
-      supabaseUrl:  PackagexEnvironment.supabase_url,
+      supabaseUrl: PackagexEnvironment.supabase_url,
       telegramTokenBot: PackagexEnvironment.telegram_token_bot,
       directoryBase: Directory.current,
     )) {

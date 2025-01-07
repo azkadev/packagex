@@ -1,6 +1,6 @@
-Maintainer: "azkadev@noemail.com>"
+Maintainer: "anonymous@noemail.com>"
 Package: example
-Version: 0.0.0
+Version: 1.0.0+1
 Section: x11
 Priority: optional
 Architecture: all

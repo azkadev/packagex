@@ -1,23 +1,26 @@
 name: 'example'
-description: 'A sample command-line application.'
-version: '0.0.0'
+description: 'A new Flutter project.'
 publish_to: 'none'
+version: '1.0.0+1'
 environment:
-  sdk: '>=3.6.0 <4.0.0'
+  sdk: '^3.6.0'
 dependencies:
-  packagex:
-    path: '../'
+  flutter:
+    sdk: 'flutter'
+  cupertino_icons: '^1.0.8' 
 dev_dependencies:
-  lints: '^5.0.0'
-  test: 'any'
-  msix: '^3.16.7'
+  flutter_test:
+    sdk: 'flutter'
+  flutter_lints: '^5.0.0'
+  msix: '^3.16.8'
+  packagex:
+    path: ../
+flutter:
+  uses-material-design: true
 packagex:
   name: 'example'
-  dart_target: 'example'
-  flutter_target: 'main'
-  dart_name: 'example'
-  flutter_name: 'example'
   is_without_platform_name: true
+  is_app_auto_clean_up_folder: true
   flutter_commands:
     obfuscate: true
     split-debug-info: '0.0.0'
@@ -25,25 +28,21 @@ packagex:
     build-number: 1
     split-per-abi: true
     no-tree-shake-icons: true
-  project_id: 'azkadev.packagex'
-  github_username: 'azkadev'
-  github_is_org: false
-  is_app_auto_clean_up_folder: true
+  uploads:
+    - platform_type: 'telegram'
+      telegram_chats:
+        - chat_id: '@general_release_action_publisher'
+          message_thread_id: ''
+        - chat_id: '-1002282230821'
+          message_thread_id: ''
+        - chat_id: '7116956141'
+          message_thread_id: ''
   packages:
     - dart_target: 'example'
-      flutter_target: 'main'
+      flutter_target: 'example'
       dart_name: 'example'
       flutter_name: 'example'
+      output_name: 'example'
 msix_config:
   display_name: 'example'
   install_certificate: false
-dependency_overrides:
-  pointycastle: '3.8.0'
-  mime: '^2.0.0'
-funding:
-  - 'https://github.com/sponsors/azkadev'
-  - 'https://github.com/sponsors/generalfoss'
-homepage: 'https://youtube.com/@azkadev'
-repository: 'https://github.com/azkadev/general_framework'
-issue_tracker: 'https://t.me/DEVELOPER_GLOBAL_PUBLIC'
-documentation: 'https://youtube.com/@azkadev'

@@ -1,10 +1,11 @@
 [Desktop Entry]
+Name=Example
+GenericName=Example
+Version=1.0.0+1
+Exec=/opt/example/example
+Icon=/opt/example/data/flutter_assets/assets/icon.png
+Terminal=false
 Type=Application
-Version=0.0.0
-Name=example
-GenericName=General Application
-Exec=example -- %u
 Categories=Music;Media;
 Keywords=Hello;World;Test;Application;
 StartupNotify=true
-

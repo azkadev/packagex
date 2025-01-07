@@ -120,10 +120,7 @@ class Packagex {
     packagexPubspec.rawData = yaml_code.clone();
     yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Started Check Pubspec Configuration: ${path.basename(file_pubspec.path)}");
 
-    PackagexPubspec packagexPubspec_default = PackagexPubspec.create(
-      dependencies: PackagexPubspecDependencies({
-        "packagex": '^0.0.70',
-      }),
+    final PackagexPubspec packagexPubspec_default = PackagexPubspec.create(
       dev_dependencies: PackagexPubspecDevDependencies({
         "msix": '^3.16.8',
       }),
@@ -1339,7 +1336,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
           final TelegramClient telegramClient = TelegramClient();
           telegramClient.ensureInitialized(
             is_init_tdlib: false,
-          );
+          ); 
           final TelegramClientData telegramClientData = TelegramClientData.telegramBotApi(token_bot: telegramTokenBot);
           for (final fileUpload in files) {
             if (fileUpload is File) {
@@ -1350,10 +1347,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
                   "@type": "sendDocument",
                   "chat_id": telegram_chat_id,
                   "message_thread_id": telegram_thread_id,
-                  "document": TgUtils.typeFile(
-                    content: fileUpload,
-                    directory_temp: directory_build_temp,
-                  ),
+                  "document": TgUtils.telegram_bot_api_file(file: fileUpload),
                 },
                 is_form: true,
                 telegramClientData: telegramClientData,
