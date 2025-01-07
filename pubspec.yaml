@@ -1,6 +1,6 @@
 name: 'packagex'
 description: 'A library for package dart or flutter to specific platform.'
-version: '0.0.73'
+version: '0.0.74'
 homepage: 'https://youtube.com/@azkadev'
 repository: 'https://github.com/azkadev/packagex.git'
 platforms:
@@ -44,8 +44,8 @@ packagex:
       github_repository_name: ''
       supabase_folder_name: ''
       telegram_chats:
-        - chat_id: ""
-          message_thread_id: ""
+        - chat_id: ''
+          message_thread_id: ''
   packages:
     - dart_target: 'packagex'
       flutter_target: 'main'
