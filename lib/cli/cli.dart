@@ -54,10 +54,12 @@ class PackagexEnvironment {
   PackagexEnvironment();
 
   static bool get is_not_interactive {
-    if (RegExp(r"virtual", caseSensitive: false).hashData(SystemInformation().get_model)) {
+    if (RegExp(r"virtual", caseSensitive: false)
+        .hashData(SystemInformation().get_model)) {
       return true;
     }
-    return ((Platform.environment["packagex_is_no_interactive"] ?? "").trim() == "true");
+    return ((Platform.environment["packagex_is_no_interactive"] ?? "").trim() ==
+        "true");
   }
 
   static String get github_token {
@@ -176,23 +178,22 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
       );
       return is_result;
     });
-
-    await packagex
-        .create(
+    await for (final streamCreate in packagex.create(
       newName: name_project,
       directoryPackage: Directory.current,
       isApplication: is_application,
-      packagexConfig: arguments_origins.packagex_utils_extension_toPackagexConfig(),
-    )
-        .listen((event) {
-      printed(event);
-    }).asFuture();
+      packagexConfig:
+          arguments_origins.packagex_utils_extension_toPackagexConfig(),
+    )) {
+      print(streamCreate);
+    }
     exit(0);
   }
   if (command == "read") {
     Directory directory_current = Directory.current;
     File file = File(p.join(directory_current.path, "pubspec.yaml"));
-    Map yaml_code = (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
+    Map yaml_code =
+        (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
 
     print(json.encode(yaml_code));
     exit(0);
@@ -202,12 +203,15 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     await for (final streamBuild in packagex.build(
       directoryBase: Directory.current,
       packagexPlatformTypes: type_platform.toPackagexPlatformTypes(),
-      packagexConfig: arguments_origins.packagex_utils_extension_toPackagexConfig(),
+      packagexConfig:
+          arguments_origins.packagex_utils_extension_toPackagexConfig(),
       isApplication: () {
         return false;
       }(),
       directoryBuild: () {
-        final String output_path = (args.after(["--output-directory", "-output-directory"]) ?? "").trim();
+        final String output_path =
+            (args.after(["--output-directory", "-output-directory"]) ?? "")
+                .trim();
         if (output_path.isNotEmpty) {
           return Directory(Directory(output_path).uri.toFilePath());
         }
@@ -221,7 +225,8 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
   if (command == "install") {
     String package_name = args.arguments[1];
 
-    if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false).hashData(package_name)) {
+    if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false)
+        .hashData(package_name)) {
       await packagex.installPackageFromUrl(
         url: package_name,
         onData: (data) {},
@@ -230,7 +235,8 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     } else {
       File file = File(package_name);
       if (file.existsSync()) {
-        await packagex.installPackageFromFile(file: file, onData: (data) {}, onDone: () {});
+        await packagex.installPackageFromFile(
+            file: file, onData: (data) {}, onDone: () {});
       } else {
         // Platform.pathSeparator;
 
@@ -241,7 +247,7 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     }
   }
 
-  if (command == "publish") { 
+  if (command == "publish") {
     final Progress progress = logger.progress("Start Publish");
     await for (final streamPublish in packagex.publish(
       tokenGithub: PackagexEnvironment.github_token,
@@ -259,11 +265,13 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
 
   if (command == "pub") {
     if (args.after(command) == "activate") {
-      String path_package_install_pub = args.after("activate") ?? Directory.current.path;
+      String path_package_install_pub =
+          args.after("activate") ?? Directory.current.path;
       if (path_package_install_pub == ".") {
         path_package_install_pub = Directory.current.path;
       }
-      File file_pubspec = File(path.join(path_package_install_pub, "pubspec.yaml"));
+      File file_pubspec =
+          File(path.join(path_package_install_pub, "pubspec.yaml"));
       if (!file_pubspec.existsSync()) {
         print("pubspec.yaml not Found");
         exit(0);
@@ -272,7 +280,15 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
       Directory directory_origin_pkg = Directory(path_package_install_pub);
       Process shell = await Process.start(
         "dart",
-        ["pub", "global", "activate", "--source", "path", directory_origin_pkg.path, "--overwrite"],
+        [
+          "pub",
+          "global",
+          "activate",
+          "--source",
+          "path",
+          directory_origin_pkg.path,
+          "--overwrite"
+        ],
       );
 
       shell.stderr.listen((event) {
@@ -286,23 +302,28 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     }
 
     if (args.after(command) == "install") {
-      String path_package_install_pub = args.after("install") ?? Directory.current.path;
+      String path_package_install_pub =
+          args.after("install") ?? Directory.current.path;
       if (path_package_install_pub == ".") {
         path_package_install_pub = Directory.current.path;
       }
-      Directory directory_pub_hosted_pub_dev = Directory(path.join(Dart.pub.hosted_directory.path, "pub.dev"));
-      File file_pubspec = File(path.join(path_package_install_pub, "pubspec.yaml"));
+      Directory directory_pub_hosted_pub_dev =
+          Directory(path.join(Dart.pub.hosted_directory.path, "pub.dev"));
+      File file_pubspec =
+          File(path.join(path_package_install_pub, "pubspec.yaml"));
       if (!file_pubspec.existsSync()) {
         print("pubspec.yaml not Found");
         exit(0);
       }
-      Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
+      Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(),
+          recover: true) as Map);
       PackagexPubspec pubspec = PackagexPubspec(yaml_code);
       String pubspec_name = pubspec.name ?? "";
       String pubspec_version = pubspec.version ?? "";
       String new_name = "${pubspec_name}-${pubspec_version}";
 
-      Directory directory_new_pub_hosted_pubdev = Directory(path.join(directory_pub_hosted_pub_dev.path, new_name));
+      Directory directory_new_pub_hosted_pubdev =
+          Directory(path.join(directory_pub_hosted_pub_dev.path, new_name));
       if (directory_new_pub_hosted_pubdev.existsSync()) {
         bool is_force = args.contains(["-f", "--force"]);
         if (is_force) {
@@ -312,7 +333,8 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
           print("Create New");
           await directory_new_pub_hosted_pubdev.create(recursive: true);
         } else {
-          print("${pubspec_name} Version: ${pubspec_version} Found in use --force");
+          print(
+              "${pubspec_name} Version: ${pubspec_version} Found in use --force");
           exit(0);
         }
       } else {
@@ -321,7 +343,8 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
       print("Installing Package ${pubspec_name} Version: ${pubspec_version} ");
       Directory directory_origin_pkg = Directory(path_package_install_pub);
 
-      directory_origin_pkg.copyTo(directory_new_pub_hosted_pubdev, ignoreDirList: [
+      directory_origin_pkg
+          .copyTo(directory_new_pub_hosted_pubdev, ignoreDirList: [
         ".dart_tool",
         "build",
         ".plugin_symlinks",
@@ -382,7 +405,11 @@ Run "packagex help" to see global options.
 List<Progress> progresss = [];
 // Progress progress = logger.progress("message");
 void printed(PackagexApiStatus event) {
-  if ([PackagexApiStatusType.progress_start, PackagexApiStatusType.progress_complete, PackagexApiStatusType.progress].contains(event.packagexApiStatusType)) {
+  if ([
+    PackagexApiStatusType.progress_start,
+    PackagexApiStatusType.progress_complete,
+    PackagexApiStatusType.progress
+  ].contains(event.packagexApiStatusType)) {
     if (event.packagexApiStatusType == PackagexApiStatusType.progress_start) {
       progresss.add(logger.progress(event.value));
       // progress.cancel();
@@ -402,7 +429,8 @@ void printed(PackagexApiStatus event) {
       progress.update(event.value);
       return;
     }
-    if (event.packagexApiStatusType == PackagexApiStatusType.progress_complete) {
+    if (event.packagexApiStatusType ==
+        PackagexApiStatusType.progress_complete) {
       progress.complete(event.value);
       return;
     }

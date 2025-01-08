@@ -2,21 +2,21 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-
- 
 class PackagexConfigUploadTelegramChat extends JsonScheme {
-
-  
   PackagexConfigUploadTelegramChat(super.rawData);
-  
+
   /// return default data
-  /// 
+  ///
   static Map get defaultData {
-    return {"@type":"packagexConfigUploadTelegramChat","chat_id":"","message_thread_id":""};
+    return {
+      "@type": "packagexConfigUploadTelegramChat",
+      "chat_id": "",
+      "message_thread_id": ""
+    };
   }
 
-  /// check data 
-  /// if raw data 
+  /// check data
+  /// if raw data
   /// - rawData["@type"] == packagexConfigUploadTelegramChat
   /// if same return true
   bool json_scheme_utils_checkDataIsSameBySpecialType() {
@@ -30,20 +30,15 @@ class PackagexConfigUploadTelegramChat extends JsonScheme {
     return onResult(rawData["@type"], defaultData["@type"]);
   }
 
-  
-
   /// create [PackagexConfigUploadTelegramChat]
-  /// Empty  
+  /// Empty
   static PackagexConfigUploadTelegramChat empty() {
     return PackagexConfigUploadTelegramChat({});
   }
 
-  
-
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -52,16 +47,13 @@ class PackagexConfigUploadTelegramChat extends JsonScheme {
     }
   }
 
-  
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
-
-  
   String? get chat_id {
     try {
-      if (rawData["chat_id"] is String == false){
+      if (rawData["chat_id"] is String == false) {
         return null;
       }
       return rawData["chat_id"] as String;
@@ -70,16 +62,13 @@ class PackagexConfigUploadTelegramChat extends JsonScheme {
     }
   }
 
-  
   set chat_id(String? value) {
     rawData["chat_id"] = value;
   }
 
-
-  
   String? get message_thread_id {
     try {
-      if (rawData["message_thread_id"] is String == false){
+      if (rawData["message_thread_id"] is String == false) {
         return null;
       }
       return rawData["message_thread_id"] as String;
@@ -88,42 +77,36 @@ class PackagexConfigUploadTelegramChat extends JsonScheme {
     }
   }
 
-  
   set message_thread_id(String? value) {
     rawData["message_thread_id"] = value;
   }
 
-
-  
   static PackagexConfigUploadTelegramChat create({
-              bool schemeUtilsIsSetDefaultData = false,
-
+    bool schemeUtilsIsSetDefaultData = false,
     String special_type = "packagexConfigUploadTelegramChat",
     String? chat_id,
     String? message_thread_id,
-})  {
+  }) {
     // PackagexConfigUploadTelegramChat packagexConfigUploadTelegramChat = PackagexConfigUploadTelegramChat({
-final Map packagexConfigUploadTelegramChat_data_create_json = {
-  
+    final Map packagexConfigUploadTelegramChat_data_create_json = {
       "@type": special_type,
       "chat_id": chat_id,
       "message_thread_id": message_thread_id,
+    };
 
-
-};
-
-
-          packagexConfigUploadTelegramChat_data_create_json.removeWhere((key, value) => value == null);
+    packagexConfigUploadTelegramChat_data_create_json
+        .removeWhere((key, value) => value == null);
 
     if (schemeUtilsIsSetDefaultData) {
       defaultData.forEach((key, value) {
-        if (packagexConfigUploadTelegramChat_data_create_json.containsKey(key) == false) {
+        if (packagexConfigUploadTelegramChat_data_create_json
+                .containsKey(key) ==
+            false) {
           packagexConfigUploadTelegramChat_data_create_json[key] = value;
         }
       });
     }
-return PackagexConfigUploadTelegramChat(packagexConfigUploadTelegramChat_data_create_json);
-
-
-      }
+    return PackagexConfigUploadTelegramChat(
+        packagexConfigUploadTelegramChat_data_create_json);
+  }
 }

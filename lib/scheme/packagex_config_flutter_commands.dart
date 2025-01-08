@@ -2,21 +2,25 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-
- 
 class PackagexConfigFlutterCommands extends JsonScheme {
-
-  
   PackagexConfigFlutterCommands(super.rawData);
-  
+
   /// return default data
-  /// 
+  ///
   static Map get defaultData {
-    return {"@type":"packagexConfigFlutterCommands","obfuscate":true,"split-debug-info":"0.0.5","build-name":"0.0.5","build-number":40,"split-per-abi":true,"no-tree-shake-icons":true};
+    return {
+      "@type": "packagexConfigFlutterCommands",
+      "obfuscate": true,
+      "split-debug-info": "0.0.5",
+      "build-name": "0.0.5",
+      "build-number": 40,
+      "split-per-abi": true,
+      "no-tree-shake-icons": true
+    };
   }
 
-  /// check data 
-  /// if raw data 
+  /// check data
+  /// if raw data
   /// - rawData["@type"] == packagexConfigFlutterCommands
   /// if same return true
   bool json_scheme_utils_checkDataIsSameBySpecialType() {
@@ -30,20 +34,15 @@ class PackagexConfigFlutterCommands extends JsonScheme {
     return onResult(rawData["@type"], defaultData["@type"]);
   }
 
-  
-
   /// create [PackagexConfigFlutterCommands]
-  /// Empty  
+  /// Empty
   static PackagexConfigFlutterCommands empty() {
     return PackagexConfigFlutterCommands({});
   }
 
-  
-
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -52,16 +51,13 @@ class PackagexConfigFlutterCommands extends JsonScheme {
     }
   }
 
-  
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
-
-  
   bool? get obfuscate {
     try {
-      if (rawData["obfuscate"] is bool == false){
+      if (rawData["obfuscate"] is bool == false) {
         return null;
       }
       return rawData["obfuscate"] as bool;
@@ -70,16 +66,13 @@ class PackagexConfigFlutterCommands extends JsonScheme {
     }
   }
 
-  
   set obfuscate(bool? value) {
     rawData["obfuscate"] = value;
   }
 
-
-  
   String? get split_debug_info {
     try {
-      if (rawData["split-debug-info"] is String == false){
+      if (rawData["split-debug-info"] is String == false) {
         return null;
       }
       return rawData["split-debug-info"] as String;
@@ -88,16 +81,13 @@ class PackagexConfigFlutterCommands extends JsonScheme {
     }
   }
 
-  
   set split_debug_info(String? value) {
     rawData["split-debug-info"] = value;
   }
 
-
-  
   String? get build_name {
     try {
-      if (rawData["build-name"] is String == false){
+      if (rawData["build-name"] is String == false) {
         return null;
       }
       return rawData["build-name"] as String;
@@ -106,16 +96,13 @@ class PackagexConfigFlutterCommands extends JsonScheme {
     }
   }
 
-  
   set build_name(String? value) {
     rawData["build-name"] = value;
   }
 
-
-  
   num? get build_number {
     try {
-      if (rawData["build-number"] is num == false){
+      if (rawData["build-number"] is num == false) {
         return null;
       }
       return rawData["build-number"] as num;
@@ -124,16 +111,13 @@ class PackagexConfigFlutterCommands extends JsonScheme {
     }
   }
 
-  
   set build_number(num? value) {
     rawData["build-number"] = value;
   }
 
-
-  
   bool? get split_per_abi {
     try {
-      if (rawData["split-per-abi"] is bool == false){
+      if (rawData["split-per-abi"] is bool == false) {
         return null;
       }
       return rawData["split-per-abi"] as bool;
@@ -142,16 +126,13 @@ class PackagexConfigFlutterCommands extends JsonScheme {
     }
   }
 
-  
   set split_per_abi(bool? value) {
     rawData["split-per-abi"] = value;
   }
 
-
-  
   bool? get no_tree_shake_icons {
     try {
-      if (rawData["no-tree-shake-icons"] is bool == false){
+      if (rawData["no-tree-shake-icons"] is bool == false) {
         return null;
       }
       return rawData["no-tree-shake-icons"] as bool;
@@ -160,16 +141,12 @@ class PackagexConfigFlutterCommands extends JsonScheme {
     }
   }
 
-  
   set no_tree_shake_icons(bool? value) {
     rawData["no-tree-shake-icons"] = value;
   }
 
-
-  
   static PackagexConfigFlutterCommands create({
-              bool schemeUtilsIsSetDefaultData = false,
-
+    bool schemeUtilsIsSetDefaultData = false,
     String special_type = "packagexConfigFlutterCommands",
     bool? obfuscate,
     String? split_debug_info,
@@ -177,10 +154,9 @@ class PackagexConfigFlutterCommands extends JsonScheme {
     num? build_number,
     bool? split_per_abi,
     bool? no_tree_shake_icons,
-})  {
+  }) {
     // PackagexConfigFlutterCommands packagexConfigFlutterCommands = PackagexConfigFlutterCommands({
-final Map packagexConfigFlutterCommands_data_create_json = {
-  
+    final Map packagexConfigFlutterCommands_data_create_json = {
       "@type": special_type,
       "obfuscate": obfuscate,
       "split-debug-info": split_debug_info,
@@ -188,22 +164,20 @@ final Map packagexConfigFlutterCommands_data_create_json = {
       "build-number": build_number,
       "split-per-abi": split_per_abi,
       "no-tree-shake-icons": no_tree_shake_icons,
+    };
 
-
-};
-
-
-          packagexConfigFlutterCommands_data_create_json.removeWhere((key, value) => value == null);
+    packagexConfigFlutterCommands_data_create_json
+        .removeWhere((key, value) => value == null);
 
     if (schemeUtilsIsSetDefaultData) {
       defaultData.forEach((key, value) {
-        if (packagexConfigFlutterCommands_data_create_json.containsKey(key) == false) {
+        if (packagexConfigFlutterCommands_data_create_json.containsKey(key) ==
+            false) {
           packagexConfigFlutterCommands_data_create_json[key] = value;
         }
       });
     }
-return PackagexConfigFlutterCommands(packagexConfigFlutterCommands_data_create_json);
-
-
-      }
+    return PackagexConfigFlutterCommands(
+        packagexConfigFlutterCommands_data_create_json);
+  }
 }

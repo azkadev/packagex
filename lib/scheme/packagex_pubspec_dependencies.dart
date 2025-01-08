@@ -4,20 +4,24 @@ import "package:general_lib/general_lib.dart";
 
 import "packagex_pubspec_dependencies_extra.dart";
 
- 
 class PackagexPubspecDependencies extends JsonScheme {
-
-  
   PackagexPubspecDependencies(super.rawData);
-  
+
   /// return default data
-  /// 
+  ///
   static Map get defaultData {
-    return {"@type":"packagexPubspecDependencies","flutter":{"@type":"packagexPubspecDependenciesExtra","sdk":"flutter"},"cupertino_icons":"^1.0.2"};
+    return {
+      "@type": "packagexPubspecDependencies",
+      "flutter": {
+        "@type": "packagexPubspecDependenciesExtra",
+        "sdk": "flutter"
+      },
+      "cupertino_icons": "^1.0.2"
+    };
   }
 
-  /// check data 
-  /// if raw data 
+  /// check data
+  /// if raw data
   /// - rawData["@type"] == packagexPubspecDependencies
   /// if same return true
   bool json_scheme_utils_checkDataIsSameBySpecialType() {
@@ -31,20 +35,15 @@ class PackagexPubspecDependencies extends JsonScheme {
     return onResult(rawData["@type"], defaultData["@type"]);
   }
 
-  
-
   /// create [PackagexPubspecDependencies]
-  /// Empty  
+  /// Empty
   static PackagexPubspecDependencies empty() {
     return PackagexPubspecDependencies({});
   }
 
-  
-
-  
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -53,36 +52,28 @@ class PackagexPubspecDependencies extends JsonScheme {
     }
   }
 
-  
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
-
-  
   PackagexPubspecDependenciesExtra get flutter {
     try {
-      if (rawData["flutter"] is Map == false){
-        return PackagexPubspecDependenciesExtra({}); 
+      if (rawData["flutter"] is Map == false) {
+        return PackagexPubspecDependenciesExtra({});
       }
       return PackagexPubspecDependenciesExtra(rawData["flutter"] as Map);
-    } catch (e) {  
-      return PackagexPubspecDependenciesExtra({}); 
+    } catch (e) {
+      return PackagexPubspecDependenciesExtra({});
     }
   }
 
-
-  
   set flutter(PackagexPubspecDependenciesExtra value) {
     rawData["flutter"] = value.toJson();
   }
 
-
-
-  
   String? get cupertino_icons {
     try {
-      if (rawData["cupertino_icons"] is String == false){
+      if (rawData["cupertino_icons"] is String == false) {
         return null;
       }
       return rawData["cupertino_icons"] as String;
@@ -91,42 +82,35 @@ class PackagexPubspecDependencies extends JsonScheme {
     }
   }
 
-  
   set cupertino_icons(String? value) {
     rawData["cupertino_icons"] = value;
   }
 
-
-  
   static PackagexPubspecDependencies create({
-              bool schemeUtilsIsSetDefaultData = false,
-
+    bool schemeUtilsIsSetDefaultData = false,
     String special_type = "packagexPubspecDependencies",
-      PackagexPubspecDependenciesExtra? flutter,
+    PackagexPubspecDependenciesExtra? flutter,
     String? cupertino_icons,
-})  {
+  }) {
     // PackagexPubspecDependencies packagexPubspecDependencies = PackagexPubspecDependencies({
-final Map packagexPubspecDependencies_data_create_json = {
-  
+    final Map packagexPubspecDependencies_data_create_json = {
       "@type": special_type,
-      "flutter": (flutter != null)?flutter.toJson(): null,
+      "flutter": (flutter != null) ? flutter.toJson() : null,
       "cupertino_icons": cupertino_icons,
+    };
 
-
-};
-
-
-          packagexPubspecDependencies_data_create_json.removeWhere((key, value) => value == null);
+    packagexPubspecDependencies_data_create_json
+        .removeWhere((key, value) => value == null);
 
     if (schemeUtilsIsSetDefaultData) {
       defaultData.forEach((key, value) {
-        if (packagexPubspecDependencies_data_create_json.containsKey(key) == false) {
+        if (packagexPubspecDependencies_data_create_json.containsKey(key) ==
+            false) {
           packagexPubspecDependencies_data_create_json[key] = value;
         }
       });
     }
-return PackagexPubspecDependencies(packagexPubspecDependencies_data_create_json);
-
-
-      }
+    return PackagexPubspecDependencies(
+        packagexPubspecDependencies_data_create_json);
+  }
 }
