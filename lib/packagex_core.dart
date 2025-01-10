@@ -665,7 +665,7 @@ To: ${file_cli.path}
               if (exit_code != 0) {
                 /// THROW ERROR
                 throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-               } else {
+              } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
             }
@@ -690,7 +690,7 @@ To: ${file_cli.path}
               if (exit_code != 0) {
                 /// THROW ERROR
                 throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-               } else {
+              } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
             }
@@ -719,7 +719,7 @@ To: ${file_cli.path}
               if (exit_code != 0) {
                 /// THROW ERROR
                 throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-               } else {
+              } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
             }
@@ -747,7 +747,7 @@ To: ${file_cli.path}
               if (exit_code != 0) {
                 /// THROW ERROR
                 throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-               } else {
+              } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
             }
@@ -770,7 +770,7 @@ To: ${file_cli.path}
               if (exit_code != 0) {
                 /// THROW ERROR
                 throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-               } else {
+              } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
             }
@@ -800,7 +800,7 @@ To: ${file_cli.path}
                   packagexApiStatusType: PackagexApiStatusType.failed,
                   value: "Failed ${message}",
                 );
-               } else {
+              } else {
                 yield PackagexApiStatus(
                   packagexApiStatusType: PackagexApiStatusType.succes,
                   value: "Succes ${message}",
@@ -848,7 +848,7 @@ To: ${file_cli.path}
               if (exit_code != 0) {
                 /// THROW ERROR
                 throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-               } else {
+              } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
               final Directory directory_apk = Directory(path.join(directoryBase.path, "build", "app", "outputs", "flutter-apk"));
@@ -1186,7 +1186,6 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
               if (exit_code != 0) {
                 /// THROW ERROR
                 throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-                
               } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
@@ -1306,6 +1305,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     });
 
     for (final PackagexConfigUpload packagexConfigUpload in pubspec.packagex.uploads) {
+      await Future.delayed(Duration(seconds: 2));
       final String upload_platform_type = (packagexConfigUpload.platform_type ?? "").trim().toLowerCase();
       if (upload_platform_type == "telegram") {
         for (PackagexConfigUploadTelegramChat packagexConfigUploadTelegramChat in packagexConfigUpload.telegram_chats) {
@@ -1325,6 +1325,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
           final TelegramClientData telegramClientData = TelegramClientData.telegramBotApi(token_bot: telegramTokenBot);
           for (final fileUpload in files) {
             if (fileUpload is File) {
+              await Future.delayed(Duration(milliseconds: 500));
               final String fileName = path.basename(fileUpload.path);
               yield "Upload Telegram ${fileName}";
               await telegramClient.invoke(
@@ -1361,6 +1362,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
         final supabase_client.StorageFileApi storageFileApi = storage.from(supabase_folder_name);
         for (final fileUpload in files) {
           if (fileUpload is File) {
+            await Future.delayed(Duration(milliseconds: 500));
             final String fileName = path.basename(fileUpload.path);
             yield "Get Supabase File: ${fileName}";
             try {
@@ -1458,6 +1460,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
         for (var i = 0; i < files.length; i++) {
           final FileSystemEntity fileSystemEntity = files[i];
           if (fileSystemEntity is File) {
+            await Future.delayed(Duration(milliseconds: 500));
             final ReleaseAsset? releaseAsset = releaseAssets.firstWhereOrNull((element) => element.name == path.basename(fileSystemEntity.path));
             if (releaseAsset != null) {
               yield "Delete Asset: ${releaseAsset.name}";
