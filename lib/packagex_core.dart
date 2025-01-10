@@ -569,7 +569,6 @@ return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
         final List<String> dart_compile_arguments = packagexPubspec.packagex.dart_compile_exe_arguments.clone();
         final List<String> flutter_build_arguments = packagexPubspec.packagex.flutter_build_arguments.clone();
 
-
         yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Starting Build: ${packagexPlatformType.name}");
         if (packagexPlatformType == PackagexPlatformType.android || packagexPlatformType == PackagexPlatformType.linux) {
           if (packagexPlatformType == PackagexPlatformType.linux) {
@@ -664,9 +663,9 @@ To: ${file_cli.path}
               });
               final int exit_code = await (process.exitCode);
               if (exit_code != 0) {
-                yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-                return;
-              } else {
+                /// THROW ERROR
+                throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+               } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
             }
@@ -689,9 +688,9 @@ To: ${file_cli.path}
               });
               final int exit_code = await (process.exitCode);
               if (exit_code != 0) {
-                yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-                return;
-              } else {
+                /// THROW ERROR
+                throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+               } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
             }
@@ -718,9 +717,9 @@ To: ${file_cli.path}
               });
               final int exit_code = await (process.exitCode);
               if (exit_code != 0) {
-                yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-                return;
-              } else {
+                /// THROW ERROR
+                throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+               } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
             }
@@ -746,9 +745,9 @@ To: ${file_cli.path}
               });
               final int exit_code = await (process.exitCode);
               if (exit_code != 0) {
-                yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-                return;
-              } else {
+                /// THROW ERROR
+                throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+               } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
             }
@@ -769,9 +768,9 @@ To: ${file_cli.path}
               });
               final int exit_code = await (process.exitCode);
               if (exit_code != 0) {
-                yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-                return;
-              } else {
+                /// THROW ERROR
+                throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+               } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
             }
@@ -796,12 +795,12 @@ To: ${file_cli.path}
               });
               final int exit_code = await (process.exitCode);
               if (exit_code != 0) {
-                yield PackagexApiStatus(
+                /// THROW ERROR
+                throw PackagexApiStatus(
                   packagexApiStatusType: PackagexApiStatusType.failed,
                   value: "Failed ${message}",
                 );
-                return;
-              } else {
+               } else {
                 yield PackagexApiStatus(
                   packagexApiStatusType: PackagexApiStatusType.succes,
                   value: "Succes ${message}",
@@ -847,9 +846,9 @@ To: ${file_cli.path}
               });
               final int exit_code = await (process.exitCode);
               if (exit_code != 0) {
-                yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-                return;
-              } else {
+                /// THROW ERROR
+                throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+               } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
               final Directory directory_apk = Directory(path.join(directoryBase.path, "build", "app", "outputs", "flutter-apk"));
@@ -1185,8 +1184,9 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
               });
               int exit_code = await (process.exitCode);
               if (exit_code != 0) {
-                yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-                return;
+                /// THROW ERROR
+                throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
+                
               } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
@@ -1212,8 +1212,8 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
               });
               int exit_code = await (process.exitCode);
               if (exit_code != 0) {
-                yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
-                return;
+                /// THROW ERROR
+                throw PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.failed, value: "Failed ${message}");
               } else {
                 yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Succes ${message}");
               }
