@@ -1369,12 +1369,20 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
               await storageFileApi.remove([fileName]);
               yield "Delete Supabase File: ${fileName}";
             } catch (e) {}
-            yield "Upload Supabase File: ${fileName}";
-            await storageFileApi.upload(
-              fileName,
-              fileUpload,
-            );
-            yield "Succes Supabase File: ${fileName}";
+            while (true) {
+              await Future.delayed(Duration(milliseconds: 1));
+              try {
+                yield "Uploading Supabase File: ${fileName}";
+                await storageFileApi.upload(
+                  fileName,
+                  fileUpload,
+                );
+                yield "Succes Supabase File: ${fileName}";
+                break;
+              } catch (e) {
+                yield "Try again Upload Supabase File: ${fileName}";
+              }
+            } 
           }
         }
         try {
