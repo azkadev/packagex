@@ -44,7 +44,8 @@ import 'package:packagex/packagex.dart';
 import 'package:general_lib/general_lib.dart';
 import 'package:packagex/scheme/packagex_pubspec.dart';
 import 'package:path/path.dart' as p;
-import 'package:system_information/dart/core.dart';
+import 'package:system_information/system_information.dart';
+// import 'package:system_information/dart/core.dart';
 import "package:yaml/yaml.dart" as yaml;
 import "package:path/path.dart" as path;
 

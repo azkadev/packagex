@@ -1375,7 +1375,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
                 yield "Uploading Supabase File: ${fileName}";
                 await storageFileApi.upload(
                   fileName,
-                  fileUpload,
+                  fileUpload
                 );
                 yield "Succes Supabase File: ${fileName}";
                 break;
