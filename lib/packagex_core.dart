@@ -138,12 +138,12 @@ class Packagex {
             "0.0.0",
             "--obfuscate",
             "--split-debug-info",
-            "temp",
+            "packagex-build-debug",
           ],
         ],
         dart_compile_exe_arguments: [
           if (isDontAddFlutterCommands == false) ...[
-            "--save-debugging-info=debug",
+            "--save-debugging-info=packagex-compile-debug",
           ],
         ],
         packages: [
