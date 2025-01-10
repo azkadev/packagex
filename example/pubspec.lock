@@ -252,10 +252,10 @@ packages:
     dependency: transitive
     description:
       name: general_lib
-      sha256: fb12847a8295c19de015c27724eeb831ca48671d7705558e402a8d3bdf6de40c
+      sha256: d3ba904a4135b583374c6c58d8b7f4bf30fc73cdd48ba98e525587367816ceb4
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.56"
+    version: "0.0.57"
   get_it:
     dependency: transitive
     description:
@@ -433,7 +433,7 @@ packages:
     source: hosted
     version: "1.15.0"
   mime:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: mime
       sha256: "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
@@ -470,7 +470,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.75"
+    version: "0.0.78"
   path:
     dependency: transitive
     description:
@@ -496,13 +496,13 @@ packages:
     source: hosted
     version: "2.1.8"
   pointycastle:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: pointycastle
-      sha256: "4be0097fcf3fd3e8449e53730c631200ebc7b88016acecab2b0da2f0149222fe"
+      sha256: "70fe966348fe08c34bf929582f1d8247d9d9408130723206472b4687227e4333"
       url: "https://pub.dev"
     source: hosted
-    version: "3.9.1"
+    version: "3.8.0"
   posix:
     dependency: transitive
     description:

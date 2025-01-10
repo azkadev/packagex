@@ -42,9 +42,13 @@ dependencies:
   telegram_client: '^0.8.33'
 packagex:
   name: 'packagex'
-  flutter_commands:
-    obfuscate: true
-    split-debug-info: '0.0.5'
+  flutter_build_arguments:
+   - --split-per-abi
+   - --obfuscate 
+  dart_compile_exe_arguments:
+    - --save-debugging-info=debug
+    - --target-os
+    - linux
   uploads:
     - platform_type: ''
       github_username: ''

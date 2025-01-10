@@ -15,5 +15,10 @@ import io.flutter.embedding.engine.FlutterEngine;
 public final class GeneratedPluginRegistrant {
   private static final String TAG = "GeneratedPluginRegistrant";
   public static void registerWith(@NonNull FlutterEngine flutterEngine) {
+    try {
+      flutterEngine.getPlugins().add(new global_corporation.general_developer.azkadev.system_information_flutter.SystemInformationFlutterPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin system_information_flutter, global_corporation.general_developer.azkadev.system_information_flutter.SystemInformationFlutterPlugin", e);
+    }
   }
 }

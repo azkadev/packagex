@@ -4,5 +4,5 @@ enum PackagexPlatformType {
   linux,
   macos,
   windows,
-  web,
+  web;
 }

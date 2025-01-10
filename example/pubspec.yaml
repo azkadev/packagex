@@ -21,13 +21,6 @@ packagex:
   name: 'example'
   is_without_platform_name: true
   is_app_auto_clean_up_folder: true
-  flutter_commands:
-    obfuscate: true
-    split-debug-info: '0.0.0'
-    build-name: '0.0.0'
-    build-number: 1
-    split-per-abi: true
-    no-tree-shake-icons: true
   uploads:
     - platform_type: 'telegram'
       telegram_chats:
@@ -41,6 +34,17 @@ packagex:
       dart_name: 'example'
       flutter_name: 'example'
       output_name: 'example'
+  flutter_build_arguments:
+    - '--split-per-abi'
+    - '--build-name'
+    - '0.0.0'
+    - '--build-number'
+    - '0.0.0'
+    - '--obfuscate'
+    - '--split-debug-info'
+    - 'temp'
+  dart_compile_exe_arguments:
+    - '--save-debugging-info=debug'
 msix_config:
   display_name: 'example'
   install_certificate: false

@@ -80,16 +80,16 @@ Future<void> main() async {
         "@type": "packagexConfig",
         "name": "Pack",
         "is_without_platform_name": true,
-        "is_app_auto_clean_up_folder": false,
-        "flutter_commands": {
-          "@type": "packagexConfigFlutterCommands",
-          "obfuscate": true,
-          "split-debug-info": "0.0.5",
-          "build-name": "0.0.5",
-          "build-number": 40,
-          "split-per-abi": true,
-          "no-tree-shake-icons": true,
-        },
+        "is_app_auto_clean_up_folder": false, 
+        "flutter_build_arguments": [
+          "--split-per-abi",
+          "--obfuscate",
+        ],
+        "dart_compile_exe_arguments": [
+          "--save-debugging-info=debug",
+          "--target-os",
+          "linux",
+        ],
         "uploads": [
           {
             "@type": "packagexConfigUpload",

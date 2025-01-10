@@ -1,5 +1,4 @@
 export "packagex_config.dart";
-export "packagex_config_flutter_commands.dart";
 export "packagex_config_package.dart";
 export "packagex_config_upload.dart";
 export "packagex_config_upload_telegram_chat.dart";
