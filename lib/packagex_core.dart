@@ -1349,6 +1349,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
           supabaseUrl,
           supabaseKey,
         );
+        
         final String supabase_folder_name = (packagexConfigUpload.supabase_folder_name ?? "").trim();
         final supabase_client.SupabaseStorageClient storage = supabaseClient.storage;
         yield "Get Supabase Folder: ${supabase_folder_name}";
@@ -1362,15 +1363,19 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
         final supabase_client.StorageFileApi storageFileApi = storage.from(supabase_folder_name);
         for (final fileUpload in files) {
           if (fileUpload is File) {
-            await Future.delayed(Duration(milliseconds: 500));
+            yield "Delayed 2 Seconds";
+            await Future.delayed(Duration(seconds: 2));
             final String fileName = path.basename(fileUpload.path);
             yield "Get Supabase File: ${fileName}";
             try {
               await storageFileApi.remove([fileName]);
               yield "Delete Supabase File: ${fileName}";
             } catch (e) {}
+            yield "Delayed 2 Seconds";
+            await Future.delayed(Duration(seconds: 2));
             while (true) {
-              await Future.delayed(Duration(milliseconds: 1));
+            yield "Delayed 2 Seconds";
+            await Future.delayed(Duration(seconds: 2));
               try {
                 yield "Uploading Supabase File: ${fileName}";
                 await storageFileApi.upload(
