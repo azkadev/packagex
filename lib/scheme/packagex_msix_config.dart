@@ -2,21 +2,28 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-
-/// Generated 
+/// Generated
 class PackagexMsixConfig extends JsonScheme {
-
   /// Generated
   PackagexMsixConfig(super.rawData);
-  
+
   /// return default data
-  /// 
+  ///
   static Map get defaultData {
-    return {"@type":"packagexMsixConfig","display_name":"example","publisher_display_name":"Azkadev Packagex","identity_name":"org.azkadev.example","msix_version":"0.0.0.0","logo_path":"example/bin/example.dart","capabilities":"internetClient, location, microphone, webcam","install_certificate":false};
+    return {
+      "@type": "packagexMsixConfig",
+      "display_name": "example",
+      "publisher_display_name": "Azkadev Packagex",
+      "identity_name": "org.azkadev.example",
+      "msix_version": "0.0.0.0",
+      "logo_path": "example/bin/example.dart",
+      "capabilities": "internetClient, location, microphone, webcam",
+      "install_certificate": false
+    };
   }
 
-  /// check data 
-  /// if raw data 
+  /// check data
+  /// if raw data
   /// - rawData["@type"] == packagexMsixConfig
   /// if same return true
   bool json_scheme_utils_checkDataIsSameBySpecialType() {
@@ -30,20 +37,16 @@ class PackagexMsixConfig extends JsonScheme {
     return onResult(rawData["@type"], defaultData["@type"]);
   }
 
-  
-
   /// create [PackagexMsixConfig]
-  /// Empty  
+  /// Empty
   static PackagexMsixConfig empty() {
     return PackagexMsixConfig({});
   }
 
-  
-
   /// Generated
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -57,11 +60,10 @@ class PackagexMsixConfig extends JsonScheme {
     rawData["@type"] = value;
   }
 
-
   /// Generated
   String? get display_name {
     try {
-      if (rawData["display_name"] is String == false){
+      if (rawData["display_name"] is String == false) {
         return null;
       }
       return rawData["display_name"] as String;
@@ -75,11 +77,10 @@ class PackagexMsixConfig extends JsonScheme {
     rawData["display_name"] = value;
   }
 
-
   /// Generated
   String? get publisher_display_name {
     try {
-      if (rawData["publisher_display_name"] is String == false){
+      if (rawData["publisher_display_name"] is String == false) {
         return null;
       }
       return rawData["publisher_display_name"] as String;
@@ -93,11 +94,10 @@ class PackagexMsixConfig extends JsonScheme {
     rawData["publisher_display_name"] = value;
   }
 
-
   /// Generated
   String? get identity_name {
     try {
-      if (rawData["identity_name"] is String == false){
+      if (rawData["identity_name"] is String == false) {
         return null;
       }
       return rawData["identity_name"] as String;
@@ -111,11 +111,10 @@ class PackagexMsixConfig extends JsonScheme {
     rawData["identity_name"] = value;
   }
 
-
   /// Generated
   String? get msix_version {
     try {
-      if (rawData["msix_version"] is String == false){
+      if (rawData["msix_version"] is String == false) {
         return null;
       }
       return rawData["msix_version"] as String;
@@ -129,11 +128,10 @@ class PackagexMsixConfig extends JsonScheme {
     rawData["msix_version"] = value;
   }
 
-
   /// Generated
   String? get logo_path {
     try {
-      if (rawData["logo_path"] is String == false){
+      if (rawData["logo_path"] is String == false) {
         return null;
       }
       return rawData["logo_path"] as String;
@@ -147,11 +145,10 @@ class PackagexMsixConfig extends JsonScheme {
     rawData["logo_path"] = value;
   }
 
-
   /// Generated
   String? get capabilities {
     try {
-      if (rawData["capabilities"] is String == false){
+      if (rawData["capabilities"] is String == false) {
         return null;
       }
       return rawData["capabilities"] as String;
@@ -165,11 +162,10 @@ class PackagexMsixConfig extends JsonScheme {
     rawData["capabilities"] = value;
   }
 
-
   /// Generated
   bool? get install_certificate {
     try {
-      if (rawData["install_certificate"] is bool == false){
+      if (rawData["install_certificate"] is bool == false) {
         return null;
       }
       return rawData["install_certificate"] as bool;
@@ -183,11 +179,9 @@ class PackagexMsixConfig extends JsonScheme {
     rawData["install_certificate"] = value;
   }
 
-
   /// Generated
   static PackagexMsixConfig create({
-              bool schemeUtilsIsSetDefaultData = false,
-
+    bool schemeUtilsIsSetDefaultData = false,
     String special_type = "packagexMsixConfig",
     String? display_name,
     String? publisher_display_name,
@@ -196,10 +190,9 @@ class PackagexMsixConfig extends JsonScheme {
     String? logo_path,
     String? capabilities,
     bool? install_certificate,
-})  {
+  }) {
     // PackagexMsixConfig packagexMsixConfig = PackagexMsixConfig({
-final Map packagexMsixConfig_data_create_json = {
-  
+    final Map packagexMsixConfig_data_create_json = {
       "@type": special_type,
       "display_name": display_name,
       "publisher_display_name": publisher_display_name,
@@ -208,12 +201,10 @@ final Map packagexMsixConfig_data_create_json = {
       "logo_path": logo_path,
       "capabilities": capabilities,
       "install_certificate": install_certificate,
+    };
 
-
-};
-
-
-          packagexMsixConfig_data_create_json.removeWhere((key, value) => value == null);
+    packagexMsixConfig_data_create_json
+        .removeWhere((key, value) => value == null);
 
     if (schemeUtilsIsSetDefaultData) {
       defaultData.forEach((key, value) {
@@ -222,8 +213,6 @@ final Map packagexMsixConfig_data_create_json = {
         }
       });
     }
-return PackagexMsixConfig(packagexMsixConfig_data_create_json);
-
-
-      }
+    return PackagexMsixConfig(packagexMsixConfig_data_create_json);
+  }
 }

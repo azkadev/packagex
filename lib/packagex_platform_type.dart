@@ -1,16 +1,20 @@
-  /// UncompleteDocumentation
+/// UncompleteDocumentation
 enum PackagexPlatformType {
-    /// UncompleteDocumentation
+  /// UncompleteDocumentation
   android,
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
   ios,
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
   linux,
-  
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
   macos,
-  /// UncompleteDocumentation  
+
+  /// UncompleteDocumentation
   windows,
+
   /// UncompleteDocumentation
   web;
 }

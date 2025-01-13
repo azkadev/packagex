@@ -2,21 +2,19 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-
-/// Generated 
+/// Generated
 class PackagexPubspecDevDependenciesExtra extends JsonScheme {
-
   /// Generated
   PackagexPubspecDevDependenciesExtra(super.rawData);
-  
+
   /// return default data
-  /// 
+  ///
   static Map get defaultData {
-    return {"@type":"packagexPubspecDevDependenciesExtra","path":"../"};
+    return {"@type": "packagexPubspecDevDependenciesExtra", "path": "../"};
   }
 
-  /// check data 
-  /// if raw data 
+  /// check data
+  /// if raw data
   /// - rawData["@type"] == packagexPubspecDevDependenciesExtra
   /// if same return true
   bool json_scheme_utils_checkDataIsSameBySpecialType() {
@@ -30,20 +28,16 @@ class PackagexPubspecDevDependenciesExtra extends JsonScheme {
     return onResult(rawData["@type"], defaultData["@type"]);
   }
 
-  
-
   /// create [PackagexPubspecDevDependenciesExtra]
-  /// Empty  
+  /// Empty
   static PackagexPubspecDevDependenciesExtra empty() {
     return PackagexPubspecDevDependenciesExtra({});
   }
 
-  
-
   /// Generated
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -57,11 +51,10 @@ class PackagexPubspecDevDependenciesExtra extends JsonScheme {
     rawData["@type"] = value;
   }
 
-
   /// Generated
   String? get path {
     try {
-      if (rawData["path"] is String == false){
+      if (rawData["path"] is String == false) {
         return null;
       }
       return rawData["path"] as String;
@@ -75,35 +68,31 @@ class PackagexPubspecDevDependenciesExtra extends JsonScheme {
     rawData["path"] = value;
   }
 
-
   /// Generated
   static PackagexPubspecDevDependenciesExtra create({
-              bool schemeUtilsIsSetDefaultData = false,
-
+    bool schemeUtilsIsSetDefaultData = false,
     String special_type = "packagexPubspecDevDependenciesExtra",
     String? path,
-})  {
+  }) {
     // PackagexPubspecDevDependenciesExtra packagexPubspecDevDependenciesExtra = PackagexPubspecDevDependenciesExtra({
-final Map packagexPubspecDevDependenciesExtra_data_create_json = {
-  
+    final Map packagexPubspecDevDependenciesExtra_data_create_json = {
       "@type": special_type,
       "path": path,
+    };
 
-
-};
-
-
-          packagexPubspecDevDependenciesExtra_data_create_json.removeWhere((key, value) => value == null);
+    packagexPubspecDevDependenciesExtra_data_create_json
+        .removeWhere((key, value) => value == null);
 
     if (schemeUtilsIsSetDefaultData) {
       defaultData.forEach((key, value) {
-        if (packagexPubspecDevDependenciesExtra_data_create_json.containsKey(key) == false) {
+        if (packagexPubspecDevDependenciesExtra_data_create_json
+                .containsKey(key) ==
+            false) {
           packagexPubspecDevDependenciesExtra_data_create_json[key] = value;
         }
       });
     }
-return PackagexPubspecDevDependenciesExtra(packagexPubspecDevDependenciesExtra_data_create_json);
-
-
-      }
+    return PackagexPubspecDevDependenciesExtra(
+        packagexPubspecDevDependenciesExtra_data_create_json);
+  }
 }

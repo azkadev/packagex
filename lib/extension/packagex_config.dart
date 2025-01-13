@@ -2,9 +2,10 @@
 
 import 'package:general_lib/general_lib.dart';
 import 'package:packagex/scheme/scheme.dart';
-  /// UncompleteDocumentation
+
+/// UncompleteDocumentation
 extension PackagexConfigExtensionOnListString on List<String> {
-    /// UncompleteDocumentation
+  /// UncompleteDocumentation
   PackagexConfig packagex_utils_extension_toPackagexConfig() {
     PackagexConfig packagexConfig = PackagexConfig({});
     Args args = Args(this);

@@ -2,27 +2,34 @@
 
 /// Packagex Api Status Type
 enum PackagexApiStatusType {
-    /// UncompleteDocumentation
+  /// UncompleteDocumentation
   succes,
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
   failed,
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
   info,
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
   start,
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
   progress_start,
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
   progress,
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
   progress_complete,
 }
 
 /// Packagex Api Status
 class PackagexApiStatus {
-    /// UncompleteDocumentation
+  /// UncompleteDocumentation
   String value;
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
 
   PackagexApiStatusType packagexApiStatusType;
 

@@ -48,12 +48,15 @@ import 'package:system_information/system_information.dart';
 // import 'package:system_information/dart/core.dart';
 import "package:yaml/yaml.dart" as yaml;
 import "package:path/path.dart" as path;
-  /// UncompleteDocumentation
+
+/// UncompleteDocumentation
 Logger logger = Logger();
-  /// UncompleteDocumentation
+
+/// UncompleteDocumentation
 class PackagexEnvironment {
-    /// UncompleteDocumentation
+  /// UncompleteDocumentation
   PackagexEnvironment();
+
   /// UncompleteDocumentation
   static bool get is_not_interactive {
     if (RegExp(r"virtual", caseSensitive: false)
@@ -63,25 +66,31 @@ class PackagexEnvironment {
     return ((Platform.environment["packagex_is_no_interactive"] ?? "").trim() ==
         "true");
   }
-    /// UncompleteDocumentation
+
+  /// UncompleteDocumentation
 
   static String get github_token {
     return (Platform.environment["packagex_github_token"] ?? "").trim();
-  }  /// UncompleteDocumentation
+  }
+
+  /// UncompleteDocumentation
 
   static String get supabase_key {
     return (Platform.environment["packagex_supabase_key"] ?? "").trim();
   }
+
   /// UncompleteDocumentation
   static String get supabase_url {
     return (Platform.environment["packagex_supabase_url"] ?? "").trim();
   }
+
   /// UncompleteDocumentation
   static String get telegram_token_bot {
     return (Platform.environment["packagex_telegram_token_bot"] ?? "").trim();
   }
 }
-  /// UncompleteDocumentation
+
+/// UncompleteDocumentation
 FutureOr<void> packagexCli(List<String> arguments_origins) async {
   Args args = Args(arguments_origins);
   Packagex packagex = Packagex();
@@ -362,7 +371,8 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
 
   exit(0);
 }
-  /// UncompleteDocumentation
+
+/// UncompleteDocumentation
 String menu_help = """
 A command-line Package
 
@@ -382,7 +392,8 @@ Run "packagex help <command>" for more information about a command.
 
 See https://youtube.com/@azkadev for detailed documentation and tutorial.
 """;
-  /// UncompleteDocumentation
+
+/// UncompleteDocumentation
 String help_create = """
 Create a new Packagex project.
 
@@ -393,7 +404,8 @@ Available Arguments:
 
 Run "packagex help" to see global options.
 """;
-  /// UncompleteDocumentation
+
+/// UncompleteDocumentation
 String help_build = """
 Create a new Packagex project.
 
@@ -404,9 +416,11 @@ Available Arguments:
 
 Run "packagex help" to see global options.
 """;
-  /// UncompleteDocumentation
+
+/// UncompleteDocumentation
 List<Progress> progresss = [];
-  /// UncompleteDocumentation
+
+/// UncompleteDocumentation
 void printed(PackagexApiStatus event) {
   if ([
     PackagexApiStatusType.progress_start,

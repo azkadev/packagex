@@ -80,7 +80,7 @@ Future<void> main() async {
         "@type": "packagexConfig",
         "name": "Pack",
         "is_without_platform_name": true,
-        "is_app_auto_clean_up_folder": false, 
+        "is_app_auto_clean_up_folder": false,
         "flutter_build_arguments": [
           "--split-per-abi",
           "--obfuscate",

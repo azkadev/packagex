@@ -2,21 +2,26 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-
-/// Generated 
+/// Generated
 class PackagexConfigPackage extends JsonScheme {
-
   /// Generated
   PackagexConfigPackage(super.rawData);
-  
+
   /// return default data
-  /// 
+  ///
   static Map get defaultData {
-    return {"@type":"packagexConfigPackage","dart_target":"packagex","flutter_target":"main","dart_name":"packagex","flutter_name":"packagex","output_name":"packagex"};
+    return {
+      "@type": "packagexConfigPackage",
+      "dart_target": "packagex",
+      "flutter_target": "main",
+      "dart_name": "packagex",
+      "flutter_name": "packagex",
+      "output_name": "packagex"
+    };
   }
 
-  /// check data 
-  /// if raw data 
+  /// check data
+  /// if raw data
   /// - rawData["@type"] == packagexConfigPackage
   /// if same return true
   bool json_scheme_utils_checkDataIsSameBySpecialType() {
@@ -30,20 +35,16 @@ class PackagexConfigPackage extends JsonScheme {
     return onResult(rawData["@type"], defaultData["@type"]);
   }
 
-  
-
   /// create [PackagexConfigPackage]
-  /// Empty  
+  /// Empty
   static PackagexConfigPackage empty() {
     return PackagexConfigPackage({});
   }
 
-  
-
   /// Generated
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -57,11 +58,10 @@ class PackagexConfigPackage extends JsonScheme {
     rawData["@type"] = value;
   }
 
-
   /// Generated
   String? get dart_target {
     try {
-      if (rawData["dart_target"] is String == false){
+      if (rawData["dart_target"] is String == false) {
         return null;
       }
       return rawData["dart_target"] as String;
@@ -75,11 +75,10 @@ class PackagexConfigPackage extends JsonScheme {
     rawData["dart_target"] = value;
   }
 
-
   /// Generated
   String? get flutter_target {
     try {
-      if (rawData["flutter_target"] is String == false){
+      if (rawData["flutter_target"] is String == false) {
         return null;
       }
       return rawData["flutter_target"] as String;
@@ -93,11 +92,10 @@ class PackagexConfigPackage extends JsonScheme {
     rawData["flutter_target"] = value;
   }
 
-
   /// Generated
   String? get dart_name {
     try {
-      if (rawData["dart_name"] is String == false){
+      if (rawData["dart_name"] is String == false) {
         return null;
       }
       return rawData["dart_name"] as String;
@@ -111,11 +109,10 @@ class PackagexConfigPackage extends JsonScheme {
     rawData["dart_name"] = value;
   }
 
-
   /// Generated
   String? get flutter_name {
     try {
-      if (rawData["flutter_name"] is String == false){
+      if (rawData["flutter_name"] is String == false) {
         return null;
       }
       return rawData["flutter_name"] as String;
@@ -129,11 +126,10 @@ class PackagexConfigPackage extends JsonScheme {
     rawData["flutter_name"] = value;
   }
 
-
   /// Generated
   String? get output_name {
     try {
-      if (rawData["output_name"] is String == false){
+      if (rawData["output_name"] is String == false) {
         return null;
       }
       return rawData["output_name"] as String;
@@ -147,33 +143,28 @@ class PackagexConfigPackage extends JsonScheme {
     rawData["output_name"] = value;
   }
 
-
   /// Generated
   static PackagexConfigPackage create({
-              bool schemeUtilsIsSetDefaultData = false,
-
+    bool schemeUtilsIsSetDefaultData = false,
     String special_type = "packagexConfigPackage",
     String? dart_target,
     String? flutter_target,
     String? dart_name,
     String? flutter_name,
     String? output_name,
-})  {
+  }) {
     // PackagexConfigPackage packagexConfigPackage = PackagexConfigPackage({
-final Map packagexConfigPackage_data_create_json = {
-  
+    final Map packagexConfigPackage_data_create_json = {
       "@type": special_type,
       "dart_target": dart_target,
       "flutter_target": flutter_target,
       "dart_name": dart_name,
       "flutter_name": flutter_name,
       "output_name": output_name,
+    };
 
-
-};
-
-
-          packagexConfigPackage_data_create_json.removeWhere((key, value) => value == null);
+    packagexConfigPackage_data_create_json
+        .removeWhere((key, value) => value == null);
 
     if (schemeUtilsIsSetDefaultData) {
       defaultData.forEach((key, value) {
@@ -182,8 +173,6 @@ final Map packagexConfigPackage_data_create_json = {
         }
       });
     }
-return PackagexConfigPackage(packagexConfigPackage_data_create_json);
-
-
-      }
+    return PackagexConfigPackage(packagexConfigPackage_data_create_json);
+  }
 }
