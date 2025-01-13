@@ -3,10 +3,10 @@ import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
 
- 
+/// Generated 
 class PackagexPubspecDevDependenciesExtra extends JsonScheme {
 
-  
+  /// Generated
   PackagexPubspecDevDependenciesExtra(super.rawData);
   
   /// return default data
@@ -40,7 +40,7 @@ class PackagexPubspecDevDependenciesExtra extends JsonScheme {
 
   
 
-  
+  /// Generated
   String? get special_type {
     try {
       if (rawData["@type"] is String == false){
@@ -52,13 +52,13 @@ class PackagexPubspecDevDependenciesExtra extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
 
-  
+  /// Generated
   String? get path {
     try {
       if (rawData["path"] is String == false){
@@ -70,13 +70,13 @@ class PackagexPubspecDevDependenciesExtra extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set path(String? value) {
     rawData["path"] = value;
   }
 
 
-  
+  /// Generated
   static PackagexPubspecDevDependenciesExtra create({
               bool schemeUtilsIsSetDefaultData = false,
 

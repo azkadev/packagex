@@ -4,10 +4,10 @@ import "package:general_lib/general_lib.dart";
 
 import "packagex_pubspec_dev_dependencies_extra.dart";
 
- 
+/// Generated 
 class PackagexPubspecDevDependencies extends JsonScheme {
 
-  
+  /// Generated
   PackagexPubspecDevDependencies(super.rawData);
   
   /// return default data
@@ -41,7 +41,7 @@ class PackagexPubspecDevDependencies extends JsonScheme {
 
   
 
-  
+  /// Generated
   String? get special_type {
     try {
       if (rawData["@type"] is String == false){
@@ -53,13 +53,13 @@ class PackagexPubspecDevDependencies extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
 
-  
+  /// Generated
   String? get lints {
     try {
       if (rawData["lints"] is String == false){
@@ -71,13 +71,13 @@ class PackagexPubspecDevDependencies extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set lints(String? value) {
     rawData["lints"] = value;
   }
 
 
-  
+  /// Generated
   String? get test {
     try {
       if (rawData["test"] is String == false){
@@ -89,13 +89,13 @@ class PackagexPubspecDevDependencies extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set test(String? value) {
     rawData["test"] = value;
   }
 
 
-  
+  /// Generated
   PackagexPubspecDevDependenciesExtra get packagex {
     try {
       if (rawData["packagex"] is Map == false){
@@ -108,14 +108,14 @@ class PackagexPubspecDevDependencies extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set packagex(PackagexPubspecDevDependenciesExtra value) {
     rawData["packagex"] = value.toJson();
   }
 
 
 
-  
+  /// Generated
   String? get msix {
     try {
       if (rawData["msix"] is String == false){
@@ -127,13 +127,13 @@ class PackagexPubspecDevDependencies extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set msix(String? value) {
     rawData["msix"] = value;
   }
 
 
-  
+  /// Generated
   static PackagexPubspecDevDependencies create({
               bool schemeUtilsIsSetDefaultData = false,
 

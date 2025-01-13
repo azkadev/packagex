@@ -3,10 +3,10 @@ import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
 
- 
+/// Generated 
 class PackagexPubspecPlatforms extends JsonScheme {
 
-  
+  /// Generated
   PackagexPubspecPlatforms(super.rawData);
   
   /// return default data
@@ -40,7 +40,7 @@ class PackagexPubspecPlatforms extends JsonScheme {
 
   
 
-  
+  /// Generated
   String? get special_type {
     try {
       if (rawData["@type"] is String == false){
@@ -52,13 +52,13 @@ class PackagexPubspecPlatforms extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
 
-  
+  /// Generated
   Object? get android {
     try {
       if (rawData["android"] is Object == false){
@@ -70,13 +70,13 @@ class PackagexPubspecPlatforms extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set android(Object? value) {
     rawData["android"] = value;
   }
 
 
-  
+  /// Generated
   Object? get ios {
     try {
       if (rawData["ios"] is Object == false){
@@ -88,13 +88,13 @@ class PackagexPubspecPlatforms extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set ios(Object? value) {
     rawData["ios"] = value;
   }
 
 
-  
+  /// Generated
   Object? get linux {
     try {
       if (rawData["linux"] is Object == false){
@@ -106,13 +106,13 @@ class PackagexPubspecPlatforms extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set linux(Object? value) {
     rawData["linux"] = value;
   }
 
 
-  
+  /// Generated
   Object? get macos {
     try {
       if (rawData["macos"] is Object == false){
@@ -124,13 +124,13 @@ class PackagexPubspecPlatforms extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set macos(Object? value) {
     rawData["macos"] = value;
   }
 
 
-  
+  /// Generated
   Object? get web {
     try {
       if (rawData["web"] is Object == false){
@@ -142,13 +142,13 @@ class PackagexPubspecPlatforms extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set web(Object? value) {
     rawData["web"] = value;
   }
 
 
-  
+  /// Generated
   Object? get windows {
     try {
       if (rawData["windows"] is Object == false){
@@ -160,13 +160,13 @@ class PackagexPubspecPlatforms extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set windows(Object? value) {
     rawData["windows"] = value;
   }
 
 
-  
+  /// Generated
   static PackagexPubspecPlatforms create({
               bool schemeUtilsIsSetDefaultData = false,
 

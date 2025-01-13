@@ -5,10 +5,10 @@ import "package:general_lib/general_lib.dart";
 import "packagex_config_upload.dart";
 import "packagex_config_package.dart";
 
- 
+/// Generated 
 class PackagexConfig extends JsonScheme {
 
-  
+  /// Generated
   PackagexConfig(super.rawData);
   
   /// return default data
@@ -42,7 +42,7 @@ class PackagexConfig extends JsonScheme {
 
   
 
-  
+  /// Generated
   String? get special_type {
     try {
       if (rawData["@type"] is String == false){
@@ -54,13 +54,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
 
-  
+  /// Generated
   String? get name {
     try {
       if (rawData["name"] is String == false){
@@ -72,13 +72,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set name(String? value) {
     rawData["name"] = value;
   }
 
 
-  
+  /// Generated
   bool? get is_without_platform_name {
     try {
       if (rawData["is_without_platform_name"] is bool == false){
@@ -90,13 +90,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set is_without_platform_name(bool? value) {
     rawData["is_without_platform_name"] = value;
   }
 
 
-  
+  /// Generated
   bool? get is_app_auto_clean_up_folder {
     try {
       if (rawData["is_app_auto_clean_up_folder"] is bool == false){
@@ -108,13 +108,13 @@ class PackagexConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set is_app_auto_clean_up_folder(bool? value) {
     rawData["is_app_auto_clean_up_folder"] = value;
   }
 
 
-  
+  /// Generated
   ///
   /// default:
   /// 
@@ -131,13 +131,13 @@ class PackagexConfig extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set flutter_build_arguments(List<String> value) {
     rawData["flutter_build_arguments"] = value;
   }
 
 
-  
+  /// Generated
   ///
   /// default:
   /// 
@@ -154,12 +154,12 @@ class PackagexConfig extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set dart_compile_exe_arguments(List<String> value) {
     rawData["dart_compile_exe_arguments"] = value;
   }
 
-  
+  /// Generated
   List<PackagexConfigUpload> get uploads {
     try {
       if (rawData["uploads"] is List == false){
@@ -172,13 +172,13 @@ class PackagexConfig extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set uploads(List<PackagexConfigUpload> values) {
     rawData["uploads"] = values.map((value) => value.toJson()).toList();
   }
 
 
-  
+  /// Generated
   List<PackagexConfigPackage> get packages {
     try {
       if (rawData["packages"] is List == false){
@@ -191,14 +191,14 @@ class PackagexConfig extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set packages(List<PackagexConfigPackage> values) {
     rawData["packages"] = values.map((value) => value.toJson()).toList();
   }
 
 
 
-  
+  /// Generated
   static PackagexConfig create({
               bool schemeUtilsIsSetDefaultData = false,
 

@@ -3,10 +3,10 @@ import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
 
- 
+/// Generated 
 class PackagexMsixConfig extends JsonScheme {
 
-  
+  /// Generated
   PackagexMsixConfig(super.rawData);
   
   /// return default data
@@ -40,7 +40,7 @@ class PackagexMsixConfig extends JsonScheme {
 
   
 
-  
+  /// Generated
   String? get special_type {
     try {
       if (rawData["@type"] is String == false){
@@ -52,13 +52,13 @@ class PackagexMsixConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
 
-  
+  /// Generated
   String? get display_name {
     try {
       if (rawData["display_name"] is String == false){
@@ -70,13 +70,13 @@ class PackagexMsixConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set display_name(String? value) {
     rawData["display_name"] = value;
   }
 
 
-  
+  /// Generated
   String? get publisher_display_name {
     try {
       if (rawData["publisher_display_name"] is String == false){
@@ -88,13 +88,13 @@ class PackagexMsixConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set publisher_display_name(String? value) {
     rawData["publisher_display_name"] = value;
   }
 
 
-  
+  /// Generated
   String? get identity_name {
     try {
       if (rawData["identity_name"] is String == false){
@@ -106,13 +106,13 @@ class PackagexMsixConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set identity_name(String? value) {
     rawData["identity_name"] = value;
   }
 
 
-  
+  /// Generated
   String? get msix_version {
     try {
       if (rawData["msix_version"] is String == false){
@@ -124,13 +124,13 @@ class PackagexMsixConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set msix_version(String? value) {
     rawData["msix_version"] = value;
   }
 
 
-  
+  /// Generated
   String? get logo_path {
     try {
       if (rawData["logo_path"] is String == false){
@@ -142,13 +142,13 @@ class PackagexMsixConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set logo_path(String? value) {
     rawData["logo_path"] = value;
   }
 
 
-  
+  /// Generated
   String? get capabilities {
     try {
       if (rawData["capabilities"] is String == false){
@@ -160,13 +160,13 @@ class PackagexMsixConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set capabilities(String? value) {
     rawData["capabilities"] = value;
   }
 
 
-  
+  /// Generated
   bool? get install_certificate {
     try {
       if (rawData["install_certificate"] is bool == false){
@@ -178,13 +178,13 @@ class PackagexMsixConfig extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set install_certificate(bool? value) {
     rawData["install_certificate"] = value;
   }
 
 
-  
+  /// Generated
   static PackagexMsixConfig create({
               bool schemeUtilsIsSetDefaultData = false,
 

@@ -20,7 +20,7 @@ executables:
   packagex: 'packagex'
 dependencies:
   collection: '^1.19.0'
-  general_lib: '^0.0.57'
+  general_lib: '^0.0.58'
   github: '^9.24.0'
   http: '^1.2.2'
   mason_logger: '^0.3.1'

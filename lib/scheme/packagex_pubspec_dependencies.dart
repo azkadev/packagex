@@ -4,10 +4,10 @@ import "package:general_lib/general_lib.dart";
 
 import "packagex_pubspec_dependencies_extra.dart";
 
- 
+/// Generated 
 class PackagexPubspecDependencies extends JsonScheme {
 
-  
+  /// Generated
   PackagexPubspecDependencies(super.rawData);
   
   /// return default data
@@ -41,7 +41,7 @@ class PackagexPubspecDependencies extends JsonScheme {
 
   
 
-  
+  /// Generated
   String? get special_type {
     try {
       if (rawData["@type"] is String == false){
@@ -53,13 +53,13 @@ class PackagexPubspecDependencies extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
 
-  
+  /// Generated
   PackagexPubspecDependenciesExtra get flutter {
     try {
       if (rawData["flutter"] is Map == false){
@@ -72,14 +72,14 @@ class PackagexPubspecDependencies extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set flutter(PackagexPubspecDependenciesExtra value) {
     rawData["flutter"] = value.toJson();
   }
 
 
 
-  
+  /// Generated
   String? get cupertino_icons {
     try {
       if (rawData["cupertino_icons"] is String == false){
@@ -91,13 +91,13 @@ class PackagexPubspecDependencies extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set cupertino_icons(String? value) {
     rawData["cupertino_icons"] = value;
   }
 
 
-  
+  /// Generated
   static PackagexPubspecDependencies create({
               bool schemeUtilsIsSetDefaultData = false,
 

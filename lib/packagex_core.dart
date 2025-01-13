@@ -60,7 +60,7 @@ import "package:supabase_client/supabase_client.dart" as supabase_client;
 class Packagex {
   /// Api
   Packagex();
-
+  /// UncompleteDocumentation
   Stream<PackagexApiStatus> create({
     required String newName,
     required Directory directoryPackage,
@@ -440,7 +440,7 @@ StartupNotify=true
     }
     yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.info, value: "Finished Create Project: ${project_name}");
   }
-
+  /// UncompleteDocumentation
   Stream<PackagexApiStatus> build({
     required Directory directoryBase,
     required List<PackagexPlatformType> packagexPlatformTypes,
@@ -497,18 +497,19 @@ StartupNotify=true
 // ignore_for_file: non_constant_identifier_names
 import 'dart:convert';
 
+/// AutoGenerateBy Packagex
 class PackagexProject${(packagexPubspec.name ?? "").split("_").map((e) => e.toUpperCaseFirstData()).join("").toUpperCaseFirstData()} {
-
+/// AutoGenerateBy Packagex
   static bool isSame({
     required String data
   }) {
     return [default_data_to_string, json.encode(default_data)].contains(data);
   }
-
+/// AutoGenerateBy Packagex
     static String get default_data_to_string {
       return (JsonEncoder.withIndent(" " * 2).convert(default_data));
     }
-
+/// AutoGenerateBy Packagex
     static Map get default_data {
 return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
     }
@@ -1224,7 +1225,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     }
     yield PackagexApiStatus(packagexApiStatusType: PackagexApiStatusType.succes, value: "Finished Build: ${packagexPlatformTypes.map((e) => e.name.toUpperCaseFirstData()).join(", ")}");
   }
-
+  /// UncompleteDocumentation
   Future<int> installPackageFromUrl({
     required String url,
     FetchOption? options,
@@ -1249,25 +1250,25 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     return await installPackageFromFile(file: file, onData: onData, onDone: onDone);
     // .listen((event) {}).asFuture();
   }
-
+  /// UncompleteDocumentation
   Future<void> installPackage({
     required String name_package,
   }) async {
     String result_url_package = "";
-  }
+  }  /// UncompleteDocumentation
 
   Future<void> searchPackage({
     required String name_package,
   }) async {
     String result_url_package = "";
   }
-
+  /// UncompleteDocumentation
   Future<void> listPackageByPublisher({
     required String username,
   }) async {
     String result_url_package = "";
   }
-
+  /// UncompleteDocumentation
   Stream<String> publish({
     required String tokenGithub,
     required String supabaseKey,
@@ -1505,7 +1506,7 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     yield "Finished";
     return;
   }
-
+  /// UncompleteDocumentation
   Future<int> installPackageFromFile({
     required File file,
     required FutureOr<void> Function(String data) onData,

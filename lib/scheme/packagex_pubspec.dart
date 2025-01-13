@@ -9,10 +9,10 @@ import "packagex_pubspec_dev_dependencies.dart";
 import "packagex_config.dart";
 import "packagex_msix_config.dart";
 
- 
+/// Generated 
 class PackagexPubspec extends JsonScheme {
 
-  
+  /// Generated
   PackagexPubspec(super.rawData);
   
   /// return default data
@@ -46,7 +46,7 @@ class PackagexPubspec extends JsonScheme {
 
   
 
-  
+  /// Generated
   String? get special_type {
     try {
       if (rawData["@type"] is String == false){
@@ -58,13 +58,13 @@ class PackagexPubspec extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
 
-  
+  /// Generated
   String? get name {
     try {
       if (rawData["name"] is String == false){
@@ -76,13 +76,13 @@ class PackagexPubspec extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set name(String? value) {
     rawData["name"] = value;
   }
 
 
-  
+  /// Generated
   String? get description {
     try {
       if (rawData["description"] is String == false){
@@ -94,13 +94,13 @@ class PackagexPubspec extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set description(String? value) {
     rawData["description"] = value;
   }
 
 
-  
+  /// Generated
   String? get version {
     try {
       if (rawData["version"] is String == false){
@@ -112,13 +112,13 @@ class PackagexPubspec extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set version(String? value) {
     rawData["version"] = value;
   }
 
 
-  
+  /// Generated
   String? get publish_to {
     try {
       if (rawData["publish_to"] is String == false){
@@ -130,13 +130,13 @@ class PackagexPubspec extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set publish_to(String? value) {
     rawData["publish_to"] = value;
   }
 
 
-  
+  /// Generated
   String? get homepage {
     try {
       if (rawData["homepage"] is String == false){
@@ -148,13 +148,13 @@ class PackagexPubspec extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set homepage(String? value) {
     rawData["homepage"] = value;
   }
 
 
-  
+  /// Generated
   String? get repository {
     try {
       if (rawData["repository"] is String == false){
@@ -166,13 +166,13 @@ class PackagexPubspec extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set repository(String? value) {
     rawData["repository"] = value;
   }
 
 
-  
+  /// Generated
   PackagexPubspecPlatforms get platforms {
     try {
       if (rawData["platforms"] is Map == false){
@@ -185,14 +185,14 @@ class PackagexPubspec extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set platforms(PackagexPubspecPlatforms value) {
     rawData["platforms"] = value.toJson();
   }
 
 
 
-  
+  /// Generated
   PackagexPubspecEnvironment get environment {
     try {
       if (rawData["environment"] is Map == false){
@@ -205,14 +205,14 @@ class PackagexPubspec extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set environment(PackagexPubspecEnvironment value) {
     rawData["environment"] = value.toJson();
   }
 
 
 
-  
+  /// Generated
   PackagexPubspecDependencies get dependencies {
     try {
       if (rawData["dependencies"] is Map == false){
@@ -225,14 +225,14 @@ class PackagexPubspec extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set dependencies(PackagexPubspecDependencies value) {
     rawData["dependencies"] = value.toJson();
   }
 
 
 
-  
+  /// Generated
   PackagexPubspecDevDependencies get dev_dependencies {
     try {
       if (rawData["dev_dependencies"] is Map == false){
@@ -245,14 +245,14 @@ class PackagexPubspec extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set dev_dependencies(PackagexPubspecDevDependencies value) {
     rawData["dev_dependencies"] = value.toJson();
   }
 
 
 
-  
+  /// Generated
   PackagexConfig get packagex {
     try {
       if (rawData["packagex"] is Map == false){
@@ -265,14 +265,14 @@ class PackagexPubspec extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set packagex(PackagexConfig value) {
     rawData["packagex"] = value.toJson();
   }
 
 
 
-  
+  /// Generated
   PackagexMsixConfig get msix_config {
     try {
       if (rawData["msix_config"] is Map == false){
@@ -285,14 +285,14 @@ class PackagexPubspec extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set msix_config(PackagexMsixConfig value) {
     rawData["msix_config"] = value.toJson();
   }
 
 
 
-  
+  /// Generated
   static PackagexPubspec create({
               bool schemeUtilsIsSetDefaultData = false,
 

@@ -3,10 +3,10 @@ import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
 
- 
+/// Generated 
 class PackagexConfigUploadTelegramChat extends JsonScheme {
 
-  
+  /// Generated
   PackagexConfigUploadTelegramChat(super.rawData);
   
   /// return default data
@@ -40,7 +40,7 @@ class PackagexConfigUploadTelegramChat extends JsonScheme {
 
   
 
-  
+  /// Generated
   String? get special_type {
     try {
       if (rawData["@type"] is String == false){
@@ -52,13 +52,13 @@ class PackagexConfigUploadTelegramChat extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
 
-  
+  /// Generated
   String? get chat_id {
     try {
       if (rawData["chat_id"] is String == false){
@@ -70,13 +70,13 @@ class PackagexConfigUploadTelegramChat extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set chat_id(String? value) {
     rawData["chat_id"] = value;
   }
 
 
-  
+  /// Generated
   String? get message_thread_id {
     try {
       if (rawData["message_thread_id"] is String == false){
@@ -88,13 +88,13 @@ class PackagexConfigUploadTelegramChat extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set message_thread_id(String? value) {
     rawData["message_thread_id"] = value;
   }
 
 
-  
+  /// Generated
   static PackagexConfigUploadTelegramChat create({
               bool schemeUtilsIsSetDefaultData = false,
 

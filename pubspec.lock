@@ -239,10 +239,10 @@ packages:
     dependency: "direct main"
     description:
       name: general_lib
-      sha256: fb12847a8295c19de015c27724eeb831ca48671d7705558e402a8d3bdf6de40c
+      sha256: "675da67d0d8e784a4522f9253d69280c2a057292a777b583b5bc6c0a2097afc7"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.56"
+    version: "0.0.58"
   get_it:
     dependency: transitive
     description:
@@ -676,10 +676,10 @@ packages:
     dependency: "direct main"
     description:
       name: supabase_client
-      sha256: "524fee33877fcbb1d857fa34aae3d349e72ceeb7c077f77fdafe4bd561ba2405"
+      sha256: "55abf96f7e515c1605cf67ea8bb5f18b990044a55793d13e82177246275bb36d"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.31"
+    version: "0.0.32"
   system_information:
     dependency: "direct main"
     description:

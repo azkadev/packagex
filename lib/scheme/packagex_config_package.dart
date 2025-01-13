@@ -3,10 +3,10 @@ import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
 
- 
+/// Generated 
 class PackagexConfigPackage extends JsonScheme {
 
-  
+  /// Generated
   PackagexConfigPackage(super.rawData);
   
   /// return default data
@@ -40,7 +40,7 @@ class PackagexConfigPackage extends JsonScheme {
 
   
 
-  
+  /// Generated
   String? get special_type {
     try {
       if (rawData["@type"] is String == false){
@@ -52,13 +52,13 @@ class PackagexConfigPackage extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
 
-  
+  /// Generated
   String? get dart_target {
     try {
       if (rawData["dart_target"] is String == false){
@@ -70,13 +70,13 @@ class PackagexConfigPackage extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set dart_target(String? value) {
     rawData["dart_target"] = value;
   }
 
 
-  
+  /// Generated
   String? get flutter_target {
     try {
       if (rawData["flutter_target"] is String == false){
@@ -88,13 +88,13 @@ class PackagexConfigPackage extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set flutter_target(String? value) {
     rawData["flutter_target"] = value;
   }
 
 
-  
+  /// Generated
   String? get dart_name {
     try {
       if (rawData["dart_name"] is String == false){
@@ -106,13 +106,13 @@ class PackagexConfigPackage extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set dart_name(String? value) {
     rawData["dart_name"] = value;
   }
 
 
-  
+  /// Generated
   String? get flutter_name {
     try {
       if (rawData["flutter_name"] is String == false){
@@ -124,13 +124,13 @@ class PackagexConfigPackage extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set flutter_name(String? value) {
     rawData["flutter_name"] = value;
   }
 
 
-  
+  /// Generated
   String? get output_name {
     try {
       if (rawData["output_name"] is String == false){
@@ -142,13 +142,13 @@ class PackagexConfigPackage extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set output_name(String? value) {
     rawData["output_name"] = value;
   }
 
 
-  
+  /// Generated
   static PackagexConfigPackage create({
               bool schemeUtilsIsSetDefaultData = false,
 

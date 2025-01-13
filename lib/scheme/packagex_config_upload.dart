@@ -4,10 +4,10 @@ import "package:general_lib/general_lib.dart";
 
 import "packagex_config_upload_telegram_chat.dart";
 
- 
+/// Generated 
 class PackagexConfigUpload extends JsonScheme {
 
-  
+  /// Generated
   PackagexConfigUpload(super.rawData);
   
   /// return default data
@@ -41,7 +41,7 @@ class PackagexConfigUpload extends JsonScheme {
 
   
 
-  
+  /// Generated
   String? get special_type {
     try {
       if (rawData["@type"] is String == false){
@@ -53,13 +53,13 @@ class PackagexConfigUpload extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
 
-  
+  /// Generated
   String? get platform_type {
     try {
       if (rawData["platform_type"] is String == false){
@@ -71,13 +71,13 @@ class PackagexConfigUpload extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set platform_type(String? value) {
     rawData["platform_type"] = value;
   }
 
 
-  
+  /// Generated
   String? get github_username {
     try {
       if (rawData["github_username"] is String == false){
@@ -89,13 +89,13 @@ class PackagexConfigUpload extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set github_username(String? value) {
     rawData["github_username"] = value;
   }
 
 
-  
+  /// Generated
   String? get github_tag {
     try {
       if (rawData["github_tag"] is String == false){
@@ -107,13 +107,13 @@ class PackagexConfigUpload extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set github_tag(String? value) {
     rawData["github_tag"] = value;
   }
 
 
-  
+  /// Generated
   bool? get github_is_org {
     try {
       if (rawData["github_is_org"] is bool == false){
@@ -125,13 +125,13 @@ class PackagexConfigUpload extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set github_is_org(bool? value) {
     rawData["github_is_org"] = value;
   }
 
 
-  
+  /// Generated
   String? get github_repository_name {
     try {
       if (rawData["github_repository_name"] is String == false){
@@ -143,13 +143,13 @@ class PackagexConfigUpload extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set github_repository_name(String? value) {
     rawData["github_repository_name"] = value;
   }
 
 
-  
+  /// Generated
   String? get supabase_folder_name {
     try {
       if (rawData["supabase_folder_name"] is String == false){
@@ -161,12 +161,12 @@ class PackagexConfigUpload extends JsonScheme {
     }
   }
 
-  
+  /// Generated
   set supabase_folder_name(String? value) {
     rawData["supabase_folder_name"] = value;
   }
 
-  
+  /// Generated
   List<PackagexConfigUploadTelegramChat> get telegram_chats {
     try {
       if (rawData["telegram_chats"] is List == false){
@@ -179,14 +179,14 @@ class PackagexConfigUpload extends JsonScheme {
   }
 
 
-  
+  /// Generated
   set telegram_chats(List<PackagexConfigUploadTelegramChat> values) {
     rawData["telegram_chats"] = values.map((value) => value.toJson()).toList();
   }
 
 
 
-  
+  /// Generated
   static PackagexConfigUpload create({
               bool schemeUtilsIsSetDefaultData = false,
 
