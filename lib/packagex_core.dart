@@ -36,6 +36,7 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 
 import "dart:async";
 import 'dart:convert';
+import "package:general_lib/fork/yaml_writer/core/yaml_writer.dart";
 import "package:github/github.dart";
 import "package:http/http.dart";
 import "package:mime/mime.dart";
@@ -51,7 +52,7 @@ import 'package:general_lib/general_lib.dart';
 import 'package:path/path.dart' as path;
 import "package:telegram_client/telegram_client.dart";
 import "package:yaml/yaml.dart" as yaml;
-import "package:yaml_writer/yaml_writer.dart";
+// import "package:yaml_writer/yaml_writer.dart";
 
 import "package:collection/collection.dart";
 import "package:supabase_client/supabase_client.dart" as supabase_client;
@@ -216,7 +217,7 @@ class Packagex {
         value:
             "Remove Pubspec Keys: [\"@type\"] ${path.basename(file_pubspec.path)}");
     await file_pubspec
-        .writeAsString(YamlWriter().write(packagexPubspec.toJson()));
+        .writeAsString(YamlWriterGeneralLib().write(packagexPubspec.toJson()));
 
     packagexPubspec.packagex.rawData.general_lib_utils_updateMapWithReplace(
         data: packagexConfig.rawData, ignoreKeys: ["@type"]);

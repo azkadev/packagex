@@ -38,7 +38,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:mason_logger/mason_logger.dart';
+// import 'package:mason_logger/mason_logger.dart';
+import 'package:general_lib/fork/mason_logger/mason_logger.dart';
 import 'package:packagex/packagex.dart';
 
 import 'package:general_lib/general_lib.dart';
