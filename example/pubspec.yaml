@@ -52,3 +52,5 @@ dependency_overrides:
   pointycastle: '3.8.0'
   mime: '^2.0.0'
 funding: []
+project:
+  type: ''

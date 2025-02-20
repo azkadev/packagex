@@ -20,7 +20,7 @@ executables:
   packagex: 'packagex'
 dependencies:
   collection: '^1.19.0'
-  general_lib: '^0.0.63'
+  general_lib: '^0.0.66'
   github: '^9.24.0'
   http: '^1.2.2'
   mime: '^2.0.0'
@@ -65,3 +65,5 @@ funding:
   - 'https://github.com/sponsors/generalfoss'
 issue_tracker: 'https://t.me/DEVELOPER_GLOBAL_PUBLIC'
 documentation: 'https://youtube.com/@azkadev'
+project:
+  type: 'library'
