@@ -11,9 +11,9 @@ platforms:
   web: null
   windows: null
 environment:
-  sdk: '>=3.6.0 <4.0.0'
+  sdk: '>=3.7.0 <4.0.0'
 dev_dependencies:
-  lints: '^5.0.0'
+  lints: '^5.1.1'
   msix: '^3.16.8'
   test: 'any'
 executables:
@@ -22,14 +22,14 @@ dependencies:
   collection: '^1.19.0'
   general_lib: '^0.0.66'
   github: '^9.24.0'
-  http: '^1.2.2'
+  http: '^1.3.0'
   mime: '^2.0.0'
   path: '^1.9.0'
   io_universe: '^0.0.5'
   yaml: '^3.1.3'
   system_information: '^0.0.10'
   supabase_client: '^0.0.33'
-  telegram_client: '^0.8.37'
+  telegram_client: '^0.8.38'
 packagex:
   name: 'packagex'
   flutter_commands:
