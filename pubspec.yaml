@@ -13,7 +13,7 @@ platforms:
 environment:
   sdk: '>=3.7.0 <4.0.0'
 dev_dependencies:
-  lints: '^5.1.1'
+  lints: '^5.0.0'
   msix: '^3.16.8'
   test: 'any'
 executables:
@@ -29,7 +29,7 @@ dependencies:
   yaml: '^3.1.3'
   system_information: '^0.0.10'
   supabase_client: '^0.0.33'
-  telegram_client: '^0.8.38'
+  telegram_client: '^0.8.42'
 packagex:
   name: 'packagex'
   flutter_commands:
