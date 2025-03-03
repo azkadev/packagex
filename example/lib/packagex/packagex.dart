@@ -15,12 +15,6 @@ class PackagexProjectExample {
 
   /// AutoGenerateBy Packagex
   static Map get default_data {
-    return {
-      "name": "example",
-      "description": "A new Flutter project.",
-      "publish_to": "none",
-      "version": "1.0.0+1",
-      "funding": []
-    };
+    return {"name": "example", "description": "A new Flutter project.", "publish_to": "none", "version": "1.0.0+1", "funding": []};
   }
 }

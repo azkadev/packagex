@@ -9,6 +9,12 @@ class PackagexPubspecDevDependencies extends JsonScheme {
   /// Generated
   PackagexPubspecDevDependencies(super.rawData);
 
+  /// return default special type @type
+  /// "packagexPubspecDevDependencies"
+  static String get defaultDataSpecialType {
+    return "packagexPubspecDevDependencies";
+  }
+
   /// return default data
   ///
   static Map get defaultData {
@@ -18,9 +24,9 @@ class PackagexPubspecDevDependencies extends JsonScheme {
       "test": "^1.16.0",
       "packagex": {
         "@type": "packagexPubspecDevDependenciesExtra",
-        "path": "../"
+        "path": "../",
       },
-      "msix": "^1.0.6"
+      "msix": "^1.0.6",
     };
   }
 
@@ -160,6 +166,7 @@ class PackagexPubspecDevDependencies extends JsonScheme {
       });
     }
     return PackagexPubspecDevDependencies(
-        packagexPubspecDevDependencies_data_create_json);
+      packagexPubspecDevDependencies_data_create_json,
+    );
   }
 }

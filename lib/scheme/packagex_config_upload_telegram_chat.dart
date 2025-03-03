@@ -7,13 +7,19 @@ class PackagexConfigUploadTelegramChat extends JsonScheme {
   /// Generated
   PackagexConfigUploadTelegramChat(super.rawData);
 
+  /// return default special type @type
+  /// "packagexConfigUploadTelegramChat"
+  static String get defaultDataSpecialType {
+    return "packagexConfigUploadTelegramChat";
+  }
+
   /// return default data
   ///
   static Map get defaultData {
     return {
       "@type": "packagexConfigUploadTelegramChat",
       "chat_id": "",
-      "message_thread_id": ""
+      "message_thread_id": "",
     };
   }
 
@@ -116,6 +122,7 @@ class PackagexConfigUploadTelegramChat extends JsonScheme {
       });
     }
     return PackagexConfigUploadTelegramChat(
-        packagexConfigUploadTelegramChat_data_create_json);
+      packagexConfigUploadTelegramChat_data_create_json,
+    );
   }
 }

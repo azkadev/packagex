@@ -9,6 +9,12 @@ class PackagexPubspecDependencies extends JsonScheme {
   /// Generated
   PackagexPubspecDependencies(super.rawData);
 
+  /// return default special type @type
+  /// "packagexPubspecDependencies"
+  static String get defaultDataSpecialType {
+    return "packagexPubspecDependencies";
+  }
+
   /// return default data
   ///
   static Map get defaultData {
@@ -16,9 +22,9 @@ class PackagexPubspecDependencies extends JsonScheme {
       "@type": "packagexPubspecDependencies",
       "flutter": {
         "@type": "packagexPubspecDependenciesExtra",
-        "sdk": "flutter"
+        "sdk": "flutter",
       },
-      "cupertino_icons": "^1.0.2"
+      "cupertino_icons": "^1.0.2",
     };
   }
 
@@ -120,6 +126,7 @@ class PackagexPubspecDependencies extends JsonScheme {
       });
     }
     return PackagexPubspecDependencies(
-        packagexPubspecDependencies_data_create_json);
+      packagexPubspecDependencies_data_create_json,
+    );
   }
 }

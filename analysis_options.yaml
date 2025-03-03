@@ -7,3 +7,4 @@ analyzer:
 linter:
   rules:
     - public_member_api_docs
+    - require_trailing_commas

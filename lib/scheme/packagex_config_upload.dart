@@ -9,6 +9,12 @@ class PackagexConfigUpload extends JsonScheme {
   /// Generated
   PackagexConfigUpload(super.rawData);
 
+  /// return default special type @type
+  /// "packagexConfigUpload"
+  static String get defaultDataSpecialType {
+    return "packagexConfigUpload";
+  }
+
   /// return default data
   ///
   static Map get defaultData {
@@ -24,9 +30,9 @@ class PackagexConfigUpload extends JsonScheme {
         {
           "@type": "packagexConfigUploadTelegramChat",
           "chat_id": "",
-          "message_thread_id": ""
+          "message_thread_id": "",
         }
-      ]
+      ],
     };
   }
 

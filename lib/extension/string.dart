@@ -81,9 +81,10 @@ extension StringPackagexExtensionOn on String {
     List<String> texts = split(",");
     List<PackagexPlatformType> packagexPlatformTypes = [];
     for (String text in texts) {
-      PackagexPlatformType? packagexPlatformType = PackagexPlatformType.values
-          .firstWhereOrNull((element) =>
-              element.name.toLowerCase() == text.toLowerCase().trim());
+      PackagexPlatformType? packagexPlatformType =
+          PackagexPlatformType.values.firstWhereOrNull(
+        (element) => element.name.toLowerCase() == text.toLowerCase().trim(),
+      );
       if (packagexPlatformType != null) {
         if (!packagexPlatformTypes.contains(packagexPlatformType)) {
           packagexPlatformTypes.add(packagexPlatformType);

@@ -7,6 +7,12 @@ class PackagexMsixConfig extends JsonScheme {
   /// Generated
   PackagexMsixConfig(super.rawData);
 
+  /// return default special type @type
+  /// "packagexMsixConfig"
+  static String get defaultDataSpecialType {
+    return "packagexMsixConfig";
+  }
+
   /// return default data
   ///
   static Map get defaultData {
@@ -18,7 +24,7 @@ class PackagexMsixConfig extends JsonScheme {
       "msix_version": "0.0.0.0",
       "logo_path": "example/bin/example.dart",
       "capabilities": "internetClient, location, microphone, webcam",
-      "install_certificate": false
+      "install_certificate": false,
     };
   }
 

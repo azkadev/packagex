@@ -7,6 +7,12 @@ class PackagexConfigPackage extends JsonScheme {
   /// Generated
   PackagexConfigPackage(super.rawData);
 
+  /// return default special type @type
+  /// "packagexConfigPackage"
+  static String get defaultDataSpecialType {
+    return "packagexConfigPackage";
+  }
+
   /// return default data
   ///
   static Map get defaultData {
@@ -16,7 +22,7 @@ class PackagexConfigPackage extends JsonScheme {
       "flutter_target": "main",
       "dart_name": "packagex",
       "flutter_name": "packagex",
-      "output_name": "packagex"
+      "output_name": "packagex",
     };
   }
 

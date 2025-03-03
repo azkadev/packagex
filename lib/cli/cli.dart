@@ -249,7 +249,10 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
       File file = File(package_name);
       if (file.existsSync()) {
         await packagex.installPackageFromFile(
-            file: file, onData: (data) {}, onDone: () {});
+          file: file,
+          onData: (data) {},
+          onDone: () {},
+        );
       } else {
         // Platform.pathSeparator;
 
@@ -300,7 +303,7 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
           "--source",
           "path",
           directory_origin_pkg.path,
-          "--overwrite"
+          "--overwrite",
         ],
       );
 
@@ -328,8 +331,10 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
         print("pubspec.yaml not Found");
         exit(0);
       }
-      Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(),
-          recover: true) as Map);
+      Map yaml_code = (yaml.loadYaml(
+        file_pubspec.readAsStringSync(),
+        recover: true,
+      ) as Map);
       PackagexPubspec pubspec = PackagexPubspec(yaml_code);
       String pubspec_name = pubspec.name ?? "";
       String pubspec_version = pubspec.version ?? "";
@@ -347,7 +352,8 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
           await directory_new_pub_hosted_pubdev.create(recursive: true);
         } else {
           print(
-              "${pubspec_name} Version: ${pubspec_version} Found in use --force");
+            "${pubspec_name} Version: ${pubspec_version} Found in use --force",
+          );
           exit(0);
         }
       } else {
@@ -356,14 +362,16 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
       print("Installing Package ${pubspec_name} Version: ${pubspec_version} ");
       Directory directory_origin_pkg = Directory(path_package_install_pub);
 
-      directory_origin_pkg
-          .copyTo(directory_new_pub_hosted_pubdev, ignoreDirList: [
-        ".dart_tool",
-        "build",
-        ".plugin_symlinks",
-        "ephemeral",
-        "example",
-      ]);
+      directory_origin_pkg.copyTo(
+        directory_new_pub_hosted_pubdev,
+        ignoreDirList: [
+          ".dart_tool",
+          "build",
+          ".plugin_symlinks",
+          "ephemeral",
+          "example",
+        ],
+      );
 
       print("complete");
       exit(0);
@@ -426,7 +434,7 @@ void printed(PackagexApiStatus event) {
   if ([
     PackagexApiStatusType.progress_start,
     PackagexApiStatusType.progress_complete,
-    PackagexApiStatusType.progress
+    PackagexApiStatusType.progress,
   ].contains(event.packagexApiStatusType)) {
     if (event.packagexApiStatusType == PackagexApiStatusType.progress_start) {
       progresss.add(logger.progress(event.value));

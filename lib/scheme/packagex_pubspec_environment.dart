@@ -7,6 +7,12 @@ class PackagexPubspecEnvironment extends JsonScheme {
   /// Generated
   PackagexPubspecEnvironment(super.rawData);
 
+  /// return default special type @type
+  /// "packagexPubspecEnvironment"
+  static String get defaultDataSpecialType {
+    return "packagexPubspecEnvironment";
+  }
+
   /// return default data
   ///
   static Map get defaultData {
@@ -92,6 +98,7 @@ class PackagexPubspecEnvironment extends JsonScheme {
       });
     }
     return PackagexPubspecEnvironment(
-        packagexPubspecEnvironment_data_create_json);
+      packagexPubspecEnvironment_data_create_json,
+    );
   }
 }

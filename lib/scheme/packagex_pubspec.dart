@@ -14,6 +14,12 @@ class PackagexPubspec extends JsonScheme {
   /// Generated
   PackagexPubspec(super.rawData);
 
+  /// return default special type @type
+  /// "packagexPubspec"
+  static String get defaultDataSpecialType {
+    return "packagexPubspec";
+  }
+
   /// return default data
   ///
   static Map get defaultData {
@@ -32,19 +38,19 @@ class PackagexPubspec extends JsonScheme {
         "linux": null,
         "macos": null,
         "web": null,
-        "windows": null
+        "windows": null,
       },
       "environment": {
         "@type": "packagexPubspecEnvironment",
-        "sdk": ">=2.18.5 <3.0.0"
+        "sdk": ">=2.18.5 <3.0.0",
       },
       "dependencies": {
         "@type": "packagexPubspecDependencies",
         "flutter": {
           "@type": "packagexPubspecDependenciesExtra",
-          "sdk": "flutter"
+          "sdk": "flutter",
         },
-        "cupertino_icons": "^1.0.2"
+        "cupertino_icons": "^1.0.2",
       },
       "dev_dependencies": {
         "@type": "packagexPubspecDevDependencies",
@@ -52,9 +58,9 @@ class PackagexPubspec extends JsonScheme {
         "test": "^1.16.0",
         "packagex": {
           "@type": "packagexPubspecDevDependenciesExtra",
-          "path": "../"
+          "path": "../",
         },
-        "msix": "^1.0.6"
+        "msix": "^1.0.6",
       },
       "packagex": {
         "@type": "packagexConfig",
@@ -65,7 +71,7 @@ class PackagexPubspec extends JsonScheme {
         "dart_compile_exe_arguments": [
           "--save-debugging-info=debug",
           "--target-os",
-          "linux"
+          "linux",
         ],
         "uploads": [
           {
@@ -80,9 +86,9 @@ class PackagexPubspec extends JsonScheme {
               {
                 "@type": "packagexConfigUploadTelegramChat",
                 "chat_id": "",
-                "message_thread_id": ""
+                "message_thread_id": "",
               }
-            ]
+            ],
           }
         ],
         "packages": [
@@ -92,9 +98,9 @@ class PackagexPubspec extends JsonScheme {
             "flutter_target": "main",
             "dart_name": "packagex",
             "flutter_name": "packagex",
-            "output_name": "packagex"
+            "output_name": "packagex",
           }
-        ]
+        ],
       },
       "msix_config": {
         "@type": "packagexMsixConfig",
@@ -104,8 +110,8 @@ class PackagexPubspec extends JsonScheme {
         "msix_version": "0.0.0.0",
         "logo_path": "example/bin/example.dart",
         "capabilities": "internetClient, location, microphone, webcam",
-        "install_certificate": false
-      }
+        "install_certificate": false,
+      },
     };
   }
 

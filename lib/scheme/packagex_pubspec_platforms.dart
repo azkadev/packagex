@@ -7,6 +7,12 @@ class PackagexPubspecPlatforms extends JsonScheme {
   /// Generated
   PackagexPubspecPlatforms(super.rawData);
 
+  /// return default special type @type
+  /// "packagexPubspecPlatforms"
+  static String get defaultDataSpecialType {
+    return "packagexPubspecPlatforms";
+  }
+
   /// return default data
   ///
   static Map get defaultData {
@@ -17,7 +23,7 @@ class PackagexPubspecPlatforms extends JsonScheme {
       "linux": null,
       "macos": null,
       "web": null,
-      "windows": null
+      "windows": null,
     };
   }
 

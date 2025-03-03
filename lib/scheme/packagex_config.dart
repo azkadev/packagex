@@ -10,6 +10,12 @@ class PackagexConfig extends JsonScheme {
   /// Generated
   PackagexConfig(super.rawData);
 
+  /// return default special type @type
+  /// "packagexConfig"
+  static String get defaultDataSpecialType {
+    return "packagexConfig";
+  }
+
   /// return default data
   ///
   static Map get defaultData {
@@ -22,7 +28,7 @@ class PackagexConfig extends JsonScheme {
       "dart_compile_exe_arguments": [
         "--save-debugging-info=debug",
         "--target-os",
-        "linux"
+        "linux",
       ],
       "uploads": [
         {
@@ -37,9 +43,9 @@ class PackagexConfig extends JsonScheme {
             {
               "@type": "packagexConfigUploadTelegramChat",
               "chat_id": "",
-              "message_thread_id": ""
+              "message_thread_id": "",
             }
-          ]
+          ],
         }
       ],
       "packages": [
@@ -49,9 +55,9 @@ class PackagexConfig extends JsonScheme {
           "flutter_target": "main",
           "dart_name": "packagex",
           "flutter_name": "packagex",
-          "output_name": "packagex"
+          "output_name": "packagex",
         }
-      ]
+      ],
     };
   }
 
