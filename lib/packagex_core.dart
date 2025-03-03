@@ -1012,6 +1012,17 @@ To: ${file_cli.path}
                 await directory_linux_packagex_app_opt.delete(recursive: true);
               }
             }
+            final String pathRelative = path.relative(file_output_app.path, from: directoryBase.path);
+
+            yield PackagexApiStatus(
+              packagexApiStatusType: PackagexApiStatusType.succes,
+              value: "✓ Built ${pathRelative} (${FileSize.filesize(size: file_output_app.statSync().size)})",
+            );
+
+            yield PackagexApiStatus(
+              packagexApiStatusType: PackagexApiStatusType.info,
+              value: "Command install: sudo dpkg --force-all --install ${pathRelative}",
+            );
 
             continue;
           }
