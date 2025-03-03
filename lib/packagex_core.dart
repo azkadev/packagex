@@ -1082,12 +1082,18 @@ To: ${file_cli.path}
                       ),
                     );
                     await dir.absolute.copy(fileSaveTo.path);
+                    final String pathRelative = path.relative(fileSaveTo.path, from: directoryBase.path);
 
                     yield PackagexApiStatus(
                       packagexApiStatusType: PackagexApiStatusType.succes,
-                      value: "✓ Built ${fileSaveTo.path} (${FileSize.filesize(size: fileSaveTo.statSync().size)})",
+                      value: "✓ Built ${pathRelative} (${FileSize.filesize(size: fileSaveTo.statSync().size)})",
                     );
-                    
+
+                    yield PackagexApiStatus(
+                      packagexApiStatusType: PackagexApiStatusType.info,
+                      value: "Command install: adb install -r -g ${pathRelative}",
+                    );
+
                     await dir.absolute.delete(
                       recursive: true,
                     );
