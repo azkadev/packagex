@@ -1,6 +1,6 @@
 name: 'packagex'
 description: 'Packagex Tool And Library for help you bundle or publish application flutter with super easy and automation'
-version: '0.0.86'
+version: '1.0.0'
 homepage: 'https://youtube.com/@azkadev'
 repository: 'https://github.com/azkadev/packagex.git'
 platforms:

@@ -10,8 +10,8 @@ Example: example.deb, example-web.zip, example.ipa, example.msix, example.dmg
 
 ### Example Usage
 
-dart pub add packagex
+flutter pub add packagex
 
-dart run packagex --command create .
+flutter run packagex --command create .
 
-dart run packagex --command build --platform linux,web,android
+flutter run packagex --command build --platform linux,web,android
