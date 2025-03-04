@@ -1,6 +1,6 @@
 name: 'packagex'
 description: 'Packagex Tool And Library for help you bundle or publish application flutter with super easy and automation'
-version: '1.0.0'
+version: '1.0.1'
 homepage: 'https://youtube.com/@azkadev'
 repository: 'https://github.com/azkadev/packagex.git'
 platforms:
@@ -20,14 +20,14 @@ executables:
   packagex: 'packagex'
 dependencies:
   collection: '^1.19.0'
-  general_lib: '^0.0.67'
+  general_lib: '^0.0.69'
   github: '^9.24.0'
   http: '^1.3.0'
   mime: '^2.0.0'
   path: '^1.9.0'
-  io_universe: '^0.0.7'
+  io_universe: '^0.0.8'
   yaml: '^3.1.3'
-  system_information: '^0.0.12'
+  system_information: '^0.0.13'
   supabase_client: '^0.0.33'
   telegram_client: '^0.8.43'
 packagex:

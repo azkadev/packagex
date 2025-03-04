@@ -88,7 +88,8 @@ class Packagex {
     if (file_pubspec.existsSync() == false) {
       yield PackagexApiStatus(
         packagexApiStatusType: PackagexApiStatusType.info,
-        value: "Started Create Project: ${(isApplication) ? "flutter" : "dart"} ${project_name}",
+        value:
+            "Started Create Project: ${(isApplication) ? "flutter" : "dart"} ${project_name}",
       );
       List<String> arguments = () {
         List<String> defaults_args = [
@@ -122,24 +123,28 @@ class Packagex {
       if (exit_code != 0) {
         yield PackagexApiStatus(
           packagexApiStatusType: PackagexApiStatusType.failed,
-          value: "Failed Create Project: ${(isApplication) ? "flutter" : "dart"} ${project_name}",
+          value:
+              "Failed Create Project: ${(isApplication) ? "flutter" : "dart"} ${project_name}",
         );
         return;
       } else {
         yield PackagexApiStatus(
           packagexApiStatusType: PackagexApiStatusType.succes,
-          value: "Succes Create Project: ${(isApplication) ? "flutter" : "dart"} ${project_name}",
+          value:
+              "Succes Create Project: ${(isApplication) ? "flutter" : "dart"} ${project_name}",
         );
       }
     }
 
     PackagexPubspec packagexPubspec = PackagexPubspec({});
 
-    Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
+    Map yaml_code =
+        (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
     packagexPubspec.rawData = yaml_code.clone();
     yield PackagexApiStatus(
       packagexApiStatusType: PackagexApiStatusType.info,
-      value: "Started Check Pubspec Configuration: ${path.basename(file_pubspec.path)}",
+      value:
+          "Started Check Pubspec Configuration: ${path.basename(file_pubspec.path)}",
     );
 
     final PackagexPubspec packagexPubspec_default = PackagexPubspec.create(
@@ -206,51 +211,63 @@ class Packagex {
     );
     yield PackagexApiStatus(
       packagexApiStatusType: PackagexApiStatusType.info,
-      value: "Update Pubspec Configuration: ${path.basename(file_pubspec.path)}",
+      value:
+          "Update Pubspec Configuration: ${path.basename(file_pubspec.path)}",
     );
 
     packagexPubspec.rawData.general_lib_utils_updateMapIfNotSameOrEmptyOrNull(
       data: packagexPubspec_default.rawData,
       ignoreKeys: ["@type"],
     );
-    packagexPubspec.rawData.general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
+    packagexPubspec.rawData
+        .general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
     yield PackagexApiStatus(
       packagexApiStatusType: PackagexApiStatusType.info,
-      value: "Remove Pubspec Keys: [\"@type\"] ${path.basename(file_pubspec.path)}",
+      value:
+          "Remove Pubspec Keys: [\"@type\"] ${path.basename(file_pubspec.path)}",
     );
     if (packagexPubspec["packagex"] is Map) {
       if (packagexPubspec["packagex"]["flutter_build_arguments"] is List) {
-        final Args args_flutter_build_arguments = Args(packagexPubspec.packagex.flutter_build_arguments);
-        int? index_build_numbers = args_flutter_build_arguments.findIndex("--build-number");
+        final Args args_flutter_build_arguments =
+            Args(packagexPubspec.packagex.flutter_build_arguments);
+        int? index_build_numbers =
+            args_flutter_build_arguments.findIndex("--build-number");
         if (index_build_numbers != null) {
-          final String build_numbers = (args_flutter_build_arguments.after(["--build-number"]) ?? "");
+          final String build_numbers =
+              (args_flutter_build_arguments.after(["--build-number"]) ?? "");
           if (build_numbers.isNotEmpty) {
             try {
-              final String build_number_parse = "${(int.tryParse(build_numbers) ?? 0)}";
+              final String build_number_parse =
+                  "${(int.tryParse(build_numbers) ?? 0)}";
               bool isFoundUpdate = false;
               if (build_number_parse.isEmpty) {
-                args_flutter_build_arguments.arguments[index_build_numbers + 1] = "0";
+                args_flutter_build_arguments
+                    .arguments[index_build_numbers + 1] = "0";
 
                 isFoundUpdate = true;
               } else if (build_numbers != build_number_parse) {
-                args_flutter_build_arguments.arguments[index_build_numbers + 1] = build_number_parse;
+                args_flutter_build_arguments
+                    .arguments[index_build_numbers + 1] = build_number_parse;
                 isFoundUpdate = true;
               }
               if (isFoundUpdate == true) {
-                packagexPubspec["packagex"]["flutter_build_arguments"] = args_flutter_build_arguments.arguments;
+                packagexPubspec["packagex"]["flutter_build_arguments"] =
+                    args_flutter_build_arguments.arguments;
               }
             } catch (e) {}
           }
         }
       }
     }
-    await file_pubspec.writeAsString(YamlWriterGeneralLib().write(packagexPubspec.toJson()));
+    await file_pubspec
+        .writeAsString(YamlWriterGeneralLib().write(packagexPubspec.toJson()));
 
     packagexPubspec.packagex.rawData.general_lib_utils_updateMapWithReplace(
       data: packagexConfig.rawData,
       ignoreKeys: ["@type"],
     );
-    packagexPubspec.rawData.general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
+    packagexPubspec.rawData
+        .general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
     if (isApplication) {
       if (!packagexPubspec.dev_dependencies.rawData.containsKey("msix")) {
         String message = "Add Package: Msix --dev";
@@ -298,7 +315,8 @@ Installed-Size: 0
 Description: "-"
 Homepage: "-"
 """;
-    scripts = scripts.replaceAllMapped(RegExp(r"({{architecture_os}})", caseSensitive: false), (match) {
+    scripts = scripts.replaceAllMapped(
+        RegExp(r"({{architecture_os}})", caseSensitive: false), (match) {
       if (Platform.isAndroid) {
         return "all";
       } else {
@@ -317,7 +335,8 @@ Homepage: "-"
       ["usr", "local", "lib"],
       ["usr", "share", "applications"],
     ];
-    Directory directory_packagex_linux = Directory(path.join(directory_project.path, "linux", "packagex"));
+    Directory directory_packagex_linux =
+        Directory(path.join(directory_project.path, "linux", "packagex"));
     for (var i = 0; i < packagex_linux_folders.length; i++) {
       Directory directory_procces = Directory(
         path.join(
@@ -330,7 +349,8 @@ Homepage: "-"
       }
     }
 
-    File file_debian_control_packagex_linux = File(path.join(directory_packagex_linux.path, "DEBIAN", "control"));
+    File file_debian_control_packagex_linux =
+        File(path.join(directory_packagex_linux.path, "DEBIAN", "control"));
     if (file_debian_control_packagex_linux.parent.existsSync() == false) {
       await file_debian_control_packagex_linux.parent.create(recursive: true);
     }
@@ -338,7 +358,8 @@ Homepage: "-"
       await file_debian_control_packagex_linux.writeAsString(scripts);
     }
 
-    File file_debian_postinst_packagex_linux = File(path.join(directory_packagex_linux.path, "DEBIAN", "postinst"));
+    File file_debian_postinst_packagex_linux =
+        File(path.join(directory_packagex_linux.path, "DEBIAN", "postinst"));
     if (file_debian_postinst_packagex_linux.parent.existsSync() == false) {
       await file_debian_postinst_packagex_linux.parent.create(recursive: true);
     }
@@ -359,12 +380,15 @@ ${default_debian_postinsts_packagex_linux.join("\n")}
 exit 0
 """);
     } else {
-      String origin_data = await file_debian_postinst_packagex_linux.readAsString();
-      List<String> origin_datas = origin_data.split("\n").map((e) => e.trim()).toList();
+      String origin_data =
+          await file_debian_postinst_packagex_linux.readAsString();
+      List<String> origin_datas =
+          origin_data.split("\n").map((e) => e.trim()).toList();
       origin_datas.removeWhere((element) => element.trim() == "exit 0");
       bool is_found_update = false;
       for (var i = 0; i < default_debian_postinsts_packagex_linux.length; i++) {
-        String default_debian_postinst_packagex_linux = default_debian_postinsts_packagex_linux[i];
+        String default_debian_postinst_packagex_linux =
+            default_debian_postinsts_packagex_linux[i];
         if (!origin_datas.contains(default_debian_postinst_packagex_linux)) {
           is_found_update = true;
           origin_datas.add(default_debian_postinst_packagex_linux);
@@ -377,10 +401,12 @@ exit 0
         origin_datas.add("exit 0");
       }
 
-      await file_debian_postinst_packagex_linux.writeAsString(origin_datas.join("\n"));
+      await file_debian_postinst_packagex_linux
+          .writeAsString(origin_datas.join("\n"));
     }
 
-    File file_debian_postrm_packagex_linux = File(path.join(directory_packagex_linux.path, "DEBIAN", "postrm"));
+    File file_debian_postrm_packagex_linux =
+        File(path.join(directory_packagex_linux.path, "DEBIAN", "postrm"));
     if (file_debian_postrm_packagex_linux.parent.existsSync() == false) {
       await file_debian_postrm_packagex_linux.parent.create(recursive: true);
     }
@@ -399,11 +425,14 @@ ${default_debian_postrms_packagex_linux.join("\n")}
     } else {
       // default_debian_postrms_packagex_linux.removeAt(0);
       // default_debian_postrms_packagex_linux.removeAt(0);
-      String origin_data = await file_debian_postrm_packagex_linux.readAsString();
-      List<String> origin_datas = origin_data.split("\n").map((e) => e.trim()).toList();
+      String origin_data =
+          await file_debian_postrm_packagex_linux.readAsString();
+      List<String> origin_datas =
+          origin_data.split("\n").map((e) => e.trim()).toList();
       bool is_found_update = false;
       for (var i = 0; i < default_debian_postrms_packagex_linux.length; i++) {
-        String default_debian_postrm_packagex_linux = default_debian_postrms_packagex_linux[i];
+        String default_debian_postrm_packagex_linux =
+            default_debian_postrms_packagex_linux[i];
         if (!origin_datas.contains(default_debian_postrm_packagex_linux)) {
           is_found_update = true;
           origin_datas.add(default_debian_postrm_packagex_linux);
@@ -413,7 +442,8 @@ ${default_debian_postrms_packagex_linux.join("\n")}
         origin_datas.insert(0, "#!/usr/bin/env sh");
       }
 
-      await file_debian_postrm_packagex_linux.writeAsString(origin_datas.join("\n"));
+      await file_debian_postrm_packagex_linux
+          .writeAsString(origin_datas.join("\n"));
     }
 
     List<String> folder_bins = [
@@ -424,7 +454,8 @@ ${default_debian_postrms_packagex_linux.join("\n")}
     for (var i = 0; i < folder_bins.length; i++) {
       String folder_bin = folder_bins[i];
 
-      File file_bin_packagex_linux_gitignore = File(path.join(folder_bin, ".gitignore"));
+      File file_bin_packagex_linux_gitignore =
+          File(path.join(folder_bin, ".gitignore"));
       if (file_bin_packagex_linux_gitignore.parent.existsSync() == false) {
         await file_bin_packagex_linux_gitignore.parent.create(recursive: true);
       }
@@ -435,7 +466,8 @@ ${default_debian_postrms_packagex_linux.join("\n")}
       );
     }
 
-    File file_gitignore_packagex_linux = File(path.join(directory_packagex_linux.path, ".gitignore"));
+    File file_gitignore_packagex_linux =
+        File(path.join(directory_packagex_linux.path, ".gitignore"));
     if (file_gitignore_packagex_linux.parent.existsSync() == false) {
       await file_gitignore_packagex_linux.parent.create(recursive: true);
     }
@@ -450,19 +482,22 @@ ${default_debian_postrms_packagex_linux.join("\n")}
       "usr/local/bin/${project_name.packagex_utils_extension_toLinuxProgram()}",
     ];
     if (file_gitignore_packagex_linux.existsSync() == false) {
-      await file_gitignore_packagex_linux.writeAsString(default_gitignores_packagex_linux.join("\n"));
+      await file_gitignore_packagex_linux
+          .writeAsString(default_gitignores_packagex_linux.join("\n"));
     } else {
       String origin_data = await file_gitignore_packagex_linux.readAsString();
       List<String> origin_datas = origin_data.split("\n");
       bool is_found_update = false;
       for (var i = 0; i < default_gitignores_packagex_linux.length; i++) {
-        String default_gitignore_packagex_linux = default_gitignores_packagex_linux[i];
+        String default_gitignore_packagex_linux =
+            default_gitignores_packagex_linux[i];
         if (!origin_datas.contains(default_gitignore_packagex_linux)) {
           is_found_update = true;
           origin_datas.add(default_gitignore_packagex_linux);
         }
       }
-      await file_gitignore_packagex_linux.writeAsString(origin_datas.join("\n"));
+      await file_gitignore_packagex_linux
+          .writeAsString(origin_datas.join("\n"));
     }
 
     String app_desktop_linux = """
@@ -495,7 +530,8 @@ StartupNotify=true
       await file_application_packagex_linux.writeAsString(app_desktop_linux);
     }
     if (Platform.isLinux) {
-      String message = "Set Permission 775: ${file_debian_postinst_packagex_linux.path} ${file_debian_postrm_packagex_linux.path}";
+      String message =
+          "Set Permission 775: ${file_debian_postinst_packagex_linux.path} ${file_debian_postrm_packagex_linux.path}";
       yield PackagexApiStatus(
         packagexApiStatusType: PackagexApiStatusType.info,
         value: "Starting ${message}",
@@ -547,10 +583,12 @@ StartupNotify=true
     packagexConfig ??= PackagexConfig({});
     yield PackagexApiStatus(
       packagexApiStatusType: PackagexApiStatusType.info,
-      value: "Starting Build: ${packagexPlatformTypes.map((e) => e.name.toUpperCaseFirstData()).join(", ")}",
+      value:
+          "Starting Build: ${packagexPlatformTypes.map((e) => e.name.toUpperCaseFirstData()).join(", ")}",
     );
 
-    final File file_pubspec = File(path.join(directoryBase.path, "pubspec.yaml"));
+    final File file_pubspec =
+        File(path.join(directoryBase.path, "pubspec.yaml"));
 
     await for (final streamCreate in create(
       newName: path.basename(directoryBase.path),
@@ -561,7 +599,8 @@ StartupNotify=true
     )) {
       yield streamCreate;
     }
-    final Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
+    final Map yaml_code =
+        (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
 
     final PackagexPubspec packagexPubspec = PackagexPubspec(yaml_code.clone());
 
@@ -569,15 +608,18 @@ StartupNotify=true
       data: packagexConfig.rawData,
       ignoreKeys: ["@type"],
     );
-    packagexPubspec.rawData.general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
+    packagexPubspec.rawData
+        .general_lib_utils_removeRecursiveByKeys(keyDatas: ["@type"]);
 
-    final Directory directory_build_packagex = directoryBuild ?? Directory(path.join(directoryBase.path, "build", "packagex"));
+    final Directory directory_build_packagex = directoryBuild ??
+        Directory(path.join(directoryBase.path, "build", "packagex"));
     yield PackagexApiStatus(
       packagexApiStatusType: PackagexApiStatusType.info,
       value: "Directory Build: ${directory_build_packagex.uri.toFilePath()}",
     );
 
-    final File file_script_pkgx = File(path.join(directoryBase.path, "lib", "packagex", "packagex.dart"));
+    final File file_script_pkgx =
+        File(path.join(directoryBase.path, "lib", "packagex", "packagex.dart"));
     if (file_script_pkgx.parent.existsSync() == false) {
       await file_script_pkgx.parent.create(
         recursive: true,
@@ -624,7 +666,8 @@ return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
         .trim();
     await file_script_pkgx.writeAsString(packagex_script_project);
 
-    final bool is_auto_delete = Platform.environment["packagex_is_auto_delete"] == "true";
+    final bool is_auto_delete =
+        Platform.environment["packagex_is_auto_delete"] == "true";
     if (is_auto_delete) {
       if (directory_build_packagex.existsSync()) {
         await directory_build_packagex.delete(recursive: true);
@@ -655,33 +698,47 @@ return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
       final int exit_code = await (process.exitCode);
     }
 
-    final List<PackagexConfigPackage> packages = packagexPubspec.packagex.packages;
+    final List<PackagexConfigPackage> packages =
+        packagexPubspec.packagex.packages;
     for (final PackagexConfigPackage packagexConfigPackage in packages) {
-      final String dart_target = packagexConfigPackage.dart_target ?? packagexPubspec.name ?? "";
-      final String dart_name = packagexConfigPackage.dart_name ?? packagexPubspec.name!.packagex_utils_extension_toLinuxProgram();
-      final String flutter_target = packagexConfigPackage.flutter_target ?? "main";
-      final String flutter_name = packagexConfigPackage.flutter_name ?? packagexPubspec.name ?? "";
-      final String output_name = packagexConfigPackage.output_name ?? (packagexPubspec.name ?? "").packagex_utils_extension_toLinuxProgram();
+      final String dart_target =
+          packagexConfigPackage.dart_target ?? packagexPubspec.name ?? "";
+      final String dart_name = packagexConfigPackage.dart_name ??
+          packagexPubspec.name!.packagex_utils_extension_toLinuxProgram();
+      final String flutter_target =
+          packagexConfigPackage.flutter_target ?? "main";
+      final String flutter_name =
+          packagexConfigPackage.flutter_name ?? packagexPubspec.name ?? "";
+      final String output_name = packagexConfigPackage.output_name ??
+          (packagexPubspec.name ?? "")
+              .packagex_utils_extension_toLinuxProgram();
 
-      final File file_packagex_release = File(path.join(directory_build_packagex.path, "${output_name}.json"));
-      await file_packagex_release.writeAsString(json_data_package_detail.toStringifyPretty(2));
+      final File file_packagex_release =
+          File(path.join(directory_build_packagex.path, "${output_name}.json"));
+      await file_packagex_release
+          .writeAsString(json_data_package_detail.toStringifyPretty(2));
 
-      for (final PackagexPlatformType packagexPlatformType in packagexPlatformTypes.toSet()) {
-        final File script_cli = File(path.join(directoryBase.path, "bin", "${dart_target}.dart"));
+      for (final PackagexPlatformType packagexPlatformType
+          in packagexPlatformTypes.toSet()) {
+        final File script_cli =
+            File(path.join(directoryBase.path, "bin", "${dart_target}.dart"));
         final File script_app = File(
           path.join(directoryBase.path, "lib", "${flutter_target}.dart"),
         );
         final bool is_app = script_app.existsSync();
         final bool is_cli = script_cli.existsSync();
 
-        final List<String> dart_compile_arguments = packagexPubspec.packagex.dart_compile_exe_arguments.clone();
-        final List<String> flutter_build_arguments = packagexPubspec.packagex.flutter_build_arguments.clone();
+        final List<String> dart_compile_arguments =
+            packagexPubspec.packagex.dart_compile_exe_arguments.clone();
+        final List<String> flutter_build_arguments =
+            packagexPubspec.packagex.flutter_build_arguments.clone();
 
         yield PackagexApiStatus(
           packagexApiStatusType: PackagexApiStatusType.info,
           value: "Starting Build: ${packagexPlatformType.name}",
         );
-        if (packagexPlatformType == PackagexPlatformType.android || packagexPlatformType == PackagexPlatformType.linux) {
+        if (packagexPlatformType == PackagexPlatformType.android ||
+            packagexPlatformType == PackagexPlatformType.linux) {
           if (packagexPlatformType == PackagexPlatformType.linux) {
             if (!Platform.isLinux) {
               yield PackagexApiStatus(
@@ -703,12 +760,14 @@ return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
               path.join(
                 directory_linux_package.path,
                 "opt",
-                (packagexPubspec.name ?? "").packagex_utils_extension_toLinuxProgram(),
+                (packagexPubspec.name ?? "")
+                    .packagex_utils_extension_toLinuxProgram(),
               ),
             );
 
             if (is_app) {
-              if (packagexPubspec.packagex.is_app_auto_clean_up_folder == true) {
+              if (packagexPubspec.packagex.is_app_auto_clean_up_folder ==
+                  true) {
                 if (directory_linux_packagex_app_opt.existsSync()) {
                   await directory_linux_packagex_app_opt.delete(
                     recursive: true,
@@ -723,7 +782,8 @@ return ${JsonEncoder.withIndent(" " * 2).convert(json_data_package_detail)};
                 }
               }
             }
-            final String message = "Set Permission: ${path.join(directory_linux_package.path, "DEBIAN")}";
+            final String message =
+                "Set Permission: ${path.join(directory_linux_package.path, "DEBIAN")}";
             yield PackagexApiStatus(
               packagexApiStatusType: PackagexApiStatusType.info,
               value: "Starting ${message}",
@@ -864,7 +924,8 @@ To: ${file_cli.path}
                   "linux",
                   "--release",
                   "--target=${script_app.path}",
-                  ...flutter_build_arguments.packagexUtilsParseFlutterArgumentsLinux(),
+                  ...flutter_build_arguments
+                      .packagexUtilsParseFlutterArgumentsLinux(),
                 ],
                 workingDirectory: directoryBase.path,
               );
@@ -899,7 +960,8 @@ To: ${file_cli.path}
                 ".",
               );
 
-              final String message = "Copy App Files: From ${path_app} To ${directory_linux_packagex_app_opt.path} ";
+              final String message =
+                  "Copy App Files: From ${path_app} To ${directory_linux_packagex_app_opt.path} ";
               yield PackagexApiStatus(
                 packagexApiStatusType: PackagexApiStatusType.info,
                 value: "Starting ${message}",
@@ -935,7 +997,8 @@ To: ${file_cli.path}
             }
 
             if (is_app || is_cli) {
-              final String message = "Set Permission: chmod -R 755 ${directory_linux_package.path}";
+              final String message =
+                  "Set Permission: chmod -R 755 ${directory_linux_package.path}";
               yield PackagexApiStatus(
                 packagexApiStatusType: PackagexApiStatusType.info,
                 value: "Starting ${message}",
@@ -1012,16 +1075,19 @@ To: ${file_cli.path}
                 await directory_linux_packagex_app_opt.delete(recursive: true);
               }
             }
-            final String pathRelative = path.relative(file_output_app.path, from: directoryBase.path);
+            final String pathRelative =
+                path.relative(file_output_app.path, from: directoryBase.path);
 
             yield PackagexApiStatus(
               packagexApiStatusType: PackagexApiStatusType.succes,
-              value: "✓ Built ${pathRelative} (${FileSize.filesize(size: file_output_app.statSync().size)})",
+              value:
+                  "✓ Built ${pathRelative} (${FileSize.filesize(size: file_output_app.statSync().size)})",
             );
 
             yield PackagexApiStatus(
               packagexApiStatusType: PackagexApiStatusType.info,
-              value: "Command install: sudo dpkg --force-all --install ${pathRelative}",
+              value:
+                  "Command install: sudo dpkg --force-all --install ${pathRelative}",
             );
 
             continue;
@@ -1042,7 +1108,8 @@ To: ${file_cli.path}
                   "--release",
                   "--split-per-abi",
                   "--target=${script_app.path}",
-                  ...flutter_build_arguments.packagexUtilsParseFlutterArgumentsAndroid(),
+                  ...flutter_build_arguments
+                      .packagexUtilsParseFlutterArgumentsAndroid(),
                 ],
                 workingDirectory: directoryBase.path,
               );
@@ -1089,20 +1156,28 @@ To: ${file_cli.path}
                     final File fileSaveTo = File(
                       path.join(
                         directory_build_packagex.path,
-                        path.basename(dir.path).replaceAll(RegExp("^(app)", caseSensitive: false), "${output_name}"),
+                        path.basename(dir.path).replaceAll(
+                              RegExp("^(app)", caseSensitive: false),
+                              "${output_name}",
+                            ),
                       ),
                     );
                     await dir.absolute.copy(fileSaveTo.path);
-                    final String pathRelative = path.relative(fileSaveTo.path, from: directoryBase.path);
+                    final String pathRelative = path.relative(
+                      fileSaveTo.path,
+                      from: directoryBase.path,
+                    );
 
                     yield PackagexApiStatus(
                       packagexApiStatusType: PackagexApiStatusType.succes,
-                      value: "✓ Built ${pathRelative} (${FileSize.filesize(size: fileSaveTo.statSync().size)})",
+                      value:
+                          "✓ Built ${pathRelative} (${FileSize.filesize(size: fileSaveTo.statSync().size)})",
                     );
 
                     yield PackagexApiStatus(
                       packagexApiStatusType: PackagexApiStatusType.info,
-                      value: "Command install: adb install -r -g ${pathRelative}",
+                      value:
+                          "Command install: adb install -r -g ${pathRelative}",
                     );
 
                     await dir.absolute.delete(
@@ -1199,7 +1274,8 @@ To: ${file_cli.path}
             ];
             packagexPubspec.msix_config.rawData.forEach((key, value) {
               if (value is String && value.isNotEmpty) {
-                String key_args_msix = "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
+                String key_args_msix =
+                    "--${key.toString().replaceAll(RegExp(r"_"), "-")}";
                 if (!msix_args.contains(key_args_msix)) {
                   return;
                 }
@@ -1328,7 +1404,8 @@ To: ${file_cli.path}
                 "macos",
                 "--release",
                 "--target=${script_app.path}",
-                ...flutter_build_arguments.packagexUtilsParseFlutterArgumentsMacos(),
+                ...flutter_build_arguments
+                    .packagexUtilsParseFlutterArgumentsMacos(),
               ],
               workingDirectory: directoryBase.path,
             );
@@ -1377,7 +1454,8 @@ To: ${file_cli.path}
                 "--release",
                 "--no-codesign",
                 "--target=${script_app.path}",
-                ...flutter_build_arguments.packagexUtilsParseFlutterArgumentsIos(),
+                ...flutter_build_arguments
+                    .packagexUtilsParseFlutterArgumentsIos(),
               ],
               workingDirectory: directoryBase.path,
             );
@@ -1538,7 +1616,8 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
                   ),
                   ".",
                 ],
-                workingDirectory: path.join(directoryBase.path, "build", "web", "."),
+                workingDirectory:
+                    path.join(directoryBase.path, "build", "web", "."),
               );
               process.stderr.listen((event) {
                 stderr.add(event);
@@ -1567,7 +1646,8 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     }
     yield PackagexApiStatus(
       packagexApiStatusType: PackagexApiStatusType.succes,
-      value: "Finished Build: ${packagexPlatformTypes.map((e) => e.name.toUpperCaseFirstData()).join(", ")}",
+      value:
+          "Finished Build: ${packagexPlatformTypes.map((e) => e.name.toUpperCaseFirstData()).join(", ")}",
     );
   }
 
@@ -1584,7 +1664,8 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
       options: options,
       encoding: encoding,
     );
-    Directory directory = Directory(path.join(Directory.current.path, "package_temp"));
+    Directory directory =
+        Directory(path.join(Directory.current.path, "package_temp"));
     if (!directory.existsSync()) {
       await directory.create(recursive: true);
     }
@@ -1631,17 +1712,21 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
     required String telegramTokenBot,
     required Directory directoryBase,
   }) async* {
-    Directory directory_build = Directory(path.join(directoryBase.path, "build"));
-    Directory directory_build_temp = Directory(path.join(directory_build.path, "temp"));
+    Directory directory_build =
+        Directory(path.join(directoryBase.path, "build"));
+    Directory directory_build_temp =
+        Directory(path.join(directory_build.path, "temp"));
     if (directory_build_temp.existsSync() == false) {
       directory_build_temp.createSync(recursive: true);
     }
-    Directory directory_projectx = Directory(path.join(directory_build.path, "packagex"));
+    Directory directory_projectx =
+        Directory(path.join(directory_build.path, "packagex"));
 
     String basename = path.basename(directoryBase.path);
 
     File file_pubspec = File(path.join(directoryBase.path, "pubspec.yaml"));
-    Map yaml_code = (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
+    Map yaml_code =
+        (yaml.loadYaml(file_pubspec.readAsStringSync(), recover: true) as Map);
 
     PackagexPubspec pubspec = PackagexPubspec(yaml_code.clone());
     if (pubspec["name"] == null) {
@@ -1655,23 +1740,30 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
       return directory_projectx
           .listSync()
           .where(
-            (e) => [".deb", ".apk", ".msix", ".json"].contains(path.extension(e.path)),
+            (e) => [".deb", ".apk", ".msix", ".json"]
+                .contains(path.extension(e.path)),
           )
           .where((element) {
-        if (RegExp(pubspec.name ?? "", caseSensitive: false).hashData(element.path)) {
+        if (RegExp(pubspec.name ?? "", caseSensitive: false)
+            .hashData(element.path)) {
           return true;
         }
         return false;
       }).toList();
     });
 
-    for (final PackagexConfigUpload packagexConfigUpload in pubspec.packagex.uploads) {
+    for (final PackagexConfigUpload packagexConfigUpload
+        in pubspec.packagex.uploads) {
       await Future.delayed(Duration(seconds: 2));
-      final String upload_platform_type = (packagexConfigUpload.platform_type ?? "").trim().toLowerCase();
+      final String upload_platform_type =
+          (packagexConfigUpload.platform_type ?? "").trim().toLowerCase();
       if (upload_platform_type == "telegram") {
-        for (PackagexConfigUploadTelegramChat packagexConfigUploadTelegramChat in packagexConfigUpload.telegram_chats) {
+        for (PackagexConfigUploadTelegramChat packagexConfigUploadTelegramChat
+            in packagexConfigUpload.telegram_chats) {
           final dynamic telegram_chat_id = () {
-            final num telegram_chat_id_number = num.tryParse(packagexConfigUploadTelegramChat.chat_id ?? "") ?? 0;
+            final num telegram_chat_id_number =
+                num.tryParse(packagexConfigUploadTelegramChat.chat_id ?? "") ??
+                    0;
             if (telegram_chat_id_number != 0) {
               return telegram_chat_id_number;
             }
@@ -1686,7 +1778,8 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
           telegramClient.ensureInitialized(
             is_init_tdlib: false,
           );
-          final TelegramClientData telegramClientData = TelegramClientData.telegramBotApi(token_bot: telegramTokenBot);
+          final TelegramClientData telegramClientData =
+              TelegramClientData.telegramBotApi(token_bot: telegramTokenBot);
           for (final fileUpload in files) {
             if (fileUpload is File) {
               await Future.delayed(Duration(milliseconds: 500));
@@ -1709,13 +1802,16 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
         }
       }
       if (upload_platform_type == "supabase") {
-        final supabase_client.SupabaseClient supabaseClient = supabase_client.SupabaseClient(
+        final supabase_client.SupabaseClient supabaseClient =
+            supabase_client.SupabaseClient(
           supabaseUrl,
           supabaseKey,
         );
 
-        final String supabase_folder_name = (packagexConfigUpload.supabase_folder_name ?? "").trim();
-        final supabase_client.SupabaseStorageClient storage = supabaseClient.storage;
+        final String supabase_folder_name =
+            (packagexConfigUpload.supabase_folder_name ?? "").trim();
+        final supabase_client.SupabaseStorageClient storage =
+            supabaseClient.storage;
         yield "Get Supabase Folder: ${supabase_folder_name}";
         try {
           await storage.getBucket(supabase_folder_name);
@@ -1727,7 +1823,8 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
           );
           yield "Create Supabase Folder: ${supabase_folder_name}";
         }
-        final supabase_client.StorageFileApi storageFileApi = storage.from(supabase_folder_name);
+        final supabase_client.StorageFileApi storageFileApi =
+            storage.from(supabase_folder_name);
         for (final fileUpload in files) {
           if (fileUpload is File) {
             yield "Delayed 2 Seconds";
@@ -1760,15 +1857,19 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
         yield "Upload Supabase Complete: ${supabase_folder_name}";
       }
       if (upload_platform_type == "github") {
-        final String github_username = packagexConfigUpload.github_username ?? "";
-        final GitHub gitHub = GitHub(auth: Authentication.withToken(tokenGithub));
+        final String github_username =
+            packagexConfigUpload.github_username ?? "";
+        final GitHub gitHub =
+            GitHub(auth: Authentication.withToken(tokenGithub));
         yield "Check User";
         final User user = await gitHub.users.getCurrentUser();
         yield "Use Github: ${user.login}";
         final String githubReleaseTag = packagexConfigUpload.github_tag ?? "";
         final RepositorySlug repositorySlug = RepositorySlug(
           github_username,
-          packagexConfigUpload.github_repository_name ?? pubspec.packagex.name ?? "",
+          packagexConfigUpload.github_repository_name ??
+              pubspec.packagex.name ??
+              "",
         );
 
         yield "Upload List: ${files.length}";
@@ -1780,7 +1881,8 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
             );
           } catch (e) {
             if (e is GitHubError) {
-              if (RegExp(r"Repository not found", caseSensitive: false).hashData(e.message)) {
+              if (RegExp(r"Repository not found", caseSensitive: false)
+                  .hashData(e.message)) {
                 // "Create Repo: ${repositorySlug.fullName}";
                 return await gitHub.repositories.createRepository(
                   CreateRepository(
@@ -1790,7 +1892,9 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
                     gitignoreTemplate: "Dart",
                     licenseTemplate: "MIT",
                   ),
-                  org: (packagexConfigUpload.github_is_org == true) ? github_username : null,
+                  org: (packagexConfigUpload.github_is_org == true)
+                      ? github_username
+                      : null,
                 );
               }
             }
@@ -1821,7 +1925,8 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
                   );
                 } catch (e) {
                   if (e is GitHubError) {
-                    if (RegExp(r"Repository is empty", caseSensitive: false).hasMatch(e.message ?? "")) {
+                    if (RegExp(r"Repository is empty", caseSensitive: false)
+                        .hasMatch(e.message ?? "")) {
                       // yield "Create Repo: ${repositorySlug.fullName}";
                       await gitHub.repositories.deleteRepository(
                         repositorySlug,
@@ -1839,7 +1944,9 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
         });
 
         yield "Fetch Assets";
-        final List<ReleaseAsset> releaseAssets = await gitHub.repositories.listReleaseAssets(repositorySlug, release_repo).toList();
+        final List<ReleaseAsset> releaseAssets = await gitHub.repositories
+            .listReleaseAssets(repositorySlug, release_repo)
+            .toList();
         yield "Succes Fetch Assets: ${releaseAssets.length}";
         for (var i = 0; i < files.length; i++) {
           final FileSystemEntity fileSystemEntity = files[i];
@@ -1850,7 +1957,8 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
             );
             if (releaseAsset != null) {
               yield "Delete Asset: ${releaseAsset.name}";
-              await gitHub.repositories.deleteReleaseAsset(repositorySlug, releaseAsset);
+              await gitHub.repositories
+                  .deleteReleaseAsset(repositorySlug, releaseAsset);
             }
             yield "Upload Asset: ${path.basename(fileSystemEntity.path)}";
             await gitHub.repositories.uploadReleaseAssets(
