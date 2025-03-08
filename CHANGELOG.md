@@ -1,3 +1,7 @@
+## 1.0.2
+
+- New Version 1.0.2
+- Update Dependencies
 ## 1.0.1
 
 - New Version 1.0.1
