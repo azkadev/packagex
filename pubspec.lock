@@ -150,14 +150,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
-  ffi_universe:
-    dependency: transitive
-    description:
-      name: ffi_universe
-      sha256: "87bd080f9e25e7969fa1bb21e1a22ab8b6be56f1d484836b246317222517ccda"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.8"
   file:
     dependency: transitive
     description:
@@ -199,10 +191,10 @@ packages:
     dependency: "direct main"
     description:
       name: general_lib
-      sha256: e900899e0467ce64430bf004d4461e79e98ef3e00bc3e3bc08fcbfee323c70e4
+      sha256: ea076e5f02986a792edeedd87ccda9158d6f2166ef8f1bc65e79becadfe21cd9
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.67"
+    version: "0.0.69"
   get_it:
     dependency: transitive
     description:
@@ -279,10 +271,10 @@ packages:
     dependency: "direct main"
     description:
       name: io_universe
-      sha256: "8086b50254572b70e056cce2f4ed3622565d6ba0dd90d9f4b4453c7b209408cf"
+      sha256: e42dd887a33901505bf1db5c6653d936d9c6260f2367150fe90b019349406aad
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.7"
+    version: "0.0.8"
   js:
     dependency: transitive
     description:
@@ -475,14 +467,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
-  server_universe:
-    dependency: transitive
-    description:
-      name: server_universe
-      sha256: "6085506b05e9ac7013976ea4739710cd5c2307478ca67b0e16e9bd1a2218798a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.37"
   shelf:
     dependency: transitive
     description:
@@ -577,45 +561,29 @@ packages:
     source: hosted
     version: "1.4.1"
   supabase:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: supabase
       sha256: "270f63cd87a16578fee87e40cbf61062e8cdbce68d5e723e665f4651d70ddd8c"
       url: "https://pub.dev"
     source: hosted
     version: "2.6.2"
-  supabase_client:
-    dependency: "direct main"
-    description:
-      name: supabase_client
-      sha256: c72518960cb6de933423b235a2d3e60ed8b38737db49700a6152dcb72bcf6c83
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.33"
   system_information:
     dependency: "direct main"
     description:
       name: system_information
-      sha256: "6c04a6758afd319f99974a5f28b0038dd55725e82b83876dcb2adbf1165d0a94"
+      sha256: "36ef787a388abb2110ce2bc68ed4e892002ddcc639824c6039ca01618454dd03"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.12"
+    version: "0.0.13"
   system_information_flutter:
     dependency: transitive
     description:
       name: system_information_flutter
-      sha256: "08f8a9bd206aa837c26a1fb1b66cc2e497fd5832ed0a53206dd329f446af0430"
+      sha256: "2f2b54c49445d78f5f6649d51b420b1bdd2b81fb0c3c498854173e7d63c0446c"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.12"
-  telegram_client:
-    dependency: "direct main"
-    description:
-      name: telegram_client
-      sha256: "609d600d5bb3985956da02d7853f558ec17ab5b0bc924e0189ae00c42a67c165"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.8.43"
+    version: "0.0.13"
   term_glyph:
     dependency: transitive
     description:

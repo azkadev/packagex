@@ -42,6 +42,7 @@ import "package:http/http.dart";
 import "package:mime/mime.dart";
 import "package:packagex/extension/arguments.dart";
 import "package:packagex/extension/string.dart";
+import "package:packagex/fork/telegram_bot_api/telegram_bot_api.dart";
 import "package:packagex/packagex_api_status.dart";
 import "package:packagex/packagex_platform_type.dart";
 import "package:packagex/scheme/scheme.dart";
@@ -50,12 +51,13 @@ import "package:io_universe/io_universe.dart";
 import 'package:general_lib/general_lib.dart';
 // import 'package:path/path.dart' as p;
 import 'package:path/path.dart' as path;
-import "package:telegram_client/telegram_client.dart";
 import "package:yaml/yaml.dart" as yaml;
 // import "package:yaml_writer/yaml_writer.dart";
 
 import "package:collection/collection.dart";
-import "package:supabase_client/supabase_client.dart" as supabase_client;
+// import "fork/supabase_client/supabase_client.dart" as supabase_client;
+
+import 'package:supabase/supabase.dart' as supabase_client;
 
 /// Api
 class Packagex {
@@ -1774,26 +1776,24 @@ zip -r  ${path.join(directory_build_packagex.path, "${flutter_name}${(packagexPu
               ) ??
               0;
           yield "Upload To Telegram Chat Id: ${telegram_chat_id}";
-          final TelegramClient telegramClient = TelegramClient();
-          telegramClient.ensureInitialized(
-            is_init_tdlib: false,
+          TelegramBotApi telegramBotApi = TelegramBotApi(
+            token_bot: telegramTokenBot,
           );
-          final TelegramClientData telegramClientData =
-              TelegramClientData.telegramBotApi(token_bot: telegramTokenBot);
+
           for (final fileUpload in files) {
             if (fileUpload is File) {
               await Future.delayed(Duration(milliseconds: 500));
               final String fileName = path.basename(fileUpload.path);
               yield "Upload Telegram ${fileName}";
-              await telegramClient.invoke(
+              await telegramBotApi.invoke(
                 parameters: {
                   "@type": "sendDocument",
                   "chat_id": telegram_chat_id,
                   "message_thread_id": telegram_thread_id,
-                  "document": TgUtils.telegram_bot_api_file(file: fileUpload),
+                  "document":
+                      telegramBotApi.telegram_bot_api_file(file: fileUpload),
                 },
                 is_form: true,
-                telegramClientData: telegramClientData,
               );
               yield "Succes Telegram ${fileName}";
             }

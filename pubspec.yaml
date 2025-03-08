@@ -27,9 +27,8 @@ dependencies:
   path: '^1.9.0'
   io_universe: '^0.0.8'
   yaml: '^3.1.3'
-  system_information: '^0.0.13'
-  supabase_client: '^0.0.33'
-  telegram_client: '^0.8.44'
+  system_information: '^0.0.13' 
+  supabase: '^2.6.2'
 packagex:
   name: 'packagex'
   flutter_commands:
