@@ -44,8 +44,7 @@ import 'package:packagex/packagex.dart';
 
 import 'package:general_lib/general_lib.dart';
 import 'package:packagex/scheme/packagex_pubspec.dart';
-import 'package:path/path.dart' as p;
-import 'package:system_information/system_information.dart';
+import 'package:path/path.dart' as p; 
 // import 'package:system_information/dart/core.dart';
 import "package:yaml/yaml.dart" as yaml;
 import "package:path/path.dart" as path;
@@ -60,12 +59,7 @@ class PackagexEnvironment {
 
   /// UncompleteDocumentation
   static bool get is_not_interactive {
-    if (RegExp(r"virtual", caseSensitive: false)
-        .hashData(SystemInformation().get_model)) {
-      return true;
-    }
-    return ((Platform.environment["packagex_is_no_interactive"] ?? "").trim() ==
-        "true");
+    return ((Platform.environment["packagex_is_no_interactive"] ?? "").trim() == "true");
   }
 
   /// UncompleteDocumentation
@@ -195,8 +189,7 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
       newName: name_project,
       directoryPackage: Directory.current,
       isApplication: is_application,
-      packagexConfig:
-          arguments_origins.packagex_utils_extension_toPackagexConfig(),
+      packagexConfig: arguments_origins.packagex_utils_extension_toPackagexConfig(),
     )) {
       print(streamCreate);
     }
@@ -205,8 +198,7 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
   if (command == "read") {
     Directory directory_current = Directory.current;
     File file = File(p.join(directory_current.path, "pubspec.yaml"));
-    Map yaml_code =
-        (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
+    Map yaml_code = (yaml.loadYaml(file.readAsStringSync(), recover: true) as Map);
 
     print(json.encode(yaml_code));
     exit(0);
@@ -216,15 +208,12 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     await for (final streamBuild in packagex.build(
       directoryBase: Directory.current,
       packagexPlatformTypes: type_platform.toPackagexPlatformTypes(),
-      packagexConfig:
-          arguments_origins.packagex_utils_extension_toPackagexConfig(),
+      packagexConfig: arguments_origins.packagex_utils_extension_toPackagexConfig(),
       isApplication: () {
         return false;
       }(),
       directoryBuild: () {
-        final String output_path =
-            (args.after(["--output-directory", "-output-directory"]) ?? "")
-                .trim();
+        final String output_path = (args.after(["--output-directory", "-output-directory"]) ?? "").trim();
         if (output_path.isNotEmpty) {
           return Directory(Directory(output_path).uri.toFilePath());
         }
@@ -238,8 +227,7 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
   if (command == "install") {
     String package_name = args.arguments[1];
 
-    if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false)
-        .hashData(package_name)) {
+    if (RegExp(r"^http(s)?:\/\/.*$", caseSensitive: false).hashData(package_name)) {
       await packagex.installPackageFromUrl(
         url: package_name,
         onData: (data) {},
@@ -281,13 +269,11 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
 
   if (command == "pub") {
     if (args.after(command) == "activate") {
-      String path_package_install_pub =
-          args.after("activate") ?? Directory.current.path;
+      String path_package_install_pub = args.after("activate") ?? Directory.current.path;
       if (path_package_install_pub == ".") {
         path_package_install_pub = Directory.current.path;
       }
-      File file_pubspec =
-          File(path.join(path_package_install_pub, "pubspec.yaml"));
+      File file_pubspec = File(path.join(path_package_install_pub, "pubspec.yaml"));
       if (!file_pubspec.existsSync()) {
         print("pubspec.yaml not Found");
         exit(0);
@@ -318,15 +304,12 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
     }
 
     if (args.after(command) == "install") {
-      String path_package_install_pub =
-          args.after("install") ?? Directory.current.path;
+      String path_package_install_pub = args.after("install") ?? Directory.current.path;
       if (path_package_install_pub == ".") {
         path_package_install_pub = Directory.current.path;
       }
-      Directory directory_pub_hosted_pub_dev =
-          Directory(path.join(Dart.pub.hosted_directory.path, "pub.dev"));
-      File file_pubspec =
-          File(path.join(path_package_install_pub, "pubspec.yaml"));
+      Directory directory_pub_hosted_pub_dev = Directory(path.join(Dart.pub.hosted_directory.path, "pub.dev"));
+      File file_pubspec = File(path.join(path_package_install_pub, "pubspec.yaml"));
       if (!file_pubspec.existsSync()) {
         print("pubspec.yaml not Found");
         exit(0);
@@ -340,8 +323,7 @@ FutureOr<void> packagexCli(List<String> arguments_origins) async {
       String pubspec_version = pubspec.version ?? "";
       String new_name = "${pubspec_name}-${pubspec_version}";
 
-      Directory directory_new_pub_hosted_pubdev =
-          Directory(path.join(directory_pub_hosted_pub_dev.path, new_name));
+      Directory directory_new_pub_hosted_pubdev = Directory(path.join(directory_pub_hosted_pub_dev.path, new_name));
       if (directory_new_pub_hosted_pubdev.existsSync()) {
         bool is_force = args.contains(["-f", "--force"]);
         if (is_force) {
@@ -455,8 +437,7 @@ void printed(PackagexApiStatus event) {
       progress.update(event.value);
       return;
     }
-    if (event.packagexApiStatusType ==
-        PackagexApiStatusType.progress_complete) {
+    if (event.packagexApiStatusType == PackagexApiStatusType.progress_complete) {
       progress.complete(event.value);
       return;
     }
