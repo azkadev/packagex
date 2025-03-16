@@ -58,10 +58,6 @@ msix_config:
 dependency_overrides:
   pointycastle: '4.0.0'
   mime: '^2.0.0'
-  archive:
-    path: '/home/galaxeus/.pub-cache/hosted/pub.dev/archive-4.0.4'
-  http:
-    path: '/home/galaxeus/.pub-cache/hosted/pub.dev/http-1.3.0'
 funding:
   - 'https://github.com/sponsors/azkadev'
   - 'https://github.com/sponsors/generalfoss'
